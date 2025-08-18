@@ -1,0 +1,8 @@
+indicator_id,category,indicator_name,unit,target,threshold_green,threshold_amber,threshold_red,frequency,data_source,owner,status,notes
+SEC01,Security,Arson attempts per week,count,0,0,1,>=2,weekly,GSOC logs,Security Focal,Active,"Escalate posture at red"
+SEC02,Security,IED incidents on corridor,count,0,0,0,>=1,weekly,Incident reports,Security Focal,Active,"Road clearance on red"
+WASH01,WASH,Residual chlorine compliance,percent,100,>=95,80-94,<80,daily,Site tests,WASH Lead,Active,"Trigger IPC surge at amber or red"
+HEALTH01,Health,Suspected cholera alerts,count,0,0,1,>=2,daily,Health cluster,Health Lead,Active,"Set up isolation area at first alert"
+PROT01,Protection,GBV incident reports per week,count,0,0,1,>=3,weekly,GBV IMS,Protection Lead,Active,"Activate surge case mgmt at amber"
+ACCESS01,Access,Escort requests per week,count,[contextual],<=2,3-5,>=6,weekly,CIMIC cell,Ops Lead,Active,"Review convoy windows at amber"
+EDU01,Education,Schools occupied as shelters,count,0,0,1,>=2,weekly,Education cluster,Education Lead,Active,"Deploy TLS when >0"
