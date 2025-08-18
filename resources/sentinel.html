@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sentinel Riskboard - Single File</title>
+  <meta name="description" content="Single-file CARVER risk dashboard ready for GitHub Pages." />
+  <meta name="author" content="M. Nuri Shakoor" />
+  <style>
+/* Minimal but complete CSS */
+body{font-family:system-ui,Arial,sans-serif;margin:0;background:#0f1115;color:#e7e9ee}
+.app-header,.tabs{background:#151923;border-bottom:1px solid #2a2f3a}
+.app-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px}
+.header-actions{display:flex;gap:8px}
+.tabs{display:flex;gap:8px;padding:10px 12px;position:sticky;top:52px;z-index:9}
+.tab{border:1px solid #2a2f3a;background:transparent;color:#e7e9ee;padding:8px 12px;border-radius:8px;cursor:pointer}
+.tab.active{background:#5aa2ff;color:#fff;border-color:transparent}
+main{padding:16px;display:grid;gap:16px;max-width:1200px;margin:0 auto}
+.panel{background:#151923;border:1px solid #2a2f3a;border-radius:12px;padding:12px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.button{border:1px solid #2a2f3a;background:transparent;color:#e7e9ee;padding:8px 12px;border-radius:8px;cursor:pointer}
+.button.primary{background:#5aa2ff;color:#fff;border-color:transparent}
+.table-wrap{overflow:auto;border:1px solid #2a2f3a;border-radius:10px}
+table{width:100%;border-collapse:separate;border-spacing:0}
+thead th{position:sticky;top:0;background:#151923;border-bottom:1px solid #2a2f3a;font-weight:600;text-align:left;padding:8px}
+tbody td{padding:6px;border-bottom:1px solid #2a2f3a;vertical-align:middle}
+.remove-btn{width:36px;height:36px;border-radius:6px;border:1px solid #2a2f3a;background:transparent;color:#ef6461;cursor:pointer}
+.view{display:none}
+.view.active{display:block}
+.legend{margin-top:8px;color:#9aa3b2;display:flex;align-items:center;gap:8px}
+.legend .dot{width:10px;height:10px;border-radius:50%;background:#5aa2ff}
+.app-footer{padding:14px;text-align:center;color:#9aa3b2}
+.list{margin:0;padding-left:16px}
+.badge{padding:4px 8px;border-radius:999px;font-size:12px;font-weight:600}
+.badge.red{background:rgba(239,100,97,0.15);color:#ef6461}
+.badge.yellow{background:rgba(243,180,75,0.18);color:#f3b44b}
+.badge.green{background:rgba(47,163,107,0.2);color:#2fa36b}
+#jsHealth{position:fixed;top:8px;right:8px;background:#d24a46;color:#fff;padding:6px 10px;border-radius:8px;font:12px system-ui,sans-serif;z-index:9999;display:none}
+.js-loading #jsHealth{display:block}
+  </style>
+  <script>
+    // Mark loading; removed when JS finishes boot
+    document.documentElement.classList.add('js-loading');
+  </script>
+</head>
+<body>
+  <div id="jsHealth">If this stays visible, the script did not execute.</div>
+
+  <header class="app-header">
+    <div class="brand" style="display:flex;align-items:center;gap:10px;font-weight:700">
+      <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-4zM8.5 10.5l3.5 2 3.5-2M12 7v8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+      <span>Sentinel Riskboard</span>
+    </div>
+    <div class="header-actions">
+      <button id="themeToggle" class="button">Toggle Theme</button>
+      <button id="shareLink" class="button">Copy Share Link</button>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Primary">
+    <button class="tab active" data-tab="assets" role="tab" aria-selected="true">Assets</button>
+    <button class="tab" data-tab="analysis" role="tab" aria-selected="false">Analysis</button>
+    <button class="tab" data-tab="summary" role="tab" aria-selected="false">Reports</button>
+    <button class="tab" data-tab="settings" role="tab" aria-selected="false">Settings</button>
+  </nav>
+
+  <main>
+    <section class="panel" id="alertsPanel" aria-live="polite">
+      <h3>Alerts</h3>
+      <ul id="alertsList" class="alerts"></ul>
+    </section>
+
+    <section class="view active" id="view-assets">
+      <div class="toolbar">
+        <button id="addAsset" class="button primary">Add Asset</button>
+        <button id="importJsonBtn" class="button">Import JSON</button>
+        <input type="file" id="importJsonFile" accept=".json" hidden />
+        <div class="spacer"></div>
+        <button id="exportJsonBtn" class="button">Export JSON</button>
+        <button id="exportCsvBtn" class="button">Export CSV</button>
+        <button id="printBtn" class="button">Print</button>
+      </div>
+
+      <div class="table-wrap">
+        <table id="assetsTable">
+          <colgroup>
+            <col style="width: 160px" />
+            <col style="width: 150px" />
+            <col style="width: 120px" />
+            <col style="width: 160px" />
+            <col style="width: 90px" />
+            <col style="width: 100px" />
+            <col style="width: 90px" />
+            <col style="width: 68px" />
+            <col style="width: 48px" />
+            <col style="width: 48px" />
+            <col style="width: 48px" />
+            <col style="width: 48px" />
+            <col style="width: 48px" />
+            <col style="width: 48px" />
+            <col style="width: 260px" />
+            <col style="width: 72px" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Sector</th>
+              <th>Type</th>
+              <th>Location</th>
+              <th>Status</th>
+              <th>Owner</th>
+              <th>Last</th>
+              <th>Severity</th>
+              <th>C</th>
+              <th>A</th>
+              <th>R</th>
+              <th>V</th>
+              <th>E</th>
+              <th>Rz</th>
+              <th>Notes</th>
+              <th>Remove</th>
+            </tr>
+          </thead>
+          <tbody id="assetsBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="view" id="view-analysis">
+      <div class="analysis-layout" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="panel">
+          <h3>Risk Matrix 5x5</h3>
+          <canvas id="riskMatrix" width="520" height="520" aria-label="5x5 risk matrix"></canvas>
+          <div class="legend">
+            <span class="dot" aria-hidden="true"></span> Asset plotted by Likelihood x Impact
+          </div>
+          <div class="toolbar">
+            <button id="exportMatrixPngBtn" class="button">Export Matrix PNG</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Computed Scores</h3>
+          <p>Impact = average of C, E, R. Likelihood = average of A, V, Rz. Recuperability is scored so low means strong resilience. App accepts 1 to 5 or 1 to 10 and normalizes to 1 to 5.</p>
+          <table id="scoresTable">
+            <thead>
+              <tr>
+                <th>Asset</th>
+                <th>L</th>
+                <th>I</th>
+                <th>Risk Tier</th>
+              </tr>
+            </thead>
+            <tbody id="scoresBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-summary">
+      <div class="panel">
+        <h3>Executive Summary</h3>
+        <textarea id="execSummary" rows="10" placeholder="Write your executive summary. Use the auto drafting below to insert a starting point."></textarea>
+        <div class="toolbar">
+          <button id="autoDraftBtn" class="button">Auto Draft</button>
+          <button id="copySummaryBtn" class="button">Copy</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>High Risk Items</h3>
+        <ul id="highRiskList" class="list"></ul>
+      </div>
+    </section>
+
+    <section class="view" id="view-settings">
+      <div class="panel">
+        <h3>Preferences</h3>
+        <label class="row" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0">
+          <span>Scoring Scale</span>
+          <select id="scaleSelect">
+            <option value="5">1 to 5</option>
+            <option value="10">1 to 10</option>
+          </select>
+        </label>
+        <label class="row" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0">
+          <span>Default DHS Sector</span>
+          <select id="defaultSector"></select>
+        </label>
+        <label class="row" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0">
+          <span>Include severe items in Alerts if due within days</span>
+          <input id="alertDays" type="number" min="0" step="1" value="14"/>
+        </label>
+        <p class="muted" style="color:#9aa3b2">Data is stored in your browser using localStorage. Use Export to back up to a file. Use Copy Share Link to create a URL that encodes your dataset for quick sharing.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <small>Prepared by ARAC International Inc. Global Security Analysis and Independent Research</small>
+  </footer>
+
+  <noscript>
+    <div style="padding:12px;margin:12px;background:#d24a46;color:#fff;border-radius:8px;">
+      JavaScript is disabled. Enable it to use Sentinel Riskboard.
+    </div>
+  </noscript>
+
+  <script>
+// Utility selectors and logger
+const qs = s=>document.querySelector(s); const qsa = s=>Array.from(document.querySelectorAll(s));
+function logErr(m){try{let b=document.getElementById('debugLog');if(!b){b=document.createElement('div');b.id='debugLog';b.style.position='fixed';b.style.bottom='8px';b.style.right='8px';b.style.maxWidth='40ch';b.style.background='rgba(0,0,0,0.6)';b.style.color='#fff';b.style.padding='8px 10px';b.style.borderRadius='8px';b.style.font='12px system-ui,sans-serif';b.style.zIndex='9999';document.body.appendChild(b);}const p=document.createElement('div');p.textContent='[Error] '+m;b.appendChild(p);}catch{}}
+window.addEventListener('error',e=>logErr(e.message||'Script error'));
+
+// Data
+const DHS_SECTORS=["Chemical","Commercial Facilities","Communications","Critical Manufacturing","Dams","Defense Industrial Base","Emergency Services","Energy","Financial Services","Food and Agriculture","Government Facilities","Healthcare and Public Health","Information Technology","Nuclear Reactors, Materials, and Waste","Transportation Systems","Water and Wastewater Systems"];
+let state={scale:5,defaultSector:"Commercial Facilities",alertDays:14,assets:[]};
+
+// Init
+document.addEventListener('DOMContentLoaded',()=>{try{
+  // Tabs
+  qsa('.tab').forEach(b=>b.addEventListener('click',onTabClick));
+  // Theme toggle
+  if(qs('#themeToggle')) qs('#themeToggle').addEventListener('click',()=>document.body.classList.toggle('light'));
+  // Sectors
+  const ds=qs('#defaultSector'); if(ds){DHS_SECTORS.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;ds.appendChild(o);});}
+
+  // Settings
+  if(qs('#scaleSelect')) qs('#scaleSelect').addEventListener('change',e=>{state.scale=Number(e.target.value);save();recalcAll();});
+  if(qs('#defaultSector')) qs('#defaultSector').addEventListener('change',e=>{state.defaultSector=e.target.value;save();});
+  if(qs('#alertDays')) qs('#alertDays').addEventListener('change',e=>{state.alertDays=Number(e.target.value);save();refreshAlerts();});
+
+  // Share link
+  if(qs('#shareLink')) qs('#shareLink').addEventListener('click',copyShareLink);
+
+  // Asset toolbar
+  if(qs('#addAsset')) qs('#addAsset').addEventListener('click',()=>addAssetRow());
+  if(qs('#exportJsonBtn')) qs('#exportJsonBtn').addEventListener('click',exportJson);
+  if(qs('#exportCsvBtn')) qs('#exportCsvBtn').addEventListener('click',exportCsv);
+  if(qs('#printBtn')) qs('#printBtn').addEventListener('click',()=>window.print());
+  if(qs('#importJsonBtn')) qs('#importJsonBtn').addEventListener('click',()=>qs('#importJsonFile')&&qs('#importJsonFile').click());
+  if(qs('#importJsonFile')) qs('#importJsonFile').addEventListener('change',importJson);
+
+  // Load state
+  if(!loadFromUrl()) load();
+
+  // Apply settings
+  if(qs('#scaleSelect')) qs('#scaleSelect').value=String(state.scale);
+  if(qs('#defaultSector')) qs('#defaultSector').value=state.defaultSector;
+  if(qs('#alertDays')) qs('#alertDays').value=String(state.alertDays);
+
+  renderAssets(); recalcAll();
+
+  // JS health indicator off
+  document.documentElement.classList.remove('js-loading');
+} catch(e){logErr(e.message||e);}});
+
+// Tabs
+function onTabClick(e){qsa('.tab').forEach(b=>b.classList.remove('active')); e.currentTarget.classList.add('active'); const t=e.currentTarget.dataset.tab; qsa('.view').forEach(v=>v.classList.remove('active')); const v=qs('#view-'+t); if(v) v.classList.add('active');}
+
+// Persistence
+function save(){try{localStorage.setItem('sentinel_state',JSON.stringify(state));}catch{}}
+function load(){try{const s=localStorage.getItem('sentinel_state'); if(s){state={...state,...JSON.parse(s)};}}catch(e){logErr('load: '+(e.message||e));}}
+function buildShareUrl(){const payload=JSON.stringify(state); const b64=btoa(unescape(encodeURIComponent(payload))); const url=new URL(window.location.href); url.hash='data='+b64; return url.toString();}
+function copyShareLink(){const link=buildShareUrl(); navigator.clipboard.writeText(link).then(()=>alert('Share link copied to clipboard')).catch(()=>prompt('Copy this link',link));}
+function loadFromUrl(){try{const h=window.location.hash||''; if(!h.startsWith('#data=')) return false; const b64=h.slice(6); const json=decodeURIComponent(escape(atob(b64))); state={...state,...JSON.parse(json)}; return true;}catch(e){logErr('loadFromUrl: '+(e.message||e)); return false;}}
+
+// Table
+function renderAssets(){const tbody=qs('#assetsBody'); if(!tbody) return; tbody.innerHTML=''; state.assets.forEach((a,i)=>tbody.appendChild(createAssetRow(a,i)));}
+function addAssetRow(p=null){const a=p||{name:'',sector:state.defaultSector,type:'',location:'',status:'Open',owner:'',last:new Date().toISOString().slice(0,10),severity:3,notes:'',scores:{C:3,A:3,R:3,V:3,E:3,Rz:3}}; state.assets.push(a); save(); renderAssets(); recalcAll();}
+function createAssetRow(a,i){
+  const tr=document.createElement('tr'); const td=x=>{const c=document.createElement('td'); c.appendChild(x); return c;};
+  const text=(v,on)=>{const el=document.createElement('input'); el.type='text'; el.value=v||''; el.addEventListener('input',ev=>{on(ev.target.value); save(); recalcAll();}); return el;};
+  const date=(v,on)=>{const el=document.createElement('input'); el.type='date'; el.value=v||''; el.addEventListener('change',ev=>{on(ev.target.value); save(); refreshAlerts();}); return el;};
+  const num=(v,on,min=1,max=10)=>{const el=document.createElement('input'); el.type='number'; el.min=String(min); el.max=String(max); el.step='1'; el.value=String(v??3); el.addEventListener('change',ev=>{on(Number(ev.target.value)); save(); recalcAll();}); return el;};
+  const select=(v,opts,on)=>{const s=document.createElement('select'); opts.forEach(o=>{const op=document.createElement('option'); op.value=o; op.textContent=o; s.appendChild(op);}); s.value=v||opts[0]; s.addEventListener('change',ev=>{on(ev.target.value); save(); recalcAll();}); return s;};
+
+  tr.appendChild(td(text(a.name,v=>a.name=v)));
+  tr.appendChild(td(select(a.sector,DHS_SECTORS,v=>a.sector=v)));
+  tr.appendChild(td(text(a.type,v=>a.type=v)));
+  tr.appendChild(td(text(a.location,v=>a.location=v)));
+  tr.appendChild(td(select(a.status||'Open',['Open','Mitigating','Closed'],v=>a.status=v)));
+  tr.appendChild(td(text(a.owner,v=>a.owner=v)));
+  tr.appendChild(td(date(a.last,v=>a.last=v)));
+  tr.appendChild(td(num(a.severity??3,v=>a.severity=v,1,5)));
+
+  ['C','A','R','V','E','Rz'].forEach(k=>{
+    const val=(a.scores&&a.scores[k])||3;
+    const n=num(val, v=>{ if(!a.scores) a.scores={}; a.scores[k]=v; }, 1, 10);
+    tr.appendChild(td(n));
+  });
+
+  tr.appendChild(td(text(a.notes||'',v=>a.notes=v)));
+
+  const rem=document.createElement('button'); rem.className='remove-btn'; rem.setAttribute('aria-label','Remove row'); rem.textContent='x';
+  rem.addEventListener('click',()=>{ if(confirm('Remove this asset')){ state.assets.splice(i,1); save(); renderAssets(); recalcAll(); }});
+  tr.appendChild(td(rem));
+  return tr;
+}
+
+// Math
+function normalize(v){const s=state.scale; if(!v) return 1; if(s===5) return Math.max(1,Math.min(5,v)); if(s===10){const m=1+(v-1)*(4/9); return Math.max(1,Math.min(5,Math.round(m*100)/100));} return v;}
+function computeLI(a){const s=a.scores||{C:3,A:3,R:3,V:3,E:3,Rz:3}; const C=normalize(s.C),E=normalize(s.E),R=normalize(s.R); const A=normalize(s.A),V=normalize(s.V),Rz=normalize(s.Rz); return {L:(A+V+Rz)/3, I:(C+E+R)/3};}
+function riskTier(L,I){const avg=(L+I)/2; if(avg>=4.2) return 'Severe'; if(avg>=3.4) return 'High'; if(avg>=2.6) return 'Elevated'; if(avg>=1.8) return 'Guarded'; return 'Low';}
+function recalcAll(){drawMatrix(); renderScores(); refreshAlerts(); populateHighRisk();}
+
+// Matrix
+function drawMatrix(){
+  const c=qs('#riskMatrix'); if(!c) return; const ctx=c.getContext('2d'); const w=c.width,h=c.height;
+  ctx.clearRect(0,0,w,h); const g=5; const cell=Math.floor(Math.min(w,h)/g);
+  for(let y=0;y<g;y++){for(let x=0;x<g;x++){const risk=(x+y)/8; const r=240+Math.floor(15*risk); ctx.fillStyle='hsl('+(Math.floor(120-120*risk))+',60%,'+(r/3)+'%)'; ctx.fillRect(x*cell,(g-1-y)*cell,cell-1,cell-1);}}
+  ctx.strokeStyle='rgba(255,255,255,0.55)'; ctx.lineWidth=1; ctx.strokeRect(0,0,cell*g,cell*g);
+  ctx.fillStyle='rgba(255,255,255,0.85)'; ctx.font='12px system-ui,sans-serif'; ctx.fillText('Likelihood ->', w-120, h-6);
+  ctx.save(); ctx.translate(6,14); ctx.rotate(-Math.PI/2); ctx.fillText('Impact ^',0,0); ctx.restore();
+  ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--accent')||'#5aa2ff';
+  state.assets.forEach(a=>{const r=computeLI(a); const l=Math.min(5,Math.max(1,r.L)); const i=Math.min(5,Math.max(1,r.I)); const x=(l-1)*cell+cell/2; const y=(5-i)*cell+cell/2; ctx.beginPath(); ctx.arc(x,y,6,0,Math.PI*2); ctx.fill();});
+}
+
+// Scores
+function renderScores(){const tbody=qs('#scoresBody'); if(!tbody) return; tbody.innerHTML=''; state.assets.forEach(a=>{const r=computeLI(a); const tr=document.createElement('tr'); tr.innerHTML='<td>'+escapeHtml(a.name||'')+'</td><td>'+r.L.toFixed(2)+'</td><td>'+r.I.toFixed(2)+'</td><td>'+riskTier(r.L,r.I)+'</td>'; tbody.appendChild(tr);});}
+
+// Alerts
+function refreshAlerts(){
+  const ul=qs('#alertsList'); if(!ul) return; ul.innerHTML='';
+  const days=state.alertDays; const today=new Date(); const soon=new Date(today.getTime()+days*86400000);
+  const items=[]; state.assets.forEach(a=>{ if(!a.last) return; const due=new Date(a.last); const sev=Number(a.severity||3); const label=sev>=4?'red':sev===3?'yellow':'green'; if(due<today) items.push({kind:'Overdue',asset:a.name||'(unnamed)',date:a.last,label}); else if(due<=soon&&sev>=3) items.push({kind:'Upcoming',asset:a.name||'(unnamed)',date:a.last,label}); });
+  items.sort((a,b)=>a.date.localeCompare(b.date));
+  items.slice(0,8).forEach(it=>{const li=document.createElement('li'); li.innerHTML='<span><strong>'+it.kind+'</strong> '+escapeHtml(it.asset)+' by '+it.date+'</span><span class="badge '+it.label+'">'+it.kind+'</span>'; ul.appendChild(li);});
+}
+
+// Reports
+function autoDraft(){
+  const high=getHighRisk(); const total=state.assets.length; const lines=[];
+  lines.push('This assessment uses CARVER scoring across '+total+' assets and computes Likelihood and Impact as simple averages aligned with the operational rule of thumb. Impact equals the average of Criticality, Effect, and Recuperability. Likelihood equals the average of Accessibility, Vulnerability, and Recognizability. Recuperability is interpreted so low means strong resilience.');
+  if(high.length){lines.push('High priority items:'); high.forEach((h,i)=>lines.push(' '+(i+1)+'. '+h.name+' at '+(h.location||'n/a')+' ranked '+h.tier+' with L='+h.L.toFixed(2)+' and I='+h.I.toFixed(2)+'.'));}
+  else {lines.push('No assets currently rank as High or Severe given the available inputs.');}
+  const box=qs('#execSummary'); if(box) box.value=lines.join('\n');
+}
+function getHighRisk(){const list=[]; state.assets.forEach(a=>{const r=computeLI(a); const tier=riskTier(r.L,r.I); if(tier==='High'||tier==='Severe') list.push({name:a.name||'(unnamed)',location:a.location||'',L:r.L,I:r.I,tier});}); list.sort((x,y)=>(y.L+y.I)-(x.L+x.I)); return list;}
+function populateHighRisk(){const ul=qs('#highRiskList'); if(!ul) return; ul.innerHTML=''; getHighRisk().forEach(h=>{const li=document.createElement('li'); li.textContent=h.name+' - '+h.tier+' risk (L='+h.L.toFixed(2)+', I='+h.I.toFixed(2)+')'; ul.appendChild(li);});}
+function copySummary(){const box=qs('#execSummary'); const val=box?box.value:''; navigator.clipboard.writeText(val).then(()=>alert('Summary copied')).catch(()=>prompt('Copy the summary',val));}
+
+// Export and Import
+function exportJson(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='sentinel_state.json'; a.click();}
+function exportCsv(){const headers=['name','sector','type','location','status','owner','last','severity','C','A','R','V','E','Rz','notes','L','I','tier']; const rows=[headers.join(',')];
+  state.assets.forEach(a=>{const r=computeLI(a); const tier=riskTier(r.L,r.I); const s=a.scores||{}; const vals=[a.name||'',a.sector||'',a.type||'',a.location||'',a.status||'',a.owner||'',a.last||'',a.severity||'',s.C||'',s.A||'',s.R||'',s.V||'',s.E||'',s.Rz||'',String(a.notes||'').replace(/\n|\r/g,' '),r.L.toFixed(2),r.I.toFixed(2),tier]; rows.push(vals.map(v=>typeof v==='string'&&v.includes(',')?('\"'+v.replace(/\"/g,'\"\"')+'\"'):v).join(','));});
+  const blob=new Blob([rows.join('\n')],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='sentinel_assets.csv'; a.click();
+}
+function importJson(ev){const file=ev&&ev.target&&ev.target.files?ev.target.files[0]:null; if(!file) return; const r=new FileReader(); r.onload=()=>{try{const parsed=JSON.parse(String(r.result)); if(parsed.assets&&Array.isArray(parsed.assets)){state={...state,...parsed}; save(); renderAssets(); recalcAll(); alert('Data imported');} else alert('Invalid JSON. Expecting an object with an assets array.');}catch(err){alert('Failed to parse JSON');}}; r.readAsText(file);}
+
+// Utils
+function escapeHtml(s){return String(s).replace(/[&<>\"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m]));}
+  </script>
+</body>
+</html>
