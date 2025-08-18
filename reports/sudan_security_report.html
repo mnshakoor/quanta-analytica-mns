@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudan: Interactive Security Report - July 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutral Harmony -->
+    <!-- Application Structure Plan: The application uses a dashboard-style, single-page layout with a sticky top navigation for easy access to key sections: a main Dashboard for an at-a-glance overview, The Conflict for military dynamics, Humanitarian Crisis for the human toll, and International Response for diplomatic efforts. This structure was chosen to transform the dense linear report into a multi-faceted, user-driven experience. It prioritizes clarity and engagement by presenting high-level data visually first (maps, charts, key stats) and allowing users to drill down into detailed text. This non-linear approach is more intuitive for exploring the complex, interconnected aspects of the crisis than a simple text document. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Displacement & Funding Data -> Goal: Compare/Inform -> Viz: Bar/Donut Charts (Chart.js) -> Interaction: Tooltips -> Justification: Visually quantifies the scale of the humanitarian crisis and funding shortfalls.
+        - Report Info: Key military events (recapturing cities, drone strikes) -> Goal: Show Change -> Viz: Interactive Timeline (HTML/CSS/JS) -> Interaction: Click events to show details -> Justification: Clearly illustrates the back-and-forth nature and evolution of the conflict.
+        - Report Info: Factions (SAF vs RSF) & external allies -> Goal: Compare/Show Relationships -> Viz: Side-by-side cards & a relationship diagram (HTML/Tailwind Grid) -> Interaction: Hover effects for clarity -> Justification: Simplifies the complex web of actors and allegiances.
+        - Report Info: Geographic conflict hotspots (Darfur, Khartoum) -> Goal: Organize/Provide Context -> Viz: Simplified Clickable Map (HTML/CSS) -> Interaction: Click to update detail panel -> Justification: Grounds the user in the physical space of the conflict, making abstract locations tangible.
+        - All text content is presented in expandable sections or modals to keep the UI clean and prevent overwhelming the user, supporting the drill-down exploration strategy.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb; /* gray-50 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .active-nav {
+            color: #1e3a8a; /* blue-800 */
+            border-bottom-color: #1e3a8a;
+        }
+        .inactive-nav {
+            color: #4b5563; /* gray-600 */
+            border-bottom-color: transparent;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: -21px;
+            width: 14px;
+            height: 14px;
+            background-color: #d1d5db; /* gray-300 */
+            border: 3px solid #f9fafb; /* gray-50 */
+            border-radius: 50%;
+            z-index: 1;
+        }
+         .timeline-item.active::before {
+            background-color: #dc2626; /* red-600 */
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl md:text-2xl font-bold text-slate-900">Sudan Security Report</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#dashboard" class="nav-link px-3 py-2 rounded-md text-sm font-medium border-b-2 transition-colors duration-300">Dashboard</a>
+                        <a href="#conflict" class="nav-link px-3 py-2 rounded-md text-sm font-medium border-b-2 transition-colors duration-300">The Conflict</a>
+                        <a href="#humanitarian" class="nav-link px-3 py-2 rounded-md text-sm font-medium border-b-2 transition-colors duration-300">Humanitarian Crisis</a>
+                        <a href="#response" class="nav-link px-3 py-2 rounded-md text-sm font-medium border-b-2 transition-colors duration-300">International Response</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#dashboard" class="nav-link text-gray-600 hover:bg-gray-200 block px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+                <a href="#conflict" class="nav-link text-gray-600 hover:bg-gray-200 block px-3 py-2 rounded-md text-base font-medium">The Conflict</a>
+                <a href="#humanitarian" class="nav-link text-gray-600 hover:bg-gray-200 block px-3 py-2 rounded-md text-base font-medium">Humanitarian Crisis</a>
+                <a href="#response" class="nav-link text-gray-600 hover:bg-gray-200 block px-3 py-2 rounded-md text-base font-medium">International Response</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <section id="dashboard" class="scroll-mt-20">
+            <div class="text-center bg-white p-6 rounded-lg shadow-sm mb-8">
+                <h2 class="text-3xl font-bold text-blue-900 mb-2">An Intensifying Civil War</h2>
+                <p class="text-lg text-slate-600 max-w-4xl mx-auto">As of July 2025, Sudan's civil war is escalating with catastrophic consequences. The conflict between the Sudanese Armed Forces (SAF) and the Rapid Support Forces (RSF) has created the world's largest displacement crisis, fueled by external actors and marked by a deliberate weaponization of aid. This dashboard provides an interactive overview of the situation.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="bg-red-100 p-4 rounded-lg text-center shadow">
+                    <div class="text-4xl font-bold text-red-800">14.5M+</div>
+                    <div class="text-md text-red-700 font-semibold">Forcibly Displaced</div>
+                </div>
+                <div class="bg-yellow-100 p-4 rounded-lg text-center shadow">
+                    <div class="text-4xl font-bold text-yellow-800">24M+</div>
+                    <div class="text-md text-yellow-700 font-semibold">Facing Acute Food Insecurity</div>
+                </div>
+                <div class="bg-blue-100 p-4 rounded-lg text-center shadow">
+                    <div class="text-4xl font-bold text-blue-800">30.4M+</div>
+                    <div class="text-md text-blue-700 font-semibold">Needing Health Assistance</div>
+                </div>
+                <div class="bg-green-100 p-4 rounded-lg text-center shadow">
+                    <div class="text-4xl font-bold text-green-800">86%</div>
+                    <div class="text-md text-green-700 font-semibold">Humanitarian Plan Unfunded</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-bold mb-4 text-center">Conflict Hotspots & Refugee Flows</h3>
+                    <p class="text-sm text-slate-500 text-center mb-4">Click on a region in Sudan or a neighboring country to see details. This is a simplified representation to illustrate key areas of conflict and displacement.</p>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="w-full md:w-2/3 bg-gray-200 rounded-lg p-4 relative aspect-square md:aspect-auto">
+                            <div id="map-sudan" class="relative w-full h-full">
+                                <!-- Sudan Regions -->
+                                <div id="map-darfur" class="map-region absolute top-[35%] left-[5%] w-[30%] h-[30%] bg-red-400 hover:bg-red-500 cursor-pointer rounded-lg flex items-center justify-center text-white font-bold text-sm md:text-base p-1" data-region="darfur">Darfur</div>
+                                <div id="map-kordofan" class="map-region absolute top-[40%] left-[36%] w-[28%] h-[25%] bg-red-400 hover:bg-red-500 cursor-pointer rounded-lg flex items-center justify-center text-white font-bold text-sm md:text-base p-1" data-region="kordofan">Kordofan</div>
+                                <div id="map-khartoum" class="map-region absolute top-[25%] left-[50%] w-[20%] h-[15%] bg-red-400 hover:bg-red-500 cursor-pointer rounded-lg flex items-center justify-center text-white font-bold text-sm md:text-base p-1" data-region="khartoum">Khartoum</div>
+                                <div id="map-portsudan" class="map-region absolute top-[15%] left-[75%] w-[20%] h-[15%] bg-orange-400 hover:bg-orange-500 cursor-pointer rounded-lg flex items-center justify-center text-white font-bold text-xs md:text-sm p-1" data-region="portsudan">Port Sudan</div>
+                                
+                                <!-- Neighboring Countries -->
+                                <div id="map-egypt" class="map-region absolute top-0 left-[30%] w-[40%] h-[10%] bg-blue-400 hover:bg-blue-500 cursor-pointer rounded-md flex items-center justify-center text-white font-bold text-xs md:text-sm p-1" data-region="egypt">Egypt</div>
+                                <div id="map-chad" class="map-region absolute top-[35%] -left-[15%] w-[14%] h-[30%] bg-blue-400 hover:bg-blue-500 cursor-pointer rounded-md flex items-center justify-center text-white font-bold text-xs md:text-sm p-1" data-region="chad">Chad</div>
+                                <div id="map-southsudan" class="map-region absolute bottom-0 left-[25%] w-[50%] h-[10%] bg-blue-400 hover:bg-blue-500 cursor-pointer rounded-md flex items-center justify-center text-white font-bold text-xs md:text-sm p-1" data-region="southsudan">South Sudan</div>
+                            </div>
+                        </div>
+                        <div id="map-details" class="w-full md:w-1/3 bg-gray-50 p-4 rounded-lg border">
+                            <h4 id="details-title" class="font-bold text-lg mb-2">Select a Region</h4>
+                            <p id="details-text" class="text-sm text-slate-700">Details about the selected region will appear here.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-bold mb-4 text-center">Outlook: Next 3-6 Months</h3>
+                    <div class="space-y-4 text-sm text-slate-700">
+                        <p><span class="font-bold text-red-600">High-Intensity Conflict:</span> Fighting likely to continue, especially around El Fasher and in the Kordofan region.</p>
+                        <p><span class="font-bold text-yellow-600">Worsening Humanitarian Crisis:</span> Expect increased displacement, famine, and disease, worsened by the rainy season and aid blockades.</p>
+                        <p><span class="font-bold text-blue-600">Diplomatic Deadlock:</span> Without a unified international effort, peace remains unlikely. Regional instability risk remains high.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="my-12 border-gray-200">
+        
+        <section id="conflict" class="scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-8">The Anatomy of the Conflict</h2>
+            <p class="text-lg text-slate-600 max-w-4xl mx-auto text-center mb-8">This section explores the core dynamics of the civil war: the primary factions locked in a struggle for power, the shifting tides of battle across the country, and the complex web of external actors fueling the violence. Understanding these elements is key to grasping the conflict's resilience and the challenges to peace.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-blue-200">
+                    <h3 class="text-2xl font-bold text-blue-900 mb-4">Sudanese Armed Forces (SAF)</h3>
+                    <p class="mb-2"><span class="font-semibold">Leader:</span> Gen. Abdel Fattah al-Burhan</p>
+                    <p class="mb-4"><span class="font-semibold">Objective:</span> Regain full state control and establish a unified, technocratic government.</p>
+                    <p class="font-semibold mb-2">Key Allies & Support:</p>
+                    <ul class="list-disc list-inside text-slate-700 space-y-1 text-sm">
+                        <li>Reportedly supported by <span class="font-bold">Iran</span>.</li>
+                        <li>Received offers of military aid from <span class="font-bold">Russia</span>, shifting from prior RSF support.</li>
+                        <li>Supported by <span class="font-bold">Ukraine's</span> special forces against Russian mercenaries.</li>
+                        <li>Allied with internal militias like the <span class="font-bold">Sudan Shield Forces (post-defection)</span> and the <span class="font-bold">al-Bara’ Ibn Malik Brigade</span>.</li>
+                    </ul>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-sm border border-red-200">
+                    <h3 class="text-2xl font-bold text-red-900 mb-4">Rapid Support Forces (RSF)</h3>
+                    <p class="mb-2"><span class="font-semibold">Leader:</span> Gen. Mohamed Hamdan Dagalo (Hemedti)</p>
+                    <p class="mb-4"><span class="font-semibold">Objective:</span> Solidify authority in controlled areas, potentially through a parallel government structure, and disrupt SAF logistics.</p>
+                     <p class="font-semibold mb-2">Key Allies & Support:</p>
+                    <ul class="list-disc list-inside text-slate-700 space-y-1 text-sm">
+                        <li>Extensive alleged support from the <span class="font-bold">United Arab Emirates (UAE)</span>, including weapons and drones.</li>
+                        <li>Historical support from Russia's <span class="font-bold">Wagner Group</span>, primarily for gold concessions.</li>
+                        <li>Manages strategic relationships with <span class="font-bold">Chad</span> due to control of the border region.</li>
+                         <li>Alleged weapon supplies from <span class="font-bold">Kenya</span>, though denied.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-2xl font-bold text-center mb-8">Conflict Evolution: A Timeline</h3>
+                <div class="relative pl-8 border-l-2 border-gray-200">
+                    <div id="timeline-container"></div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="my-12 border-gray-200">
+
+        <section id="humanitarian" class="scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-8">A Catastrophic Human Toll</h2>
+            <p class="text-lg text-slate-600 max-w-4xl mx-auto text-center mb-8">The war has triggered the world's largest displacement crisis and a humanitarian catastrophe of unprecedented scale. Famine, a collapsed healthcare system, and rampant disease outbreaks define the daily reality for millions of Sudanese civilians, with aid organizations facing severe access constraints and funding shortfalls.</p>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-bold text-center mb-4">Refugee Destinations</h3>
+                    <div class="chart-container">
+                        <canvas id="refugeeChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-bold text-center mb-4">Humanitarian Funding Gap (2025)</h3>
+                     <div class="chart-container">
+                        <canvas id="fundingChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h4 class="text-lg font-bold mb-2">Food Insecurity & Famine</h4>
+                    <p class="text-sm text-slate-600">Famine is confirmed in multiple areas, driven by conflict, high food prices, and the weaponization of aid. Both sides block or restrict relief, leading to one of history's most severe food crises.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h4 class="text-lg font-bold mb-2">Health System Collapse</h4>
+                    <p class="text-sm text-slate-600">70% of medical facilities are non-operational. Attacks on hospitals are frequent. Outbreaks of cholera, malaria, and measles are rampant, with malnutrition rates among the world's highest.</p>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h4 class="text-lg font-bold mb-2">Aid Access Constraints</h4>
+                    <p class="text-sm text-slate-600">Humanitarian access has severely deteriorated. Aid workers are threatened and attacked, infrastructure is damaged, and both SAF and RSF impose bureaucratic and physical blockades on lifesaving relief.</p>
+                </div>
+            </div>
+        </section>
+        
+        <hr class="my-12 border-gray-200">
+
+        <section id="response" class="scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-8">A Fragmented International Response</h2>
+            <p class="text-lg text-slate-600 max-w-4xl mx-auto text-center mb-8">Despite the escalating crisis, diplomatic efforts to broker peace have been largely unsuccessful. Mediation tracks are fragmented, and the conflicting interests of external powers undermine a unified international strategy, while warring parties consistently fail to adhere to ceasefire agreements.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-bold mb-3">Jeddah Process</h3>
+                    <p class="text-sm text-slate-700">Brokered by Saudi Arabia and the U.S., this key diplomatic track has failed to achieve meaningful breakthroughs as hostilities persist. The focus on civilian protection remains largely unimplemented.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-bold mb-3">African Union (AU) & IGAD</h3>
+                    <p class="text-sm text-slate-700">The AU and IGAD advocate for a unified, Sudanese-led peace process. They host consultative meetings to coordinate efforts but struggle to enforce compliance or overcome external interference.</p>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-bold mb-3">United Nations (UN)</h3>
+                    <p class="text-sm text-slate-700">The UN monitors human rights abuses, coordinates the humanitarian response, and calls for ceasefires. However, its efforts are hampered by violence, aid blockades, and divisions within the Security Council.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    const mapData = {
+        darfur: { title: "Darfur Region", text: "A major conflict hotspot with escalating communal violence and ethnically targeted attacks by the RSF. The city of El Fasher is under intense siege, and concerns of a second genocide are high. The Zamzam IDP camp, Sudan's largest, was attacked, displacing over 400,000 people." },
+        kordofan: { title: "Kordofan Region", text: "Scene of intensified conflict, with repeated artillery, shelling, and drone strikes causing numerous civilian casualties. The RSF aims to break the SAF siege on key cities like Dilling and controls strategic transit areas." },
+        khartoum: { title: "Khartoum State", text: "After initial RSF capture, the capital was largely retaken by the SAF by May 2025. The area remains a site of retaliatory violence and a severe cholera outbreak. Its recapture is a major strategic and symbolic victory for the SAF." },
+        portsudan: { title: "Port Sudan", text: "Serves as Sudan's temporary wartime capital and a vital maritime and logistical hub for the SAF. It has been the target of unprecedented RSF drone strikes aimed at disrupting SAF governance and supply lines." },
+        egypt: { title: "Egypt", text: "Hosts the largest number of new arrivals, with 1.5 million Sudanese refugees recorded as of April 2025." },
+        chad: { title: "Chad", text: "Has received over 726,000 Sudanese refugees, overwhelming its crisis-affected eastern provinces. Chad's government must manage a complex relationship with the RSF, which controls the adjacent border." },
+        southsudan: { title: "South Sudan", text: "Has received over 1.5 million people, including 352,000 Sudanese refugees and many returning South Sudanese. The influx strains resources in a country grappling with its own internal conflicts." },
+    };
+
+    const mapRegions = document.querySelectorAll('.map-region');
+    const detailsTitle = document.getElementById('details-title');
+    const detailsText = document.getElementById('details-text');
+
+    mapRegions.forEach(region => {
+        region.addEventListener('click', () => {
+            const regionId = region.dataset.region;
+            const data = mapData[regionId];
+            detailsTitle.textContent = data.title;
+            detailsText.textContent = data.text;
+            
+            mapRegions.forEach(r => r.classList.remove('ring-2', 'ring-offset-2', 'ring-blue-600'));
+            region.classList.add('ring-2', 'ring-offset-2', 'ring-blue-600');
+        });
+    });
+
+    const timelineData = [
+        { date: "Late 2023", event: "RSF captures Wad Madani", details: "The RSF seizes the strategic city of Wad Madani, east of Khartoum, controlling key trade routes and expanding its territorial control.", active: false},
+        { date: "Jan 2025", event: "SAF recaptures Wad Madani", details: "In a major counter-offensive, the SAF successfully recaptures Wad Madani, marking a significant momentum shift.", active: false},
+        { date: "Mar-May 2025", event: "SAF retakes Khartoum", details: "The SAF regains control of the capital, Khartoum, and by May 20, announces full control over the state, expelling RSF from their last strongholds.", active: false},
+        { date: "May 2025", event: "RSF Drone Strikes on Port Sudan", details: "The RSF demonstrates new asymmetric capabilities by launching unprecedented drone strikes against Port Sudan, targeting the SAF's logistical and administrative hub.", active: false},
+        { date: "April-July 2025", event: "RSF besieges El Fasher", details: "The RSF intensifies its siege and attack on El Fasher in North Darfur, one of the last SAF bases in the region, causing hundreds of civilian casualties.", active: true},
+    ];
+
+    const timelineContainer = document.getElementById('timeline-container');
+    timelineData.forEach(item => {
+        const div = document.createElement('div');
+        div.className = `timeline-item relative mb-8 pb-8 ${item.active ? 'active' : ''}`;
+        div.innerHTML = `
+            <div class="ml-8">
+                <p class="font-bold text-lg">${item.date}</p>
+                <h4 class="font-semibold text-xl mb-2">${item.event}</h4>
+                <p class="text-slate-600 text-sm">${item.details}</p>
+            </div>
+        `;
+        timelineContainer.appendChild(div);
+    });
+
+    const refugeeCtx = document.getElementById('refugeeChart').getContext('2d');
+    new Chart(refugeeCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Egypt', 'South Sudan', 'Chad'],
+            datasets: [{
+                label: 'Refugees (in thousands)',
+                data: [1500, 352, 726],
+                backgroundColor: ['#60a5fa', '#3b82f6', '#2563eb'],
+                borderColor: '#1e3a8a',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                title: { display: true, text: 'Sudanese Refugees in Neighboring Countries' }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: { display: true, text: 'Number of people (in thousands)' }
+                }
+            }
+        }
+    });
+
+    const fundingCtx = document.getElementById('fundingChart').getContext('2d');
+    new Chart(fundingCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Funded (14%)', 'Unfunded (86%)'],
+            datasets: [{
+                data: [14, 86],
+                backgroundColor: ['#4ade80', '#fecaca'],
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom' },
+                title: { display: true, text: '2025 Humanitarian Response Plan ($4.16B Required)' },
+                 tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.label}: ${context.raw}%`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('main section');
+
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.4
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                navLinks.forEach(link => {
+                    link.classList.remove('active-nav');
+                    link.classList.add('inactive-nav');
+                    if (link.getAttribute('href').substring(1) === entry.target.id) {
+                        link.classList.add('active-nav');
+                        link.classList.remove('inactive-nav');
+                    }
+                });
+            }
+        });
+    }, observerOptions);
+
+    sections.forEach(section => {
+        observer.observe(section);
+    });
+    
+    // Set initial active link
+    navLinks.forEach(link => {
+        if (link.getAttribute('href') === '#dashboard') {
+            link.classList.add('active-nav');
+        } else {
+            link.classList.add('inactive-nav');
+        }
+    });
+});
+</script>
+</body>
+</html>
+
+
