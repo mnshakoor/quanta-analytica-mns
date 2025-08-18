@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sentiment Snapshot + Content Analysis Tool</title>
+  <meta name="description" content="Single file, client side Sentiment Snapshot and Content Analysis tool for intelligence and risk professionals." />
+  <style>
+    :root {
+      --bg: #0f1115;
+      --panel: #161a22;
+      --panel-2: #1c2230;
+      --text: #e8ecf1;
+      --muted: #9aa4b2;
+      --accent: #4da3ff;
+      --border: #2a3344;
+      --green: #1ea672;
+      --yellow: #c1a10a;
+      --red: #d04d4d;
+      --pos: var(--green);
+      --neu: var(--yellow);
+      --neg: var(--red);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: linear-gradient(180deg, rgba(10,12,16,.9), rgba(10,12,16,.7));
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+
+    .controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .btn {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .btn:hover { background: var(--panel-2); }
+
+    .badge { padding: 4px 8px; border-radius: 999px; font-size: 12px; border: 1px solid var(--border); background: var(--panel); color: var(--muted); }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 14px;
+      padding: 14px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      box-shadow: 0 6px 24px rgba(0,0,0,.25);
+    }
+
+    .h {
+      font-size: 14px;
+      letter-spacing: .3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 4px 0 10px;
+    }
+
+    .input-wrap { display: grid; grid-template-rows: auto 1fr auto; gap: 10px; height: 70vh; }
+
+    .toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .toolbar .muted { color: var(--muted); font-size: 13px; }
+
+    .editor {
+      position: relative;
+      background: #0b0e13;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      overflow: auto;
+      line-height: 1.55;
+      font-size: 15px;
+    }
+
+    .editor[contenteditable="true"]:empty:before { content: "Paste or type source text here..."; color: #596273; }
+
+    .legend { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
+
+    .k-pos { background: var(--pos); }
+    .k-neu { background: var(--neu); }
+    .k-neg { background: var(--neg); }
+
+    .kw { border-radius: 6px; padding: 0 2px; }
+    .kw.pos { background: rgba(30,166,114,.18); box-shadow: inset 0 0 0 1px rgba(30,166,114,.35); }
+    .kw.neu { background: rgba(193,161,10,.18); box-shadow: inset 0 0 0 1px rgba(193,161,10,.35); }
+    .kw.neg { background: rgba(208,77,77,.18); box-shadow: inset 0 0 0 1px rgba(208,77,77,.35); }
+
+    .tooltip { position: fixed; pointer-events: none; transform: translate(-50%, -120%); background: #111722; border: 1px solid var(--border); padding: 6px 8px; border-radius: 8px; font-size: 12px; color: var(--text); display: none; z-index: 999; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .pill { background: #0c121b; border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align: center; }
+    .pill .v { font-weight: 700; font-size: 16px; display: block; }
+
+    .table { width: 100%; border-collapse: collapse; }
+    .table th, .table td { border-bottom: 1px solid var(--border); padding: 8px 6px; text-align: left; }
+    .table th { color: var(--muted); font-size: 12px; letter-spacing: .3px; text-transform: uppercase; }
+
+    .panel-title { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .row-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+
+    input[type="text"], input[type="number"], input[type="url"], select, textarea {
+      background: #0c121b;
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 8px 10px;
+      width: 100%;
+    }
+
+    textarea.small { min-height: 56px; }
+
+    .stack { display: grid; gap: 8px; }
+    .muted { color: var(--muted); }
+
+    .bottom { display: grid; grid-template-columns: 1fr; gap: 14px; padding: 0 14px 14px; }
+
+    .seg { display: flex; gap: 6px; flex-wrap: wrap; }
+    .seg button { padding: 6px 10px; border-radius: 999px; border: 1px solid var(--border); background: #0c121b; color: var(--text); cursor: pointer; }
+    .seg button.active { background: var(--accent); color: #001022; border-color: transparent; }
+
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1px solid var(--border); background: #0c121b; border-radius: 999px; }
+    .chip input { width: 140px; background: transparent; border: none; color: var(--text); outline: none; }
+
+    .grid { display: grid; gap: 10px; }
+
+    .section-note { font-size: 12px; color: var(--muted); }
+
+    .sent-label { font-weight: 800; }
+
+    .flex { display: flex; gap: 8px; align-items: center; }
+
+    .right-scroll { height: 70vh; overflow: auto; }
+
+    .foot { padding: 10px 14px 24px; color: var(--muted); font-size: 12px; }
+
+    /* Print styles for PDF export */
+    @media print {
+      body { background: #fff; color: #000; }
+      .topbar, .toolbar, .controls { display: none !important; }
+      .layout { grid-template-columns: 1fr; }
+      .editor { border: 1px solid #ccc; }
+      .card { box-shadow: none; border: 1px solid #ccc; }
+      .bottom { padding: 0; }
+    }
+
+    /* Responsive */
+    @media (max-width: 1100px) {
+      .layout { grid-template-columns: 1fr; }
+      .input-wrap { height: auto; }
+      .right-scroll { height: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="title">Sentiment Snapshot + Content Analysis <span class="badge">Client side</span></div>
+    <div class="controls">
+      <label class="btn" for="fileInput">Upload .txt</label>
+      <input id="fileInput" type="file" accept=".txt" style="display:none" />
+      <button class="btn" id="resetBtn" title="Clear everything">Reset</button>
+      <button class="btn" id="exportJsonBtn" title="Export JSON">Export JSON</button>
+      <button class="btn" id="exportCsvBtn" title="Export CSV">Export CSV</button>
+      <button class="btn" id="exportPngBtn" title="Export chart PNG">Chart PNG</button>
+      <button class="btn" id="printBtn" title="Print or Save as PDF in browser">Export PDF</button>
+      <button class="btn" id="themeBtn" title="Toggle theme">Theme</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- Left: Input and Highlights -->
+    <div class="card input-wrap">
+      <div class="panel-title">
+        <div class="h">Text Input</div>
+        <div class="legend">
+          <span class="dot k-pos"></span><span class="muted">Positive</span>
+          <span class="dot k-neu" style="margin-left:6px"></span><span class="muted">Neutral</span>
+          <span class="dot k-neg" style="margin-left:6px"></span><span class="muted">Negative</span>
+        </div>
+      </div>
+      <div id="editor" class="editor" contenteditable="true"></div>
+      <div class="toolbar">
+        <div class="muted">Characters: <span id="charCount">0</span> / 5000 • Words: <span id="wordCount">0</span> • Sentiment words: <span id="sentWordCount">0</span></div>
+        <div class="muted" id="limitWarn" style="display:none">Approaching limit. Consider trimming input.</div>
+        <div class="flex" style="margin-left:auto">
+          <button class="btn" id="selectAllBtn">Select All</button>
+          <button class="btn" id="useSelectionBtn" title="Send selection to Insight builder">Use selection</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Summary and Charts -->
+    <div class="card right-scroll">
+      <div class="panel-title">
+        <div class="h">Sentiment Summary</div>
+        <span class="badge" id="sentLabel">Neutral</span>
+      </div>
+      <div class="metrics" style="margin-bottom:10px">
+        <div class="pill"><span class="muted">Total words</span><span class="v" id="mWords">0</span></div>
+        <div class="pill"><span class="muted">Sentiment words</span><span class="v" id="mSentWords">0</span></div>
+        <div class="pill"><span class="muted">Score</span><span class="v" id="mScore">0.00</span></div>
+        <div class="pill"><span class="muted">Pos/Neu/Neg</span><span class="v" id="mDist">0 / 0 / 0</span></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card" style="padding:10px">
+          <div class="h">Keyword Top 10</div>
+          <table class="table" id="kwTable">
+            <thead><tr><th>Keyword</th><th>Weight</th><th>Hits</th><th>Weighted</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="card" style="padding:10px">
+          <div class="h">Distribution</div>
+          <canvas id="chart" width="400" height="220" style="background:#0b0e13;border:1px solid var(--border);border-radius:10px"></canvas>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px;padding:10px">
+        <div class="panel-title">
+          <div class="h">Keyword Library</div>
+          <button class="btn" id="addKwBtn">Add</button>
+        </div>
+        <div class="section-note">Edit weights to calibrate tone. Weight can be negative, zero, or positive. Click a badge to set polarity.</div>
+        <table class="table" id="libTable">
+          <thead><tr><th>Word</th><th>Polarity</th><th>Weight</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom: Content Analysis Modules -->
+  <div class="bottom">
+    <div class="card">
+      <div class="panel-title"><div class="h">Narrative Focus</div><span class="badge">Auto + manual</span></div>
+      <div class="row">
+        <div class="stack">
+          <label class="muted">Main themes detected</label>
+          <div id="themes" class="seg"></div>
+        </div>
+        <div class="stack">
+          <label class="muted">Top actions detected</label>
+          <div id="actions" class="seg"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="panel-title"><div class="h">Stated vs Implied Intent</div><span class="badge">Line tagging</span></div>
+      <div class="section-note">Lines with modal cues are pre-flagged. Tag as needed.</div>
+      <table class="table" id="intentTable">
+        <thead><tr><th style="width:40px;">Tag</th><th>Line</th><th style="width:180px;">Category</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="panel-title"><div class="h">Emotional Tone Tracker</div><span class="badge">Auto + sliders</span></div>
+      <div class="row-4">
+        <div class="stack">
+          <label class="muted">Urgency</label>
+          <input type="range" id="urgency" min="0" max="2" step="1" />
+          <div id="urgencyBadge" class="badge">Neutral</div>
+        </div>
+        <div class="stack">
+          <label class="muted">Confidence</label>
+          <input type="range" id="confidence" min="0" max="2" step="1" />
+          <div id="confidenceBadge" class="badge">Neutral</div>
+        </div>
+        <div class="stack">
+          <label class="muted">Anxiety</label>
+          <input type="range" id="anxiety" min="0" max="2" step="1" />
+          <div id="anxietyBadge" class="badge">Neutral</div>
+        </div>
+        <div class="stack">
+          <label class="muted">Defensiveness</label>
+          <input type="range" id="defensiveness" min="0" max="2" step="1" />
+          <div id="defensivenessBadge" class="badge">Neutral</div>
+        </div>
+      </div>
+      <div class="section-note">Auto cues are derived from word usage. Adjust if your judgment differs.</div>
+    </div>
+
+    <div class="card">
+      <div class="panel-title"><div class="h">Source Reliability Notes</div><span class="badge">Manual</span></div>
+      <div class="row-3">
+        <div class="stack"><label class="muted">Source URL</label><input id="srcUrl" type="url" placeholder="https://" /></div>
+        <div class="stack"><label class="muted">Author or Org</label><input id="srcAuthor" type="text" placeholder="Name" /></div>
+        <div class="stack"><label class="muted">Credibility</label>
+          <select id="srcCred">
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
+          </select>
+        </div>
+      </div>
+      <div class="stack" style="margin-top:10px">
+        <label class="muted">Bias or tone shifts vs baseline</label>
+        <textarea id="srcNotes" class="small" placeholder="Your notes"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="panel-title"><div class="h">Stakeholder Signal Mapping</div><span class="badge">Matrix</span></div>
+      <div class="seg" id="stakeholderChips"></div>
+      <div style="margin-top:8px">
+        <table class="table" id="stakeTable">
+          <thead><tr><th>Stakeholder</th><th>Signal</th><th>Sentiment toward stakeholder</th><th>Notes</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="panel-title"><div class="h">Insight Builder</div><span class="badge">Draft output</span></div>
+      <div class="row">
+        <div class="stack">
+          <label class="muted">Insight</label>
+          <textarea id="insightText" class="small" placeholder="Insight text"></textarea>
+        </div>
+        <div class="stack">
+          <label class="muted">Implication</label>
+          <textarea id="implicationText" class="small" placeholder="Implication text"></textarea>
+        </div>
+      </div>
+      <div class="flex" style="margin-top:8px">
+        <button class="btn" id="addInsightBtn">Add to list</button>
+        <div class="muted">Tip: Use the Use selection button above to grab key lines.</div>
+      </div>
+      <div style="margin-top:8px">
+        <table class="table" id="insightsTable">
+          <thead><tr><th style="width:44%">Insight</th><th style="width:44%">Implication</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="foot">All processing occurs locally in your browser. This build supports .txt import. For .docx, convert to .txt before loading.
+    </div>
+  </div>
+
+  <div id="tooltip" class="tooltip"></div>
+
+  <script>
+    // ---------- Utility ----------
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+    const STOPWORDS = new Set((`a an the of and to in for on with as by from at that this is are was were be been being have has had do did will would should can could may might must not it its their his her your our they we you he she them us i or if but so than then there here when where how what which who whom why because into over under again further once only both each few more most other some such no nor too very down up out off above below between before after during without within also across per via about`).split(/\s+/));
+
+    // Basic verbs for action detection, extendable
+    const COMMON_VERBS = new Set((`act add align allocate announce assess assure attack avoid balance ban build call capture change claim close comply counter create cut decide declare defend delay deliver demand deploy develop diminish disrupt endorse enforce escalate evaluate expand expect explain form help implement increase indicate influence inform initiate insist intend intervene invest lead limit maintain manage meet mitigate monitor negotiate oppose plan prepare pressure prevent prioritize promise propose protect provide reduce regulate report request require respond restore restrict review secure seek share shift signal stand strengthen support suspend target threaten train update warn`.split(/\s+/)));
+
+    // Emotional lexicons for auto sliders
+    const LEX_EMO = {
+      urgency: new Set(["urgent","immediately","now","without delay","asap","rapid","accelerate","swift","quickly","prompt","deadline","time critical","expedite"]),
+      confidence: new Set(["confident","assure","guarantee","certain","will","ensure","committed","unwavering","definite","clear"]),
+      anxiety: new Set(["concern","worry","risk","fear","anxious","uncertain","volatile","threat","instability","fragile"]),
+      defensiveness: new Set(["deny","reject","refute","mischaracterize","baseless","unfounded","defend","justify","clarify","misinformation"])
+    };
+
+    // Keyword library with default weights (can be edited)
+    let keywordLib = {
+      // negative
+      "crisis": -2, "escalation": -2, "threat": -2, "instability": -2, "sanction": -1.5, "condemn": -1.5,
+      "critical": -1, "risk": -1, "violence": -2, "attack": -2, "disrupt": -1.5, "ban": -1.2,
+      // neutral (0) entries are allowed, kept as switches
+      // positive
+      "stabilize": 1, "deescalate": 2, "support": 1, "cooperate": 1.5, "mediate": 1.5, "ceasefire": 2,
+      "progress": 1.2, "improve": 1.2, "commit": 1, "ensure": 0.8
+    };
+
+    // Modal cue regex for intent pre-flagging
+    const MODAL_RE = /\b(will|intend|should|likely|must|aim to|plan to|pledge|commit to)\b/i;
+
+    // State
+    let rawText = "";
+    let tokenInfo = []; // {text, norm, type: pos|neu|neg|null, weight}
+
+    // ---------- Editor and Highlight ----------
+    const editor = $("#editor");
+    const tooltip = $("#tooltip");
+
+    function escapeHtml(s){
+      return s.replace(/[&<>\"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+    }
+
+    function tokenize(text){
+      const parts = text.split(/(\b)/); // keep word boundaries
+      const out = [];
+      for(let p of parts){
+        if(p === "") continue;
+        if(/\w/.test(p)){
+          const norm = p.toLowerCase();
+          const w = keywordLib[norm];
+          let type = null;
+          if(typeof w === "number"){
+            type = w > 0 ? "pos" : w < 0 ? "neg" : "neu";
+          }
+          out.push({text:p, norm, type, weight:w});
+        } else {
+          out.push({text:p, norm:p, type:null, weight:undefined});
+        }
+      }
+      return out;
+    }
+
+    function renderHighlighted(tokens){
+      const html = tokens.map(t => {
+        if(t.type){
+          return `<span class="kw ${t.type}" data-weight="${t.weight}">${escapeHtml(t.text)}</span>`;
+        }
+        return escapeHtml(t.text);
+      }).join("");
+      editor.innerHTML = html;
+    }
+
+    function updateAll(){
+      // Extract plain text from editor, preserving spaces and newlines
+      const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT, null);
+      const texts = [];
+      let n; while(n = walker.nextNode()){ texts.push(n.nodeValue); }
+      rawText = texts.join("");
+
+      // Enforce char limit warning
+      const cc = rawText.length;
+      $("#charCount").textContent = cc.toString();
+      $("#limitWarn").style.display = cc > 4500 ? "block" : "none";
+
+      // Tokenize and re-render highlights
+      tokenInfo = tokenize(rawText);
+      renderHighlighted(tokenInfo);
+
+      // Words and sentiment words
+      const words = rawText.trim().split(/\s+/).filter(Boolean);
+      const totalWords = words.length;
+      const sentTokens = tokenInfo.filter(t => t.type);
+
+      // Counts
+      const posHits = sentTokens.filter(t => t.type === "pos").length;
+      const negHits = sentTokens.filter(t => t.type === "neg").length;
+      const neuHits = sentTokens.filter(t => t.type === "neu").length;
+
+      // Weighted sums and score
+      let posSum = 0, negSum = 0;
+      for(const t of sentTokens){
+        if(t.weight > 0) posSum += t.weight; else if(t.weight < 0) negSum += Math.abs(t.weight);
+      }
+      const denom = sentTokens.length || 1;
+      let score = (posSum - negSum) / denom; // normalized by count
+
+      // Label by thresholds
+      let label = "Neutral";
+      if(score > 0.25) label = "Positive";
+      else if(score < -0.25) label = "Negative";
+
+      // Update summary UI
+      $("#wordCount").textContent = totalWords.toString();
+      $("#sentWordCount").textContent = sentTokens.length.toString();
+      $("#mWords").textContent = totalWords.toString();
+      $("#mSentWords").textContent = sentTokens.length.toString();
+      $("#mScore").textContent = score.toFixed(2);
+      $("#mDist").textContent = `${posHits} / ${neuHits} / ${negHits}`;
+      $("#sentLabel").textContent = label;
+      $("#sentLabel").style.background = label === "Positive" ? "rgba(30,166,114,.2)" : label === "Negative" ? "rgba(208,77,77,.2)" : "#0c121b";
+      $("#sentLabel").style.color = label === "Neutral" ? "var(--muted)" : "var(--text)";
+
+      updateKeywordTables(sentTokens);
+      drawChart(posHits, neuHits, negHits);
+      runNarrativeFocus(words);
+      buildIntentTable();
+      autoTone(words);
+    }
+
+    function updateFromPlain(text){
+      rawText = text.slice(0, 5000);
+      tokenInfo = tokenize(rawText);
+      renderHighlighted(tokenInfo);
+      updateAll();
+    }
+
+    // Events on editor
+    editor.addEventListener("input", () => {
+      // When typing, rebuild from textContent to keep spans minimal
+      const text = editor.textContent || "";
+      updateFromPlain(text);
+    });
+
+    editor.addEventListener("mousemove", e => {
+      const t = e.target;
+      if(t.classList && t.classList.contains("kw")){
+        tooltip.textContent = `Weight: ${t.dataset.weight}`;
+        tooltip.style.left = e.pageX + "px";
+        tooltip.style.top = e.pageY + "px";
+        tooltip.style.display = "block";
+      } else {
+        tooltip.style.display = "none";
+      }
+    });
+
+    $("#selectAllBtn").addEventListener("click", () => {
+      const range = document.createRange();
+      range.selectNodeContents(editor);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    });
+
+    $("#useSelectionBtn").addEventListener("click", () => {
+      const sel = window.getSelection();
+      const text = sel ? sel.toString().trim() : "";
+      if(text){ $("#insightText").value = text; }
+    });
+
+    // ---------- File load ----------
+    $("#fileInput").addEventListener("change", async e => {
+      const f = e.target.files[0];
+      if(!f) return;
+      if(f.name.endsWith('.txt')){
+        const text = await f.text();
+        updateFromPlain(text);
+      } else {
+        alert('This build supports .txt import. Convert .docx to .txt and try again.');
+      }
+      e.target.value = "";
+    });
+
+    // ---------- Keyword Library UI ----------
+    function renderLib(){
+      const body = $("#libTable tbody");
+      body.innerHTML = "";
+      const entries = Object.entries(keywordLib).sort((a,b)=>a[0].localeCompare(b[0]));
+      for(const [word, weight] of entries){
+        const tr = document.createElement('tr');
+        const pol = weight > 0 ? 'Positive' : weight < 0 ? 'Negative' : 'Neutral';
+        tr.innerHTML = `
+          <td><input data-word="${word}" class="lib-word" type="text" value="${word}" /></td>
+          <td>
+            <div class="seg">
+              <button class="pol-btn ${pol==='Positive'?'active':''}" data-word="${word}" data-pol="Positive">Positive</button>
+              <button class="pol-btn ${pol==='Neutral'?'active':''}" data-word="${word}" data-pol="Neutral">Neutral</button>
+              <button class="pol-btn ${pol==='Negative'?'active':''}" data-word="${word}" data-pol="Negative">Negative</button>
+            </div>
+          </td>
+          <td style="width:120px"><input class="lib-weight" data-word="${word}" type="number" step="0.1" value="${weight}" /></td>
+          <td><button class="btn del-btn" data-word="${word}">Remove</button></td>
+        `;
+        body.appendChild(tr);
+      }
+
+      // Wire events
+      $$(".pol-btn").forEach(b=>{
+        b.addEventListener('click', () => {
+          const w = b.dataset.word;
+          const pol = b.dataset.pol;
+          // Toggle active UI and set default weight if zero
+          b.parentElement.querySelectorAll('button').forEach(btn=>btn.classList.remove('active'));
+          b.classList.add('active');
+          if(!(w in keywordLib)) return;
+          let cur = keywordLib[w];
+          if(pol === 'Positive' && cur <= 0) keywordLib[w] = Math.abs(cur||1);
+          if(pol === 'Neutral') keywordLib[w] = 0;
+          if(pol === 'Negative' && cur >= 0) keywordLib[w] = -Math.abs(cur||1);
+          renderLib();
+          updateAll();
+        });
+      });
+
+      $$(".lib-weight").forEach(inp=>{
+        inp.addEventListener('change', () => {
+          const w = inp.dataset.word;
+          const val = parseFloat(inp.value) || 0;
+          keywordLib[w] = val;
+          updateAll();
+        });
+      });
+
+      $$(".lib-word").forEach(inp=>{
+        inp.addEventListener('change', () => {
+          const oldWord = inp.dataset.word;
+          const newWord = (inp.value||"").toLowerCase().trim();
+          if(!newWord || newWord === oldWord) return;
+          const weight = keywordLib[oldWord];
+          delete keywordLib[oldWord];
+          keywordLib[newWord] = weight;
+          renderLib();
+          updateAll();
+        });
+      });
+
+      $$(".del-btn").forEach(btn=>{
+        btn.addEventListener('click', () => {
+          const w = btn.dataset.word;
+          delete keywordLib[w];
+          renderLib();
+          updateAll();
+        });
+      });
+    }
+
+    $("#addKwBtn").addEventListener('click', () => {
+      let base = prompt('Add keyword (single word):');
+      if(!base) return;
+      base = base.toLowerCase().trim();
+      if(!base) return;
+      let weight = parseFloat(prompt('Weight (negative for negative sentiment, positive for positive):')||'0');
+      if(isNaN(weight)) weight = 0;
+      keywordLib[base] = weight;
+      renderLib();
+      updateAll();
+    });
+
+    // ---------- Summary tables and chart ----------
+    function updateKeywordTables(sentTokens){
+      // Weighted keyword aggregation
+      const map = new Map(); // word -> {hits, weight}
+      for(const t of sentTokens){
+        const e = map.get(t.norm) || {hits:0, weight:t.weight};
+        e.hits += 1; e.weight = t.weight; map.set(t.norm, e);
+      }
+      const arr = Array.from(map.entries()).map(([k,v])=>({word:k, hits:v.hits, weight:v.weight, weighted:v.hits * Math.abs(v.weight)}));
+      arr.sort((a,b)=> b.weighted - a.weighted);
+
+      const body = $("#kwTable tbody");
+      body.innerHTML = "";
+      for(const row of arr.slice(0,10)){
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${row.word}</td><td>${row.weight}</td><td>${row.hits}</td><td>${row.weighted.toFixed(2)}</td>`;
+        body.appendChild(tr);
+      }
+    }
+
+    function drawChart(pos, neu, neg){
+      const c = $("#chart");
+      const ctx = c.getContext('2d');
+      ctx.clearRect(0,0,c.width,c.height);
+      // Axes
+      const margin = {l:40,r:10,t:10,b:30};
+      const w = c.width - margin.l - margin.r;
+      const h = c.height - margin.t - margin.b;
+      const x0 = margin.l, y0 = margin.t;
+      ctx.strokeStyle = '#2a3344';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x0, y0, w, h);
+
+      const values = [pos, neu, neg];
+      const labels = ['Pos','Neu','Neg'];
+      const colors = ['#1ea672','#c1a10a','#d04d4d'];
+      const max = Math.max(1, ...values);
+      const barW = w / values.length * 0.6;
+
+      values.forEach((v, i) => {
+        const x = x0 + (i + 0.2) * (w / values.length);
+        const bh = (v / max) * (h - 20);
+        const y = y0 + h - bh;
+        ctx.fillStyle = colors[i];
+        ctx.fillRect(x, y, barW, bh);
+        ctx.fillStyle = '#9aa4b2';
+        ctx.font = '12px system-ui';
+        ctx.fillText(labels[i], x + barW/2 - 10, y0 + h + 16);
+        ctx.fillText(String(v), x + barW/2 - 8, y - 6);
+      });
+    }
+
+    // ---------- Narrative Focus ----------
+    function runNarrativeFocus(words){
+      const clean = words.map(w => w.toLowerCase().replace(/^[^a-z]+|[^a-z]+$/g, '')).filter(Boolean);
+      const counts = new Map();
+      for(const w of clean){
+        if(STOPWORDS.has(w)) continue;
+        counts.set(w, (counts.get(w)||0)+1);
+      }
+      // Rank nouns by excluding common verbs
+      const nounish = Array.from(counts.entries()).filter(([w])=>!COMMON_VERBS.has(w));
+      nounish.sort((a,b)=>b[1]-a[1]);
+      const topThemes = nounish.slice(0,6).map(([w])=>w);
+
+      // Actions from verbs list intersect
+      const actions = Array.from(counts.keys()).filter(w=>COMMON_VERBS.has(w)).sort((a,b)=> (counts.get(b)||0)-(counts.get(a)||0)).slice(0,6);
+
+      renderChips($("#themes"), topThemes);
+      renderChips($("#actions"), actions);
+    }
+
+    function renderChips(container, items){
+      container.innerHTML = "";
+      items.forEach(i => {
+        const b = document.createElement('button');
+        b.className = 'chip';
+        b.textContent = i;
+        container.appendChild(b);
+      });
+      // Add manual entry chip
+      const add = document.createElement('span');
+      add.className = 'chip';
+      add.innerHTML = '<span>+</span><input placeholder="Add" />';
+      add.querySelector('input').addEventListener('keydown', e => {
+        if(e.key === 'Enter'){
+          const val = e.target.value.trim();
+          if(val){ items.push(val); renderChips(container, items); }
+        }
+      });
+      container.appendChild(add);
+    }
+
+    // ---------- Intent tagging ----------
+    function buildIntentTable(){
+      const body = $("#intentTable tbody");
+      body.innerHTML = "";
+      const lines = rawText.split(/\n+/).map(l=>l.trim()).filter(l=>l.length>0);
+      for(const line of lines){
+        const flagged = MODAL_RE.test(line);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><input type="checkbox" class="intent-check" ${flagged? 'checked': ''}></td>
+          <td>${escapeHtml(line)}</td>
+          <td>
+            <select class="intent-cat">
+              <option value="Declared Intent">Declared Intent</option>
+              <option value="Implied Threat">Implied Threat</option>
+              <option value="Mitigation Statement">Mitigation Statement</option>
+            </select>
+          </td>
+        `;
+        body.appendChild(tr);
+      }
+    }
+
+    // ---------- Emotional Tone auto ----------
+    function autoTone(words){
+      const tokens = words.map(w=>w.toLowerCase());
+      const score = (lex) => tokens.reduce((a,w)=> a + (lex.has(w)?1:0), 0);
+      const u = score(LEX_EMO.urgency), c = score(LEX_EMO.confidence), a = score(LEX_EMO.anxiety), d = score(LEX_EMO.defensiveness);
+      setSliderFromCount('#urgency', u); setBadge('#urgencyBadge', u);
+      setSliderFromCount('#confidence', c); setBadge('#confidenceBadge', c);
+      setSliderFromCount('#anxiety', a); setBadge('#anxietyBadge', a);
+      setSliderFromCount('#defensiveness', d); setBadge('#defensivenessBadge', d);
+    }
+
+    function setSliderFromCount(sel, n){
+      const el = $(sel);
+      const v = n > 5 ? 2 : n > 1 ? 1 : 0;
+      el.value = v;
+    }
+    function setBadge(sel, n){
+      const el = $(sel);
+      const label = n > 5 ? 'High' : n > 1 ? 'Moderate' : 'Neutral';
+      el.textContent = label;
+      el.style.background = label==='High' ? 'rgba(208,77,77,.2)' : label==='Moderate' ? 'rgba(193,161,10,.2)' : '#0c121b';
+      el.style.color = label==='Neutral' ? 'var(--muted)' : 'var(--text)';
+    }
+
+    // Manual slider listeners keep badge in sync
+    ['#urgency','#confidence','#anxiety','#defensiveness'].forEach(id => {
+      $(id).addEventListener('input', e => {
+        const map = {0:'Neutral',1:'Moderate',2:'High'}; const v = parseInt(e.target.value,10);
+        const badge = id+'Badge';
+        $(badge).textContent = map[v];
+        $(badge).style.background = v===2 ? 'rgba(208,77,77,.2)' : v===1 ? 'rgba(193,161,10,.2)' : '#0c121b';
+        $(badge).style.color = v===0 ? 'var(--muted)' : 'var(--text)';
+      });
+    });
+
+    // ---------- Stakeholder Mapping ----------
+    const DEFAULT_STAKEHOLDERS = ['Government','Opposition','Military','Police','NGO','UN','Media','Civilians','Private Sector','International Partners'];
+
+    function renderStakeholderChips(){
+      const wrap = $("#stakeholderChips");
+      wrap.innerHTML = "";
+      DEFAULT_STAKEHOLDERS.forEach(s => {
+        const b = document.createElement('button');
+        b.className = 'chip'; b.textContent = s; b.addEventListener('click', ()=>addStakeholderRow(s));
+        wrap.appendChild(b);
+      });
+      const add = document.createElement('span');
+      add.className = 'chip'; add.innerHTML = '<span>+</span><input placeholder="Custom" />';
+      add.querySelector('input').addEventListener('keydown', e => {
+        if(e.key==='Enter'){
+          const v = e.target.value.trim(); if(v){ addStakeholderRow(v); e.target.value=''; }
+        }
+      });
+      wrap.appendChild(add);
+    }
+
+    function addStakeholderRow(name){
+      const body = $("#stakeTable tbody");
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${escapeHtml(name)}</td>
+        <td>
+          <select class="stk-signal">
+            <option>Threat</option>
+            <option>Opportunity</option>
+            <option>Neutral</option>
+          </select>
+        </td>
+        <td>
+          <select class="stk-sent">
+            <option>Negative</option>
+            <option>Neutral</option>
+            <option>Positive</option>
+          </select>
+        </td>
+        <td><input class="stk-notes" type="text" placeholder="Notes" /></td>
+        <td><button class="btn stk-del">Remove</button></td>
+      `;
+      tr.querySelector('.stk-del').addEventListener('click', ()=> tr.remove());
+      body.appendChild(tr);
+    }
+
+    // ---------- Insight Builder ----------
+    $("#addInsightBtn").addEventListener('click', () => {
+      const i = $("#insightText").value.trim();
+      const m = $("#implicationText").value.trim();
+      if(!i && !m) return;
+      const body = $("#insightsTable tbody");
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${escapeHtml(i)}</td><td>${escapeHtml(m)}</td><td><button class="btn rm">Remove</button></td>`;
+      tr.querySelector('.rm').addEventListener('click', ()=>tr.remove());
+      body.appendChild(tr);
+      $("#insightText").value = ""; $("#implicationText").value = "";
+    });
+
+    // ---------- Exports ----------
+    function buildJSON(){
+      const sentTokens = tokenInfo.filter(t=>t.type);
+      // Keyword map
+      const kwMap = {};
+      for(const t of sentTokens){
+        kwMap[t.norm] = kwMap[t.norm] || {hits:0, weight:t.weight};
+        kwMap[t.norm].hits += 1;
+      }
+      // Dist and score
+      const posHits = sentTokens.filter(t => t.type === "pos").length;
+      const negHits = sentTokens.filter(t => t.type === "neg").length;
+      let posSum = 0, negSum = 0;
+      for(const t of sentTokens){ if(t.weight>0) posSum += t.weight; else if(t.weight<0) negSum += Math.abs(t.weight); }
+      const denom = sentTokens.length || 1;
+      const score = (posSum - negSum) / denom;
+      const label = score>0.25 ? 'Positive' : score<-0.25 ? 'Negative' : 'Neutral';
+
+      // Intent tags
+      const intents = [];
+      $$("#intentTable tbody tr").forEach(tr => {
+        const checked = tr.querySelector('.intent-check').checked;
+        if(checked){
+          const line = tr.children[1].textContent;
+          const cat = tr.querySelector('.intent-cat').value;
+          intents.push({line, category:cat});
+        }
+      });
+
+      // Stakeholders
+      const stakeholders = [];
+      $$("#stakeTable tbody tr").forEach(tr => {
+        stakeholders.push({
+          name: tr.children[0].textContent,
+          signal: tr.querySelector('.stk-signal').value,
+          sentiment: tr.querySelector('.stk-sent').value,
+          notes: tr.querySelector('.stk-notes').value
+        });
+      });
+
+      // Insights
+      const insights = [];
+      $$("#insightsTable tbody tr").forEach(tr => {
+        insights.push({ insight: tr.children[0].textContent, implication: tr.children[1].textContent });
+      });
+
+      // Source notes
+      const source = { url: $("#srcUrl").value, author: $("#srcAuthor").value, credibility: $("#srcCred").value, notes: $("#srcNotes").value };
+
+      return {
+        meta: { generatedAt: new Date().toISOString(), version: '2025-08-18' },
+        text: rawText,
+        sentiment: { score, label, posHits, negHits, totalSentimentTokens: sentTokens.length },
+        keywordMap: kwMap,
+        narrativeFocus: { themes: $$("#themes .chip").filter(x=>x.querySelector('input')==null).map(x=>x.textContent), actions: $$("#actions .chip").filter(x=>x.querySelector('input')==null).map(x=>x.textContent) },
+        intentTags: intents,
+        emotionalTone: {
+          urgency: $("#urgency").value,
+          confidence: $("#confidence").value,
+          anxiety: $("#anxiety").value,
+          defensiveness: $("#defensiveness").value
+        },
+        source,
+        stakeholders,
+        insights
+      };
+    }
+
+    function download(filename, content, type='application/json'){
+      const blob = new Blob([content], {type});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+    }
+
+    $("#exportJsonBtn").addEventListener('click', ()=>{
+      const data = buildJSON();
+      download('sentiment_snapshot.json', JSON.stringify(data, null, 2));
+    });
+
+    $("#exportCsvBtn").addEventListener('click', ()=>{
+      const data = buildJSON();
+      const rows = [];
+      rows.push(['Section','Field1','Field2','Field3','Field4'].join(','));
+      // Summary
+      rows.push(['Summary','Score',data.sentiment.score.toFixed(2),'Label',data.sentiment.label].join(','));
+      // Stakeholders
+      for(const s of data.stakeholders){ rows.push(['Stakeholder', s.name, s.signal, s.sentiment, '"'+(s.notes||'')+'"'].join(',')); }
+      // Intents
+      for(const i of data.intentTags){ rows.push(['Intent', i.category, '"'+i.line.replace(/"/g,'""')+'"','',''].join(',')); }
+      // Insights
+      for(const k of data.insights){ rows.push(['Insight', '"'+k.insight.replace(/"/g,'""')+'"', 'Implication', '"'+k.implication.replace(/"/g,'""')+'"',''].join(',')); }
+      download('sentiment_snapshot.csv', rows.join('\n'), 'text/csv');
+    });
+
+    $("#exportPngBtn").addEventListener('click', ()=>{
+      const c = $("#chart");
+      const url = c.toDataURL('image/png');
+      fetch(url).then(res=>res.blob()).then(blob=>{
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob); a.download = 'sentiment_chart.png'; a.click();
+      });
+    });
+
+    $("#printBtn").addEventListener('click', ()=> window.print());
+
+    // ---------- Reset and Theme ----------
+    $("#resetBtn").addEventListener('click', () => {
+      if(!confirm('Clear all inputs and results?')) return;
+      editor.innerHTML = ""; rawText = ""; tokenInfo = []; updateAll();
+      $("#srcUrl").value = ""; $("#srcAuthor").value = ""; $("#srcCred").value = "High"; $("#srcNotes").value = "";
+      $("#stakeTable tbody").innerHTML = ""; $("#insightsTable tbody").innerHTML = "";
+    });
+
+    function toggleTheme(){
+      // Light theme swap
+      const light = document.body.dataset.theme === 'light';
+      if(light){ document.body.dataset.theme = 'dark'; Object.assign(document.documentElement.style, {
+        '--bg':'#0f1115','--panel':'#161a22','--panel-2':'#1c2230','--text':'#e8ecf1','--muted':'#9aa4b2','--border':'#2a3344'
+      }); }
+      else { document.body.dataset.theme = 'light'; Object.assign(document.documentElement.style, {
+        '--bg':'#f5f7fb','--panel':'#ffffff','--panel-2':'#f3f6fb','--text':'#0f1218','--muted':'#5a6576','--border':'#d9e0ee'
+      }); }
+      localStorage.setItem('sst_theme', document.body.dataset.theme);
+    }
+    $("#themeBtn").addEventListener('click', toggleTheme);
+
+    // ---------- Init ----------
+    function init(){
+      // Restore theme
+      const saved = localStorage.getItem('sst_theme');
+      if(saved){ document.body.dataset.theme = saved; if(saved==='light') toggleTheme(); }
+      renderLib();
+      renderStakeholderChips();
+      updateFromPlain("");
+    }
+
+    init();
+  </script>
+</body>
+</html>
