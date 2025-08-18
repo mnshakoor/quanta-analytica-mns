@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="system">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Resurgence of Violence in the Central African Republic - Quanta Analytica</title>
+  <meta name="description" content="Interactive report page for Quanta Analytica: Resurgence of Violence in the Central African Republic after the N’Djamena Accord. Searchable sections, theme toggle, export, and print." />
+  <meta name="author" content="Quanta Analytica - M. Nuri Shakoor" />
+  <meta property="og:title" content="Resurgence of Violence in the Central African Republic" />
+  <meta property="og:description" content="Interactive, single-page report with search, theme toggle, and export." />
+  <meta property="og:type" content="article" />
+  <meta name="color-scheme" content="light dark" />
+  <style>
+    :root{
+      --bg: #f7f7fb;
+      --surface: #ffffff;
+      --text: #14151a;
+      --muted: #575b66;
+      --border: #e8e8f1;
+      --accent: #2563eb;
+      --accent-2:#0ea5e9;
+      --warn:#ef4444;
+      --ok:#16a34a;
+      --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.06);
+      --radius: 14px;
+      --code-bg:#0b1020;
+      --code-text:#e6edf3;
+      --highlight:#fff7cc;
+    }
+    [data-theme="dark"]{
+      --bg: #0c0f14;
+      --surface: #141922;
+      --text: #f2f5f7;
+      --muted: #9aa3ad;
+      --border: #232a35;
+      --accent: #60a5fa;
+      --accent-2:#38bdf8;
+      --warn:#f87171;
+      --ok:#34d399;
+      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 24px rgba(0,0,0,.35);
+      --code-bg:#0b1020;
+      --code-text:#e6edf3;
+      --highlight:#2a2f3a;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .container{max-width:1200px;margin:0 auto;padding:24px}
+    header.header{
+      position:sticky;top:0;z-index:50;background:linear-gradient(180deg,var(--bg),rgba(0,0,0,0));
+      border-bottom:1px solid var(--border);backdrop-filter:saturate(1.2) blur(8px)
+    }
+    .bar{
+      display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 24px
+    }
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{
+      width:36px;height:36px;border-radius:10px;background:conic-gradient(from 180deg at 50% 50%, var(--accent), var(--accent-2), var(--accent));
+      box-shadow: var(--shadow);
+    }
+    .title{font-weight:700;letter-spacing:.2px}
+    .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .btn, .input{
+      border:1px solid var(--border);background:var(--surface);color:var(--text);padding:10px 12px;border-radius:10px;
+      box-shadow: var(--shadow);font-weight:600
+    }
+    .btn{cursor:pointer;transition:transform .05s ease}
+    .btn:hover{transform:translateY(-1px)}
+    .btn.small{padding:8px 10px;font-weight:600}
+    .btn.primary{background:linear-gradient(180deg,var(--accent),var(--accent-2));color:#fff;border-color:transparent}
+    .input{min-width:260px}
+    main{
+      display:grid;grid-template-columns: 280px 1fr;gap:24px;align-items:start;padding:24px
+    }
+    nav.toc{
+      position:sticky;top:72px;align-self:start;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px
+    }
+    nav.toc h3{margin:0 0 8px 0;font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+    nav.toc a{display:block;padding:6px 8px;border-radius:8px;color:var(--text)}
+    nav.toc a:hover{background:var(--bg)}
+    article.report{
+      background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:2rem
+    }
+    .meta{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:14px;margin-bottom:8px}
+    .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:12px 0 24px}
+    .chip{
+      background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:10px 12px
+    }
+    .badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;border:1px solid var(--border);background:var(--bg);color:var(--muted)}
+    details.section{
+      border:1px solid var(--border);border-radius:12px;margin:18px 0;padding:0;background:transparent
+    }
+    details.section[open]{background:linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,0)) }
+    details.section summary{
+      cursor:pointer;list-style:none;padding:14px 16px;font-weight:700;display:flex;gap:10px;align-items:center
+    }
+    details.section summary:hover{background:var(--bg);border-radius:12px}
+    details.section summary::marker{display:none}
+    .section-body{padding:0 16px 16px}
+    h1{margin:.2rem 0 1rem;font-size:28px;line-height:1.2}
+    h2{margin:1.25rem 0 .75rem;font-size:20px}
+    h3{margin:1rem 0 .5rem;font-size:18px}
+    p{margin:.5rem 0 1rem}
+    .callout{
+      border-left:4px solid var(--accent);padding:12px 14px;background:var(--bg);border-radius:10px;margin:12px 0
+    }
+    .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    ul{margin:.25rem 0 1rem 1.25rem}
+    code,pre{font-family: ui-monospace,SFMono-Regular,Consolas,Menlo,monospace}
+    pre{background:var(--code-bg);color:var(--code-text);padding:12px;border-radius:10px;overflow:auto}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:.5rem 0 1.25rem}
+    .footnote{font-size:14px;color:var(--muted)}
+    .ref-tip{
+      position:absolute;z-index:60;max-width:480px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow);border-radius:10px;padding:10px 12px;display:none
+    }
+    .supref{cursor:help;padding:0 2px;border-bottom:1px dotted var(--muted)}
+    .sticky-top{position:fixed;right:16px;bottom:16px;display:none}
+    .sticky-top .btn{border-radius:999px;padding:10px 12px}
+    .mark{background:var(--highlight);padding:2px 4px;border-radius:6px}
+    .footer-note{margin-top:24px;font-size:13px;color:var(--muted)}
+    /* Responsive */
+    @media (max-width: 980px){
+      main{grid-template-columns:1fr}
+      nav.toc{position:relative;top:auto}
+      .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .input{min-width:unset;width:100%}
+    }
+    /* Print */
+    @media print{
+      header.header, .controls, nav.toc, .sticky-top{display:none !important}
+      main{display:block;padding:0}
+      article.report{box-shadow:none;border:none}
+      a{text-decoration:none}
+    }
+  </style>
+</head>
+<body>
+  <header class="header" role="banner" aria-label="Top Bar">
+    <div class="bar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div class="title">Quanta Analytica - Interactive Report</div>
+          <div style="font-size:12px;color:var(--muted)">Resurgence of Violence in the Central African Republic</div>
+        </div>
+      </div>
+      <div class="controls">
+        <input id="q" class="input" type="search" placeholder="Search sections..." aria-label="Search sections" />
+        <button id="collapseAll" class="btn small" type="button" title="Collapse all">Collapse</button>
+        <button id="expandAll" class="btn small" type="button" title="Expand all">Expand</button>
+        <button id="exportJson" class="btn small" type="button" title="Export outline as JSON">Export JSON</button>
+        <button id="printBtn" class="btn small" type="button" title="Print or Save as PDF">Print</button>
+        <button id="themeBtn" class="btn small" type="button" title="Toggle theme">Theme</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav class="toc" aria-label="Table of contents">
+      <h3>Contents</h3>
+      <div id="tocList"></div>
+    </nav>
+
+    <article class="report" id="report">
+      <div class="meta">
+        <span class="badge">CAR Crisis</span>
+        <span class="badge">N’Djamena Accord</span>
+        <span class="badge">DDR</span>
+        <span class="badge">MINUSCA</span>
+        <span class="badge">Governance</span>
+      </div>
+
+      <h1 id="top">Resurgence of Violence in the Central African Republic Post N’Djamena Accord</h1>
+      <div class="callout">
+        <strong>Source:</strong> Uploaded report for Quanta Analytica. Reference markers like [1] map to the References section at the end. :contentReference[oaicite:1]{index=1}
+      </div>
+
+      <div class="kpis">
+        <div class="chip"><strong>Report Window</strong><br/>Apr 19 2025 to Aug 2025</div>
+        <div class="chip"><strong>Key Actors</strong><br/>3R, UPC, FACA, MINUSCA, Wagner</div>
+        <div class="chip"><strong>Core Theme</strong><br/>DDR failure and governance fragility</div>
+        <div class="chip"><strong>Prepared for</strong><br/>Quanta Analytica - ARAC International</div>
+      </div>
+
+      <div class="toolbar">
+        <span class="footnote">Tip: Use the search box to filter sections. Click Theme to switch Light or Dark. Print to export PDF.</span>
+      </div>
+
+      <!-- Executive Summary -->
+      <details class="section" open data-title="Executive Summary" id="sec-executive-summary">
+        <summary>Executive Summary</summary>
+        <div class="section-body">
+          <p>
+            Violence resurged soon after the April 19 2025 N’Djamena Accord as 3R and UPC dynamics reappeared despite a formal dissolution dated July 10 2025. The June 28 2025 incident near Nzakoundou showed FACA unable to hold terrain, which signaled structural DDR failure tied to logistics, economics, and politics [1][2]. Capacity-commitment mismatches, weak extractive governance, and external actor complexity compounded risks [3][4][5][6][7].
+          </p>
+          <ul>
+            <li><span class="mark">DDR logistics shortfalls</span> at cantonment sites drove recidivism and banditry risks [1][2].</li>
+            <li>Governance fragility and elastic ineffectiveness limited enforcement of the accord [2][3][7].</li>
+            <li>Arms embargo lift without oversight risked militarized patronage rather than institutional reform [2][3].</li>
+            <li>Identity-territory linkages and resource control kept violence economically viable [2][3][5].</li>
+          </ul>
+        </div>
+      </details>
+
+      <!-- 1. Introduction -->
+      <details class="section" open data-title="1. Introduction" id="sec-introduction">
+        <summary>1. Introduction</summary>
+        <div class="section-body">
+          <p>
+            The CAR conflict is historically rooted in weak governance and fragmented authority. The N’Djamena Accord sought to demobilize 3R and UPC and reintegrate combatants into civilian life or FACA, but optimism faded quickly as violence re-emerged within weeks [1][2][3].
+          </p>
+          <p>
+            This report analyzes immediate post-accord relapse with focus on DDR failure, political-institutional weaknesses, humanitarian impacts, external actor roles, and structural incentives, closing with policy measures.
+          </p>
+        </div>
+      </details>
+
+      <!-- 2. Failure of DDR -->
+      <details class="section" data-title="2. Failure of Disarmament and Reintegration (DDR)" id="sec-ddr">
+        <summary>2. Failure of Disarmament and Reintegration (DDR)</summary>
+        <div class="section-body">
+          <h3>2.1 Logistical Challenges</h3>
+          <p>
+            Sites such as Bokolobo, Maloum, Nzacko, and Yaloke reported shortages of food, water, and shelter [1][2]. MINUSCA presence was overstretched while FACA perimeter security proved unreliable in areas like Nzakoundou, illustrated by the June 28 event [1][2].
+          </p>
+          <h3>2.2 Economic Challenges</h3>
+          <p>
+            A promise to reintegrate 5,000 combatants lacked funding and scalable livelihoods plans. With a projected 2025 GDP at subsistence levels and donor pipelines strained, ex-combatants faced strong incentives to revert to armed activity, especially around Dawala, Thicka, and Sataigne [1][2].
+          </p>
+          <h3>2.3 Political Challenges</h3>
+          <p>
+            The accord assumed state capacity that did not exist. Identity-territory functions of 3R and UPC were not replaced with legitimate representation or revenue-sharing mechanisms, so rearmament remained a rational path [2].
+          </p>
+          <h3>2.4 Capacity-Commitment Mismatch</h3>
+          <p>
+            The state shoulders DDR burdens without the means to secure sites or finance reintegration, producing partial compliance and relapse [2]. Violence persists as an economic modality when reintegration benefits fail to materialize [2].
+          </p>
+        </div>
+      </details>
+
+      <!-- 3. Political and Institutional Weaknesses -->
+      <details class="section" data-title="3. Political and Institutional Weaknesses" id="sec-governance">
+        <summary>3. Political and Institutional Weaknesses</summary>
+        <div class="section-body">
+          <h3>3.1 Governance Fragility</h3>
+          <p>
+            BTI 2024 classifies CAR as fragile with weak monopoly of force outside Bangui and porous borders that enable armed group mobility [3]. World Governance Indicators remain low across core pillars [2].
+          </p>
+          <h3>3.2 Elastic Ineffectiveness</h3>
+          <p>
+            Failures are absorbed without correction. Promised reintegration since 2017 lacked durable mechanisms, and power centralization did not produce operational coherence [2][7].
+          </p>
+          <h3>3.3 Extractive Governance Gaps</h3>
+          <p>
+            EITI 2024 shows only USD 2.6M in 2021 revenues, poor disclosure, and weak archives. Opacity undermines fiscal capacity and enables illicit resource capture [5].
+          </p>
+          <h3>3.4 Corruption and Transparency</h3>
+          <p>
+            IMF diagnostics highlight entrenched corruption and weak administrative capacity. Recommended legal, digital, and supervisory reforms show limited traction [4][7].
+          </p>
+          <h3>3.5 Monopoly of Force and Borders</h3>
+          <p>
+            State control is rare beyond the capital. FACA depends on external partners and struggles to hold terrain [3].
+          </p>
+          <h3>3.6 Electoral and Constitutional Issues</h3>
+          <p>
+            The 2023 constitutional shift expanded executive tenure and narrowed eligibility. Local elections slipped repeatedly, reducing checks and civic inclusion [7].
+          </p>
+          <h3>3.7 Repression of Opposition and Civil Society</h3>
+          <p>
+            Freedom House notes intimidation, arrests, and constraints on media and NGOs. Allegations of abuses implicated state and external security elements [7].
+          </p>
+          <h3>3.8 Media Suppression and Social Cleavages</h3>
+          <p>
+            Limited independent media and hate content inflame cleavages. Many Muslims remain displaced or confined to enclaves under persistent targeting [7].
+          </p>
+        </div>
+      </details>
+
+      <!-- 4. Humanitarian and Civilian Impact -->
+      <details class="section" data-title="4. Humanitarian and Civilian Impact" id="sec-humanitarian">
+        <summary>4. Humanitarian and Civilian Impact</summary>
+        <div class="section-body">
+          <h3>4.1 Displacement and Insecurity</h3>
+          <p>
+            Over half the population required assistance in early 2023. Hundreds of thousands remained refugees or IDPs, with renewed violence touching all 16 prefectures [2][7].
+          </p>
+          <h3>4.2 Basic Needs</h3>
+          <p>
+            Shortages at cantonment and community levels constrain food, water, shelter, and health access. Economic fragility limits state service delivery, increasing aid dependency [1][2].
+          </p>
+          <h3>4.3 Recidivism Risk</h3>
+          <p>
+            Ex-combatants without livelihoods or security are pulled back into armed activity or crime. Cantonment bottlenecks amplify this loop [2].
+          </p>
+          <h3>4.4 MINUSCA Role</h3>
+          <p>
+            MINUSCA’s civilian protection mandate faces mobility and logistics constraints. New flashpoints strain coverage while aid worker targeting continues [1][7].
+          </p>
+        </div>
+      </details>
+
+      <!-- 5. Role of External Actors -->
+      <details class="section" data-title="5. Role of External Actors" id="sec-external">
+        <summary>5. Role of External Actors</summary>
+        <div class="section-body">
+          <h3>5.1 MINUSCA</h3>
+          <p>
+            Tactical presence in flashpoints supports stabilization but remains overstretched without parallel FACA holding capacity [1].
+          </p>
+          <h3>5.2 Russia - Wagner Group</h3>
+          <p>
+            Wagner presence since 2018 supported territorial gains for the government and came with serious rights concerns and EU sanctions context [3][7].
+          </p>
+          <h3>5.3 African Union</h3>
+          <p>
+            AU endorsed dissolutions of 3R and UPC on July 10 2025, but rapid relapse showed limited enforcement leverage [1].
+          </p>
+          <h3>5.4 Neighboring Countries</h3>
+          <p>
+            Chad and Cameroon are essential for interdiction of supply lines. Rwanda and Angola engaged in Luanda Roadmap mediation [1][3].
+          </p>
+          <h3>5.5 Arms Embargo Lift</h3>
+          <p>
+            Lifting the embargo without strong oversight risks fueling patronage networks. Security sector reform and accountability need to track any materiel growth [2][3].
+          </p>
+        </div>
+      </details>
+
+      <!-- 6. Structural Incentives -->
+      <details class="section" data-title="6. Structural Incentives for Violence" id="sec-structure">
+        <summary>6. Structural Incentives for Violence</summary>
+        <div class="section-body">
+          <h3>6.1 Violence as Economic Modality</h3>
+          <p>
+            Where reintegration fails, rearmament restores control over local economies and routes, turning violence into a sustaining enterprise [2].
+          </p>
+          <h3>6.2 Identity - Territory Linkages</h3>
+          <p>
+            3R protects pastoral routes while UPC seeks corridor control. Without new political venues that represent identity interests, rearmament remains rational [2].
+          </p>
+          <h3>6.3 Local Governance Gaps</h3>
+          <p>
+            Uneven statehood leaves power vacuums that militias fill with de facto rule [2][3].
+          </p>
+          <h3>6.4 Resource and Corridor Control</h3>
+          <p>
+            Mineral rents and corridor tolls finance operations. Weak extractive transparency enables illicit capture and conflict persistence [3][5].
+          </p>
+        </div>
+      </details>
+
+      <!-- 7. Recommendations -->
+      <details class="section" data-title="7. Recommendations" id="sec-recs">
+        <summary>7. Recommendations</summary>
+        <div class="section-body">
+          <div class="grid-2">
+            <div class="callout">
+              <strong>7.1 Humanitarian surge and DDR</strong>
+              <p>Stabilize cantonment logistics, secure sites with UN-authorized protection, deploy cash-for-work and training pathways, and track delivery with biometric vouchers [1][2].</p>
+            </div>
+            <div class="callout">
+              <strong>7.2 Security plus reform</strong>
+              <p>Joint FACA - MINUSCA operations to retake hotspots, reinforce discipline and rights safeguards, and coordinate cross-border interdiction with Chad and Cameroon [1][7].</p>
+            </div>
+            <div class="callout">
+              <strong>7.3 Tiered reintegration</strong>
+              <p>Prioritize high-risk zones with multi-year planning that blends livelihoods, reconciliation, and identity-linked governance venues [1][2].</p>
+            </div>
+            <div class="callout">
+              <strong>7.4 Governance and transparency</strong>
+              <p>Advance EITI-aligned disclosures, digitize PFM, strengthen legal oversight, and protect civil society and media for accountability [4][5][7].</p>
+            </div>
+            <div class="callout">
+              <strong>7.5 International and regional alignment</strong>
+              <p>Synchronize donor support with realistic state capacity, and leverage Luanda Roadmap partners for regional early warning and border control [1][3].</p>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <!-- References -->
+      <details class="section" data-title="References" id="sec-refs" open>
+        <summary>References</summary>
+        <div class="section-body">
+          <ol>
+            <li>[1] Shakoor, M. N. 2025. Violence Resurgence and Disarmament Fragility in CAR.</li>
+            <li>[2] Shakoor, M. N. 2025. The Disarmament Paradox in CAR.</li>
+            <li>[3] Bertelsmann Stiftung. 2024. BTI 2024 Country Report - CAR.</li>
+            <li>[4] IMF. 2021. Governance Diagnostic Report - CAR.</li>
+            <li>[5] EITI International Secretariat. 2024. CAR Validation - Final Report.</li>
+            <li>[6] UN Security Council. 2025. Sanctions and related resolutions.</li>
+            <li>[7] Freedom House. 2024. CAR Country Report.</li>
+          </ol>
+          <p class="footer-note">Hover any in-text [number] to preview the matching reference. Printing will include full citations.</p>
+        </div>
+      </details>
+
+      <div class="footer-note">Prepared by Quanta Analytica. Last updated <span id="now"></span>.</div>
+    </article>
+  </main>
+
+  <div class="sticky-top" id="toTopWrap">
+    <button class="btn primary" id="toTop" title="Back to top">↑</button>
+  </div>
+
+  <div id="refTip" class="ref-tip" role="tooltip" aria-hidden="true"></div>
+
+  <script>
+    // Utilities
+    const $ = (sel, el=document)=>el.querySelector(sel);
+    const $$ = (sel, el=document)=>Array.from(el.querySelectorAll(sel));
+
+    // Theme management
+    const themeBtn = $("#themeBtn");
+    const root = document.documentElement;
+    const saved = localStorage.getItem("qa-theme");
+    function applyTheme(mode){
+      root.setAttribute("data-theme", mode);
+      localStorage.setItem("qa-theme", mode);
+    }
+    // Initialize theme
+    (()=> {
+      if(saved){ applyTheme(saved); }
+      else{
+        // Respect system
+        const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        applyTheme(prefersDark ? "dark" : "light");
+      }
+    })();
+    themeBtn.addEventListener("click", ()=>{
+      const cur = root.getAttribute("data-theme");
+      applyTheme(cur==="dark" ? "light" : "dark");
+    });
+
+    // TOC generation
+    const toc = $("#tocList");
+    const sections = $$(".section");
+    sections.forEach(sec=>{
+      const title = sec.getAttribute("data-title") || $("summary", sec)?.textContent?.trim() || "Section";
+      const id = sec.id || title.toLowerCase().replace(/[^a-z0-9]+/g,"-");
+      sec.id = id;
+      const a = document.createElement("a");
+      a.href = "#"+id;
+      a.textContent = title;
+      toc.appendChild(a);
+    });
+
+    // Search filter
+    const q = $("#q");
+    q.addEventListener("input", ()=>{
+      const term = q.value.trim().toLowerCase();
+      sections.forEach(s=>{
+        const text = s.textContent.toLowerCase();
+        s.style.display = term ? (text.includes(term) ? "" : "none") : "";
+      });
+    });
+
+    // Collapse and Expand
+    $("#collapseAll").addEventListener("click", ()=> sections.forEach(s=> s.open=false));
+    $("#expandAll").addEventListener("click", ()=> sections.forEach(s=> s.open=true));
+
+    // Print
+    $("#printBtn").addEventListener("click", ()=> window.print());
+
+    // Export outline JSON
+    $("#exportJson").addEventListener("click", ()=>{
+      const data = {
+        title: document.title,
+        updated: new Date().toISOString(),
+        sections: sections.map(s=>{
+          const title = s.getAttribute("data-title") || $("summary", s)?.textContent?.trim();
+          const body = $(".section-body", s)?.innerText || "";
+          const words = body.split(/\s+/).filter(Boolean).length;
+          return { id: s.id, title, words };
+        }),
+        references: $$("#sec-refs ol li").map(li => li.innerText.trim())
+      };
+      const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = "CAR_report_outline.json"; a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // Back to top
+    const toTopWrap = $("#toTopWrap");
+    window.addEventListener("scroll", ()=>{
+      toTopWrap.style.display = window.scrollY > 600 ? "block" : "none";
+    });
+    $("#toTop").addEventListener("click", ()=> window.scrollTo({top:0,behavior:"smooth"}));
+
+    // Footnote hover tips for [1]..[7]
+    const refText = {
+      "1": "Shakoor 2025 - Violence Resurgence and Disarmament Fragility in CAR.",
+      "2": "Shakoor 2025 - The Disarmament Paradox in CAR.",
+      "3": "BTI 2024 - CAR Country Report.",
+      "4": "IMF 2021 - Governance Diagnostic Report for CAR.",
+      "5": "EITI 2024 - CAR Validation Final Report.",
+      "6": "UNSC 2025 - Sanctions and related resolutions.",
+      "7": "Freedom House 2024 - CAR Report."
+    };
+    const tip = $("#refTip");
+
+    function enhanceRefs(el){
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+        acceptNode(node){
+          if(!node.nodeValue) return NodeFilter.FILTER_REJECT;
+          // Skip if inside references list
+          if(el.closest && el.closest("#sec-refs")) return NodeFilter.FILTER_REJECT;
+          // Skip code and pre
+          if(node.parentElement && (node.parentElement.tagName === "CODE" || node.parentElement.tagName === "PRE")) return NodeFilter.FILTER_REJECT;
+          return /\[(\d+)\]/.test(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+        }
+      });
+      const toWrap = [];
+      while(walker.nextNode()){ toWrap.push(walker.currentNode); }
+      toWrap.forEach(textNode=>{
+        const frag = document.createDocumentFragment();
+        const parts = textNode.nodeValue.split(/(\[\d+\])/g);
+        parts.forEach(part=>{
+          if(/^\[(\d+)\]$/.test(part)){
+            const n = part.replace(/\[|\]/g,"");
+            const sup = document.createElement("sup");
+            sup.className = "supref";
+            sup.textContent = `[${n}]`;
+            sup.tabIndex = 0;
+            sup.dataset.n = n;
+            sup.addEventListener("mouseenter", e=> showTip(e.currentTarget));
+            sup.addEventListener("focus", e=> showTip(e.currentTarget));
+            sup.addEventListener("mouseleave", hideTip);
+            sup.addEventListener("blur", hideTip);
+            frag.appendChild(sup);
+          }else{
+            frag.appendChild(document.createTextNode(part));
+          }
+        });
+        textNode.parentNode.replaceChild(frag, textNode);
+      });
+    }
+    function showTip(el){
+      const n = el.dataset.n;
+      const text = refText[n] || "Reference";
+      tip.textContent = text;
+      const rect = el.getBoundingClientRect();
+      tip.style.left = Math.min(rect.left + window.scrollX, window.scrollX + document.body.clientWidth - 520) + "px";
+      tip.style.top = (rect.bottom + window.scrollY + 8) + "px";
+      tip.style.display = "block";
+      tip.setAttribute("aria-hidden","false");
+    }
+    function hideTip(){
+      tip.style.display = "none";
+      tip.setAttribute("aria-hidden","true");
+    }
+    // Enhance all section bodies
+    $$(".section-body").forEach(enhanceRefs);
+
+    // Now badge
+    $("#now").textContent = new Date().toLocaleString(undefined,{year:"numeric",month:"short",day:"2-digit"});
+
+  </script>
+</body>
+</html>
