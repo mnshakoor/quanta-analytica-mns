@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quanta Analytica MNS Consulting | Data-Driven Risk & Security Analysis</title>
+<meta name="description" content="Quanta Analytica by M Nuri Shakoor Consulting delivers data-driven political, security, NGO, and digital resilience analysis. Powered by ISO 31000, INSSA, CARVER, and PESTELS, our Conflict Systems Research Framework (CSRF) provides actionable intelligence for NGOs, governments, and private sector partners worldwide." />
+<meta name="keywords" content="Quanta Analytica, MNS Consulting, M Nuri Shakoor, data-driven analysis, geopolitical risk, NGO security risk management, conflict systems research framework, CSRF, digital resilience, AI analytics, structured analytic techniques, PESTELS, CARVER, ISO 31000, INSSA, ARAC International, IOSI Global, Lladner Business Solutions, afsdata, Digital Navigator" />
+<meta property="og:title" content="Quanta Analytica MNS Consulting" />
+<meta property="og:description" content="Data-driven political, security, NGO, and digital resilience analysis by M Nuri Shakoor Consulting. Powered by international standards and structured analytic techniques." />
+<meta property="og:url" content="https://quanta-analytica.mnshakoor.com" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://afsdata.org/preview.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Quanta Analytica MNS Consulting" />
+<meta name="twitter:description" content="Data-driven risk and resilience consulting by M Nuri Shakoor. Geopolitics, NGO SRM, digital resilience, and analytics." />
+
+  <meta name="theme-color" content="#0c0f12" />
+
+  <!-- Favicon (inline emoji) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='0.9em' font-size='90'%3E📊%3C/text%3E%3C/svg%3E" />
+
+  <style>
+    :root {
+      --bg: #0c0f12;
+      --bg-soft: #12161b;
+      --card: #151b22;
+      --text: #e8ecef;
+      --muted: #a7b1bb;
+      --brand: #00b37d;
+      --brand-2: #40df9f;
+      --accent: #10b981;
+      --border: #26313c;
+      --shadow: 0 10px 30px rgba(0,0,0,.3);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --maxw: 1200px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; }
+    a { color: var(--brand-2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .container { max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
+
+    /* Header */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: linear-gradient(180deg, rgba(12,15,18,.95), rgba(12,15,18,.85));
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: saturate(140%) blur(6px);
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 16px; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: .4px; }
+    .logo {
+      width: 40px; height: 40px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      display: grid; place-items: center; color: #00140d; font-weight: 800;
+      box-shadow: var(--shadow);
+    }
+    .brand b { color: var(--text); }
+    nav ul { display: flex; gap: 18px; list-style: none; margin: 0; padding: 0; }
+    nav a { color: var(--muted); font-weight: 600; padding: 10px 12px; border-radius: 10px; }
+    nav a.active, nav a:hover { background: var(--bg-soft); color: var(--text); }
+    .actions { display: flex; align-items: center; gap: 10px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 10px; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--border);
+      color: var(--text); background: var(--card); box-shadow: var(--shadow); cursor: pointer;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+      font-weight: 700;
+    }
+    .btn:hover { transform: translateY(-1px); border-color: var(--brand); }
+    .btn.primary { background: linear-gradient(135deg, var(--brand), var(--brand-2)); color: #02140c; border: none; }
+    .menu { display: none; }
+
+    /* Hero */
+    .hero {
+      background: radial-gradient(1200px 400px at 50% -10%, rgba(64,223,159,.12), transparent), linear-gradient(180deg, #0c0f12, #0c0f12);
+      border-bottom: 1px solid var(--border);
+      padding: 64px 0 40px;
+    }
+    .hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 28px; align-items: center; }
+    .kicker { color: var(--brand-2); font-weight: 800; letter-spacing: .6px; text-transform: uppercase; font-size: 12px; }
+    h1 { margin: 10px 0 8px; font-size: clamp(28px, 4.8vw, 48px); line-height: 1.05; }
+    .lead { font-size: 18px; color: var(--muted); max-width: 58ch; }
+    .hero-card {
+      background: linear-gradient(180deg, #10161c, #0f141a);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 18px; box-shadow: var(--shadow);
+    }
+    .stat { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+    .stat > div { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px; }
+
+    /* Sections */
+    section { padding: 64px 0; border-bottom: 1px solid var(--border); }
+    h2 { font-size: 26px; margin: 0 0 8px; }
+    .sub { color: var(--muted); margin-bottom: 18px; }
+
+    /* Services */
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 18px; box-shadow: var(--shadow); position: relative; overflow: hidden;
+    }
+    .card h3 { margin: 6px 0 8px; font-size: 18px; }
+    .badge { font-size: 11px; font-weight: 800; letter-spacing: .3px; text-transform: uppercase; color: var(--brand-2); }
+    .card ul { margin: 0; padding-left: 18px; color: var(--muted); }
+    .filters { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+
+    /* CSRF */
+    .accordion { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .acc-item + .acc-item { border-top: 1px solid var(--border); }
+    .acc-btn {
+      width: 100%; text-align: left; padding: 16px; background: var(--bg-soft); color: var(--text);
+      font-weight: 700; border: none; outline: none; cursor: pointer;
+    }
+    .acc-panel { display: none; padding: 16px; background: var(--card); color: var(--muted); }
+    .acc-btn:after { content: "▸"; float: right; transition: transform .2s; }
+    .acc-btn.active:after { transform: rotate(90deg); }
+
+    /* Contact */
+    .contact {
+      display: grid; grid-template-columns: 1.25fr .75fr; gap: 18px;
+    }
+    .contact form { display: grid; gap: 12px; }
+    input, textarea {
+      background: var(--bg-soft); color: var(--text); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 14px; font: inherit;
+    }
+    textarea { min-height: 120px; resize: vertical; }
+    footer { padding: 20px 0 56px; color: var(--muted); }
+
+    /* Back to top */
+    #toTop {
+      position: fixed; right: 16px; bottom: 16px; display: none;
+      background: var(--brand); color: #042015; border: none; border-radius: 50px;
+      padding: 12px 14px; font-weight: 800; box-shadow: var(--shadow); cursor: pointer;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .contact { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      nav ul { display: none; }
+      .menu { display: inline-flex; }
+      .grid-4 { grid-template-columns: 1fr; }
+      .hero { padding-top: 48px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <div class="logo" aria-label="Quanta Analytica logo">MNS</div>
+        <div>
+          <div style="font-size:13px; color:var(--muted); line-height:1;">QUANTA ANALYTICA</div>
+          <b>MNS Consulting</b>
+        </div>
+      </div>
+      <nav aria-label="Primary">
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#csrf">CSRF</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="actions">
+        <button id="themeBtn" class="btn" type="button">Toggle theme</button>
+        <a class="btn primary" href="#contact">Start a project</a>
+        <button class="btn menu" id="openMenu" aria-controls="mobile" aria-expanded="false">Menu</button>
+      </div>
+    </div>
+  </header>
+
+  <div id="mobile" hidden>
+    <div class="container" style="padding:12px 0 0;">
+      <nav>
+        <ul style="display:grid; gap:8px; padding-bottom:10px;">
+          <li><a href="#about">About</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#csrf">CSRF</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="kicker">Data driven insight for complex environments</div>
+          <h1>Clarity in Chaos. Insight in Action.</h1>
+          <p class="lead">We transform data into strategy and strategy into impact. Quanta Analytica MNS Consulting specializes in data-driven political, security, NGO, and digital risk analysis. Our mission is to make large datasets clear, actionable, and accessible for decision makers.</p>
+          <div style="display:flex; gap:10px; margin-top:16px;">
+            <a href="#services" class="btn primary">Explore services</a>
+            <a href="#csrf" class="btn">View our CSRF framework</a>
+          </div>
+        </div>
+        <div class="hero-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-size:14px; color:var(--muted);">Trusted methods</div>
+              <div style="font-size:24px; font-weight:800; color:var(--brand-2);">ISO 31000 • INSSA • PESTELS • CARVER</div>
+            </div>
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M3 13l4 4L21 3" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="stat">
+            <div>
+              <div style="font-size:12px; color:var(--muted);">Four pillars</div>
+              <div style="font-size:18px; font-weight:800;">Geo risk • P&S risk • NGO SRM • Digital resilience</div>
+            </div>
+            <div>
+              <div style="font-size:12px; color:var(--muted);">Approach</div>
+              <div style="font-size:18px; font-weight:800;">Structured Analytic Techniques • CSRF</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="container">
+        <h2>About Us</h2>
+        <p class="sub">In partnership with Lladner Business Solutions and International Development, we support organizations that operate in complex and high risk environments with empirical, decision ready intelligence.</p>
+      </div>
+    </section>
+
+    <section id="services">
+      <div class="container">
+        <h2>Services and Capabilities</h2>
+        <p class="sub">Everything we do is grounded in data driven analysis. Use the filter to focus on what you need.</p>
+        <div class="filters">
+          <button class="btn" data-filter="all" type="button">All</button>
+          <button class="btn" data-filter="geo" type="button">Geopolitical</button>
+          <button class="btn" data-filter="ps" type="button">Political and Security</button>
+          <button class="btn" data-filter="ngo" type="button">NGO SRM</button>
+          <button class="btn" data-filter="dlr" type="button">Digital Resilience</button>
+        </div>
+
+        <div class="grid-4" id="cards">
+          <article class="card" data-tags="geo">
+            <span class="badge">Pillar</span>
+            <h3>Geopolitical Risk Assessment</h3>
+            <p class="sub">Assess political, economic and security factors that can destabilize systems with an emphasis on sub state actors and regional dynamics.</p>
+            <ul>
+              <li>Empirical indicators and regional trend mapping</li>
+              <li>Forward looking insight for strategic planning</li>
+            </ul>
+          </article>
+
+          <article class="card" data-tags="ps">
+            <span class="badge">Pillar</span>
+            <h3>Political and Security Risk Assessment</h3>
+            <p class="sub">Structured evaluations of ethnopolitical, geopolitical and geographic dynamics using conflict datasets, scenarios and spatial mapping.</p>
+            <ul>
+              <li>Evidence based and predictive outputs</li>
+              <li>Advisory for immediate and long term risks</li>
+            </ul>
+          </article>
+
+          <article class="card" data-tags="ngo">
+            <span class="badge">Pillar</span>
+            <h3>NGO Security Risk Management</h3>
+            <p class="sub">Specialized SRM for NGOs in fragile contexts using INSSA, GISF and ISO aligned methods.</p>
+            <ul>
+              <li>Contextual threat and access planning</li>
+              <li>Crisis preparedness and continuity</li>
+              <li>Capacity building for field teams</li>
+            </ul>
+          </article>
+
+          <article class="card" data-tags="dlr">
+            <span class="badge">Pillar</span>
+            <h3>Digital Literacy and Resilience</h3>
+            <p class="sub">Strengthen resilience against disinformation, malign influence and cyber enabled threats through the Digital Navigator framework.</p>
+            <ul>
+              <li>AI powered content and influence mapping</li>
+              <li>Media literacy and cognitive resilience training</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <b>Our Advantage</b>
+          <ul>
+            <li>Data driven across all services</li>
+            <li>Empirical methods rooted in ISO 31000, INSSA, PESTELS and CARVER</li>
+            <li>Integration of traditional risk management and digital resilience</li>
+		<li>Leveraging advancements in AI integration technologies</li>
+            <li>Affordable and high quality intelligence for NGOs, SMEs and global firms</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="csrf">
+      <div class="container">
+        <h2>Conflict Systems Research Framework</h2>
+        <p class="sub">A layered architecture that fuses standards, analytic tools, conflict field frameworks and behavioral insights into a cohesive system.</p>
+
+        <div class="accordion" id="acc">
+          <div class="acc-item">
+  <button class="acc-btn" type="button">Layer 1. Standards and Competencies (Governance Spine)</button>
+  <div class="acc-panel">
+    <p>This layer anchors the framework in internationally recognized standards and professional competencies. It ensures that all analysis and recommendations are legitimate, defensible, and aligned with duty of care obligations.</p>
+
+    <h4>ISO 31000 Risk Management</h4>
+    <p>ISO 31000 provides globally recognized principles and processes for risk management. We apply its guidelines to ensure consistency, transparency, and continuous improvement in all assessments and decision-making processes.</p>
+
+    <h4>INSSA Core Competencies</h4>
+    <p>The International NGO Safety and Security Association (INSSA) defines the professional competencies required for effective security risk management in humanitarian and development contexts. By aligning with INSSA, we ensure that staff skills, organizational systems, and governance structures meet international best practice.</p>
+
+    <h4>CC-Security Risk Management (CC-SRM)</h4>
+    <p>This competency framework, developed for humanitarian operations, integrates duty of care with operational realities in fragile and conflict-affected environments. It emphasizes practical application of standards in high-risk contexts where staff safety and organizational reputation are at stake.</p>
+
+    <h4>Integrating Standards and Competencies</h4>
+    <p>These frameworks form the governance spine of the CSRF. By embedding ISO, INSSA, and CC-SRM principles, we ensure that risk management is not only methodologically sound but also accountable, ethical, and aligned with donor and stakeholder expectations.</p>
+
+    <h4>Decision Outputs</h4>
+    <ul>
+      <li>Risk management processes that comply with international standards.</li>
+      <li>Competency-based training and guidance for staff and partners.</li>
+      <li>Governance structures that reinforce duty of care and accountability.</li>
+      <li>Clear audit trails that satisfy donor, board, and partner requirements.</li>
+    </ul>
+
+    <p><strong>Outcome for clients:</strong> a standards-driven foundation that legitimizes analysis, strengthens governance, and ensures compliance with international duty of care obligations.</p>
+  </div>
+</div>
+
+          <div class="acc-item">
+  <button class="acc-btn" type="button">Layer 2. Context & Systems Diagnosis</button>
+  <div class="acc-panel">
+    <p>In this layer, we assess the broader environment and systemic resilience factors that shape risks, opportunities, and stability. We use internationally recognized frameworks to ensure that no critical driver is overlooked.</p>
+
+    <h4>PESTELS Framework</h4>
+    <p>PESTELS expands analysis across seven dimensions of the operating environment:</p>
+    <ul>
+      <li><strong>Political</strong> – governance, institutions, leadership, and policy direction.</li>
+      <li><strong>Economic</strong> – growth, trade, employment, financial stability.</li>
+      <li><strong>Social</strong> – demographics, inequality, education, health, and social cohesion.</li>
+      <li><strong>Technological</strong> – digital transformation, cyber risks, innovation.</li>
+      <li><strong>Environmental</strong> – climate, natural resources, disasters, sustainability.</li>
+      <li><strong>Legal</strong> – rule of law, human rights, regulatory frameworks.</li>
+      <li><strong>Security</strong> – threats, conflict, terrorism, crime, and resilience capacity.</li>
+    </ul>
+    <p>This structured lens ensures that political and security analysis is grounded in the wider system context.</p>
+
+    <h4>Positive Peace Framework (Institute for Economics & Peace)</h4>
+    <p>Positive Peace identifies the attitudes, institutions, and structures that build and sustain peaceful societies. The eight pillars are:</p>
+    <ol>
+      <li><strong>Well-functioning Government</strong></li>
+      <li><strong>Sound Business Environment</strong></li>
+      <li><strong>Equitable Distribution of Resources</strong></li>
+      <li><strong>Acceptance of the Rights of Others</strong></li>
+      <li><strong>Good Relations with Neighbors</strong></li>
+      <li><strong>Free Flow of Information</strong></li>
+      <li><strong>High Levels of Human Capital</strong></li>
+      <li><strong>Low Levels of Corruption</strong></li>
+    </ol>
+    <p>These pillars serve as both diagnostics and benchmarks, highlighting systemic strengths and weaknesses across societies.</p>
+
+    <h4>HALO Systems Thinking (IEP)</h4>
+    <p>The HALO (Holistic Analytical Lens for Outcomes) model from the Institute for Economics & Peace applies systems thinking to Positive Peace. It recognizes that the eight pillars are interdependent and mutually reinforcing — changes in one pillar affect others, sometimes in unexpected ways. By mapping these interactions, HALO helps identify leverage points where interventions will have the greatest long-term impact.</p>
+
+    <p><strong>Outcome for clients:</strong> a holistic understanding of context, resilience factors, and systemic risks that enables smarter planning, more resilient programs, and improved foresight into conflict and peace dynamics.</p>
+  </div>
+</div>
+          <div class="acc-item">
+  <button class="acc-btn" type="button">Layer 3. Targeted Risk and Vulnerability Analysis</button>
+  <div class="acc-panel">
+    <p>This layer translates context into prioritized, decision ready risks. We combine a structured, threat aware scoring model with bias resistant analytic techniques to identify what is most at risk, why it is vulnerable, and which interventions will have the greatest impact.</p>
+
+    <h4>CARVER Method</h4>
+    <p>CARVER is a quantitative model that prioritizes targets, assets, and vulnerabilities that can be adapted for any risk assessment scenario. We integrate CARVER with the ISO 31000 compliant risk matrix to evaluate likelihood and impact. Each factor is scored and combined to create a ranked risk profile. This ranking process allows decision-makers to clearly see where resources, mitigation, and monitoring should be focused for the greatest risk reduction.</p>
+    <ul>
+      <li><strong>Criticality</strong> - how essential the asset or function is to operations or mission success.</li>
+      <li><strong>Accessibility</strong> - how easily an adversary can reach or affect the target.</li>
+      <li><strong>Recuperability</strong> - how quickly capability can be restored after disruption.</li>
+      <li><strong>Vulnerability</strong> - how susceptible the target is to specific attack modes or hazards.</li>
+      <li><strong>Effect</strong> - magnitude and scope of impact if compromised.</li>
+      <li><strong>Recognizability</strong> - how easy it is to identify and locate the target in the real world.</li>
+    </ul>
+    <p><strong>How we apply CARVER</strong>: define assets and processes, map plausible threat modes, score each factor on a consistent scale, apply weights aligned to mission priorities, then visualize results in a ranked register and heat map. This yields clear, defensible priorities for mitigation and protection.</p>
+
+    <h4>Structured Analytic Techniques</h4>
+    <p>To reduce bias and increase traceability, we apply SATs alongside CARVER. Techniques are selected to match the decision problem and available evidence.</p>
+    <ul>
+      <li><strong>Key Assumptions Check</strong> - surfaces and tests the assumptions that drive risk estimates.</li>
+      <li><strong>Analysis of Competing Hypotheses</strong> - evaluates multiple explanations against the evidence to avoid confirmation bias.</li>
+      <li><strong>Indicators and Signposts</strong> - defines early warning indicators and decision thresholds for ongoing monitoring.</li>
+      <li><strong>Scenario Analysis and Cone of Plausibility</strong> - explores credible futures to stress test plans and contingencies.</li>
+      <li><strong>Red Team and Pre mortem</strong> - challenges plans from an adversary viewpoint and identifies failure modes before they occur.</li>
+    </ul>
+
+    <h4>Decision Outputs</h4>
+    <ul>
+      <li>Prioritized risk and vulnerability register mapped to assets, locations, and processes.</li>
+      <li>Targeted mitigation options with cost, feasibility, and expected risk reduction.</li>
+      <li>Early warning indicators and triggers for escalation or contingency activation.</li>
+      <li>Clear audit trail of evidence, assumptions, and methods to support donor and governance requirements.</li>
+    </ul>
+
+    <p><strong>Outcome for clients:</strong> a defensible, ranked picture of what matters most, where it is most vulnerable, and which actions will measurably reduce risk.</p>
+  </div>
+</div>
+
+<div class="acc-item">
+  <button class="acc-btn" type="button">Layer 4. Conflict Drivers and Dynamics</button>
+  <div class="acc-panel">
+    <p>This layer examines the underlying causes, triggers, and dynamics of conflict. By combining internationally recognized frameworks, we ensure analysis is systematic, comparable, and aligned with donor standards.</p>
+
+    <h4>Conflict Assessment Framework (CAF 2.0)</h4>
+    <p>CAF provides a structured approach to identify root causes, proximate drivers, and conflict triggers. It helps map how grievances, capacity, and opportunities interact to sustain or reduce violence.</p>
+
+    <h4>UN Conflict Analysis Practice Note</h4>
+    <p>The UN framework emphasizes “do no harm” principles and integrates cross-cutting issues such as human rights, gender, and inclusion. It enables a shared language across international, governmental, and NGO stakeholders.</p>
+
+    <h4>Conflict Assessment System Tool (CAST)</h4>
+    <p>Developed by the Fund for Peace, CAST is a quantitative and qualitative tool that measures a state’s vulnerability to conflict and fragility. It triangulates three data streams — quantitative datasets, media/content analysis, and expert assessments — to score twelve risk indicators grouped into four categories: Cohesion, Economic, Political, and Social. CAST underpins the annual Fragile States Index and provides early-warning insights used by governments, multilaterals, NGOs, and private sector actors.</p>
+
+    <h4>Integrating Frameworks</h4>
+    <p>By combining CAF, UN, and CAST, we create a conflict systems map that captures structural causes, immediate triggers, fragility scores, and feedback loops. This integration produces a robust diagnostic that balances qualitative insights with quantitative measures.</p>
+
+    <h4>Decision Outputs</h4>
+    <ul>
+      <li>System maps that visualize conflict drivers, actors, triggers, and fragility indicators.</li>
+      <li>Identification of resilience factors that can reduce risks and promote stability.</li>
+      <li>Shared analytical baselines that support donor reporting and cross-agency coordination.</li>
+      <li>Evidence-based recommendations for program design, policy engagement, and early warning.</li>
+    </ul>
+
+    <p><strong>Outcome for clients:</strong> a clear and measurable understanding of the causes and dynamics of conflict, grounded in internationally accepted frameworks, that informs more effective strategies and interventions.</p>
+  </div>
+</div>
+
+          <div class="acc-item">
+  <button class="acc-btn" type="button">Layer 5. Strategic Interaction and Influence</button>
+  <div class="acc-panel">
+    <p>We use strategic interaction theories and frameworks to analyze the dynamic relationships between actors and stakeholders in complex contexts. This helps us anticipate how decisions, signals, and behaviors influence one another in conflict and security environments.</p>
+    <p><strong>Outcome for clients:</strong> clear insight into negotiation dynamics, power plays, and influence pathways that shape risks and opportunities.</p>
+  </div>
+</div>
+
+          <div class="acc-item">
+  <button class="acc-btn" type="button">Layer 6. Operationalization and Adaptive Response</button>
+  <div class="acc-panel">
+    <p>This layer moves analysis into action. We translate insights into practical security, crisis, and resilience measures that can be adapted as conditions evolve. Our focus is on preparedness, adaptability, and continuous learning.</p>
+
+    <h4>OODA Loop</h4>
+    <p>We apply the Observe–Orient–Decide–Act cycle to help organizations adapt quickly in complex and fast-changing environments. By shortening the decision cycle and embedding continuous feedback, leaders can stay ahead of emerging risks.</p>
+
+    <h4>Crisis & Contingency Planning</h4>
+    <p>We design plans and playbooks that cover prevention, preparedness, response, and recovery. This ensures that organizations are ready for high-impact, low-probability events while maintaining operational continuity during day-to-day disruptions.</p>
+
+    <h4>Monitoring, Evaluation, and Learning (MEL)</h4>
+    <p>We integrate MEL frameworks so that every intervention generates lessons learned. This creates a feedback loop that strengthens resilience, informs strategy, and supports donor and governance reporting requirements.</p>
+
+    <h4>Decision Outputs</h4>
+    <ul>
+      <li>Adaptive decision-making cycles with clear triggers and thresholds for action.</li>
+      <li>Practical contingency and crisis management plans aligned to international standards.</li>
+      <li>Training and exercises to validate readiness and build staff confidence.</li>
+      <li>Embedded learning systems that continuously improve resilience over time.</li>
+    </ul>
+
+    <p><strong>Outcome for clients:</strong> a tested and adaptable resilience framework that allows organizations to respond effectively under pressure, recover quickly, and continuously strengthen their ability to operate in volatile environments.</p>
+  </div>
+</div>
+
+        <div class="card" style="margin-top:16px;">
+          <b>Why the CSRF works</b>
+          <ul>
+            <li>Holistic across environment, actors, vulnerabilities and behavior</li>
+            <li>Multi scalar from site to state and donor systems</li>
+            <li>Credible and aligned with ISO, INSSA, CAF and UN standards</li>
+            <li>Adaptive using OODA and MEL for change over time</li>
+            <li>Integrative bridging quant models with qualitative systems thinking</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="container contact">
+        <div>
+          <h2>Contact</h2>
+          <p class="sub">Ready to scope a project or request a workshop. Send us a note and we will reply promptly.</p>
+          <form id="contactForm" action="mailto:ai_consultant@mnshakoor.com" method="post" enctype="text/plain">
+            <input type="text" name="name" placeholder="Your name" required />
+            <input type="email" name="email" placeholder="Your email" required />
+            <textarea name="message" placeholder="Tell us about your needs" required></textarea>
+            <div style="display:flex; gap:10px;">
+              <button class="btn primary" type="submit">Send</button>
+              <a class="btn" href="https://linktr.ee/mnshakoor" target="_blank" rel="noopener">Linktree</a>
+            </div>
+          </form>
+        </div>
+        <aside class="card">
+          <b>Quick links</b>
+          <ul>
+            <li><a href="https://mnshakoor.com" target="_blank" rel="noopener">Website</a></li>
+            <li><a href="https://global.arac-international.org" target="_blank" rel="noopener">ARAC International</a></li>
+            <li><a href="https://www.linkedin.com/in/mnurishakoor/" target="_blank" rel="noopener">LinkedIn</a></li>
+            <li>Emails: ai_consultant@mnshakoor.com • nshakoor@arac-international.org</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div>Quanta Analytica: Simplifying Complexity. Empowering Decisions.</div>
+      <div style="font-size:12px; margin-top:6px;">© <span id="year"></span> Quanta Analytica MNS Consulting</div>
+    </div>
+  </footer>
+
+  <button id="toTop" aria-label="Back to top">↑ Top</button>
+
+  <script>
+    // Smooth scroll and active nav
+    const sections = [...document.querySelectorAll('main section')];
+    const navLinks = [...document.querySelectorAll('nav a')];
+    const mobile = document.getElementById('mobile');
+    const menuBtn = document.getElementById('openMenu');
+    const themeBtn = document.getElementById('themeBtn');
+    const toTop = document.getElementById('toTop');
+
+    function setActive() {
+      const y = window.scrollY + 120;
+      for (const link of navLinks) link.classList.remove('active');
+      for (const sec of sections) {
+        const rect = sec.getBoundingClientRect();
+        const top = window.scrollY + rect.top;
+        if (y >= top && y < top + rect.height) {
+          const id = '#' + sec.id;
+          const active = navLinks.find(a => a.getAttribute('href') === id);
+          if (active) active.classList.add('active');
+        }
+      }
+      toTop.style.display = window.scrollY > 600 ? 'inline-flex' : 'none';
+    }
+    window.addEventListener('scroll', setActive);
+    window.addEventListener('load', setActive);
+
+    // Mobile menu
+    menuBtn?.addEventListener('click', () => {
+      const hidden = mobile.hasAttribute('hidden');
+      if (hidden) { mobile.removeAttribute('hidden'); menuBtn.setAttribute('aria-expanded', 'true'); }
+      else { mobile.setAttribute('hidden', ''); menuBtn.setAttribute('aria-expanded', 'false'); }
+    });
+
+    // Accordion
+    document.getElementById('acc')?.addEventListener('click', e => {
+      const btn = e.target.closest('.acc-btn');
+      if (!btn) return;
+      btn.classList.toggle('active');
+      const panel = btn.nextElementSibling;
+      panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+    });
+
+    // Filters
+    const cards = [...document.querySelectorAll('#cards .card')];
+    document.querySelectorAll('[data-filter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tag = btn.getAttribute('data-filter');
+        cards.forEach(c => {
+          const show = tag === 'all' || c.dataset.tags.includes(tag);
+          c.style.display = show ? 'block' : 'none';
+        });
+      });
+    });
+
+    // Theme toggle
+    const DARK = {bg:'#0c0f12', text:'#e8ecef'};
+    const LIGHT = {bg:'#f6f7f8', text:'#0c0f12'};
+    themeBtn?.addEventListener('click', () => {
+      const isDark = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() === DARK.bg;
+      document.documentElement.style.setProperty('--bg', isDark ? LIGHT.bg : DARK.bg);
+      document.documentElement.style.setProperty('--bg-soft', isDark ? '#ffffff' : '#12161b');
+      document.documentElement.style.setProperty('--card', isDark ? '#ffffff' : '#151b22');
+      document.documentElement.style.setProperty('--text', isDark ? LIGHT.text : DARK.text);
+      document.documentElement.style.setProperty('--muted', isDark ? '#495057' : '#a7b1bb');
+      document.documentElement.style.setProperty('--border', isDark ? '#dde2e7' : '#26313c');
+    });
+
+    // Back to top
+    toTop.addEventListener('click', () => window.scrollTo({top: 0, behavior: 'smooth'}));
+
+    // Footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Simple analytics stub
+    function track(event, data) {
+      console.log('[analytics]', event, data || {});
+    }
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('click', () => track('click', {text: el.textContent?.trim()}));
+    });
+  </script>
+</body>
+</html>
