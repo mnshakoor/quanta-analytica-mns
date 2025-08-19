@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PACER Document Extraction Worksheet</title>
+  <style>
+    :root{
+      --bg:#0f1220;
+      --panel:#151935;
+      --text:#e8ebf7;
+      --muted:#a9b1d6;
+      --accent:#7aa2f7;
+      --accent-2:#9ece6a;
+      --danger:#f7768e;
+      --warn:#e0af68;
+      --ok:#2ac3de;
+      --border:#23284a;
+      --chip:#1c2145;
+    }
+    [data-theme="light"]{
+      --bg:#f7f8fc;
+      --panel:#ffffff;
+      --text:#111322;
+      --muted:#47507a;
+      --accent:#2457ff;
+      --accent-2:#198754;
+      --danger:#c22c4e;
+      --warn:#a46a00;
+      --ok:#007b8f;
+      --border:#e5e7f3;
+      --chip:#eef1fb;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",sans-serif;
+      line-height:1.4;
+    }
+    header{
+      position:sticky; top:0; z-index:10;
+      background:linear-gradient(180deg,var(--panel),rgba(0,0,0,0));
+      backdrop-filter:saturate(1.2) blur(6px);
+      border-bottom:1px solid var(--border);
+      padding:10px 16px;
+      display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    }
+    .title{font-weight:700; font-size:18px; letter-spacing:.2px}
+    .meta{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+    .meta input{
+      background:var(--panel); color:var(--text);
+      border:1px solid var(--border); border-radius:10px; padding:8px 10px; min-width:160px;
+    }
+    .btn{
+      background:var(--accent); color:white; border:0; border-radius:12px; padding:10px 14px; cursor:pointer;
+      font-weight:600; letter-spacing:.2px;
+    }
+    .btn.secondary{ background:transparent; color:var(--text); border:1px solid var(--border)}
+    .btn.ghost{ background:transparent; color:var(--muted)}
+    .btn.warn{ background:var(--warn); color:#fff}
+    .btn.ok{ background:var(--accent-2); color:#fff}
+    .btnRow{display:flex; gap:8px; flex-wrap:wrap}
+    .wrap{display:grid; grid-template-columns:280px 1fr 360px; gap:12px; padding:12px; align-items:start}
+    aside, main, .right{
+      background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:12px;
+      box-shadow:0 6px 30px rgba(0,0,0,.15);
+    }
+    h2{font-size:16px; margin:.2rem 0 8px}
+    p, small{color:var(--muted)}
+    .legend{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+    .chip{
+      display:flex; align-items:center; gap:8px; padding:8px; border:1px solid var(--border); border-radius:12px;
+      background:var(--chip); font-weight:600; color:var(--text)
+    }
+    .pill{display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:8px; font-weight:800; font-size:12px}
+    .P{background:#845ef7; color:#fff}
+    .A{background:#e879f9; color:#fff}
+    .C{background:#22c55e; color:#fff}
+    .E{background:#0ea5e9; color:#fff}
+    .R{background:#f59e0b; color:#fff}
+    .tagBtns{display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-top:10px}
+    .tagBtns button{border:1px solid var(--border); background:var(--chip); color:var(--text); padding:10px; border-radius:12px; cursor:pointer; font-weight:700}
+    .tagBtns button:hover{filter:brightness(1.05)}
+    .doc{
+      min-height:360px; max-height:60vh; overflow:auto; border:1px dashed var(--border); border-radius:12px; padding:12px;
+      line-height:1.6; background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.03));
+    }
+    .doc:focus{outline:2px solid var(--accent)}
+    mark.highlight{
+      padding:2px 4px; border-radius:6px; font-weight:600; cursor:pointer;
+    }
+    mark.P{background:rgba(132,94,247,.25)}
+    mark.A{background:rgba(232,121,249,.25)}
+    mark.C{background:rgba(34,197,94,.25)}
+    mark.E{background:rgba(14,165,233,.25)}
+    mark.R{background:rgba(245,158,11,.25)}
+    .hlList{display:flex; flex-direction:column; gap:8px; max-height:30vh; overflow:auto; border-top:1px dashed var(--border); margin-top:10px; padding-top:10px}
+    .hlItem{display:flex; gap:8px; padding:8px; border:1px solid var(--border); border-radius:12px; background:var(--chip); cursor:pointer}
+    .hlItem:hover{filter:brightness(1.05)}
+    .hlText{color:var(--text); white-space:nowrap; text-overflow:ellipsis; overflow:hidden}
+    .right form{display:flex; flex-direction:column; gap:10px}
+    .field{display:flex; flex-direction:column; gap:6px}
+    .field input, .field textarea, .field select{
+      background:transparent; color:var(--text);
+      border:1px solid var(--border); border-radius:10px; padding:8px 10px; width:100%; resize:vertical;
+    }
+    .split{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+    table{width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius:12px; border:1px solid var(--border)}
+    thead th{position:sticky; top:0; background:var(--chip); padding:10px; text-align:left; font-size:13px; border-bottom:1px solid var(--border)}
+    tbody td{padding:10px; border-bottom:1px solid var(--border); vertical-align:top}
+    tbody tr:last-child td{border-bottom:0}
+    tbody td[contenteditable]{background:rgba(0,0,0,.05)}
+    .footer{
+      margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end
+    }
+    .switch{
+      border:1px solid var(--border); background:var(--chip); border-radius:999px; padding:6px 10px; cursor:pointer; font-weight:700;
+    }
+    @media (max-width:1100px){
+      .wrap{grid-template-columns:1fr; }
+      .doc{max-height:none}
+    }
+  </style>
+</head>
+<body data-theme="dark">
+  <header>
+    <div class="title">PACER Document Extraction Worksheet</div>
+    <div class="meta">
+      <input id="docTitle" placeholder="Document title">
+      <input id="docDate" type="date">
+      <input id="docSource" placeholder="Source or link">
+    </div>
+    <div class="btnRow" style="margin-left:auto">
+      <button id="themeToggle" class="switch" title="Toggle theme">Theme: Dark</button>
+      <button id="btnExportJSON" class="btn">Export JSON</button>
+      <button id="btnExportCSV" class="btn secondary">Export CSV</button>
+      <button id="btnPrint" class="btn ghost">Print</button>
+      <button id="btnReset" class="btn warn">Clear State</button>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <aside>
+      <h2>1) PACER quick tags</h2>
+      <p>Select text in the document, then click a tag to highlight and capture it.</p>
+      <div class="legend">
+        <div class="chip"><span class="pill P">P</span> Procedural</div>
+        <div class="chip"><span class="pill A">A</span> Analogous</div>
+        <div class="chip"><span class="pill C">C</span> Conceptual</div>
+        <div class="chip"><span class="pill E">E</span> Evidence</div>
+        <div class="chip"><span class="pill R">R</span> Reference</div>
+      </div>
+      <div class="tagBtns">
+        <button data-tag="P">Tag P</button>
+        <button data-tag="A">Tag A</button>
+        <button data-tag="C">Tag C</button>
+        <button data-tag="E">Tag E</button>
+        <button data-tag="R">Tag R</button>
+      </div>
+
+      <h2 style="margin-top:12px">Highlights</h2>
+      <div id="hlList" class="hlList" aria-live="polite"></div>
+    </aside>
+
+    <main>
+      <h2>2) Paste the document then tag selections</h2>
+      <p>Tip: keep formatting simple. For long PDFs, paste text blocks per section.</p>
+      <div id="doc" class="doc" contenteditable="true" spellcheck="true" aria-label="Paste your document here"></div>
+
+      <h2 style="margin-top:12px">4) Key Insights Table</h2>
+      <div class="btnRow" style="margin-bottom:6px">
+        <button id="btnAddInsight" class="btn ok">Add from current extraction</button>
+        <button id="btnAddEmpty" class="btn secondary">Add empty row</button>
+      </div>
+      <div class="tableWrap">
+        <table id="insightsTable">
+          <thead>
+            <tr>
+              <th style="width:64px">Type</th>
+              <th>Item</th>
+              <th>Why it matters</th>
+              <th>Implications</th>
+              <th style="width:110px">Confidence</th>
+              <th style="width:140px">Source ref</th>
+              <th style="width:40px"></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="footer">
+        <small>Use Print to save a PDF. Data auto-saves to your browser.</small>
+      </div>
+    </main>
+
+    <section class="right">
+      <h2>3) Extraction fields</h2>
+      <p>Click a highlight or tag new text to load fields for that item.</p>
+      <form id="extractForm">
+        <div class="split">
+          <div class="field">
+            <label>Type</label>
+            <select id="exType">
+              <option value="P">Procedural</option>
+              <option value="A">Analogous</option>
+              <option value="C">Conceptual</option>
+              <option value="E">Evidence</option>
+              <option value="R">Reference</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Source ref (page or link)</label>
+            <input id="exSourceRef" placeholder="p.3 or URL">
+          </div>
+        </div>
+        <div class="field">
+          <label>Item title</label>
+          <input id="exItem" placeholder="Short handle for this extraction">
+        </div>
+        <div id="dynamicFields"></div>
+        <div class="split">
+          <div class="field">
+            <label>Why it matters</label>
+            <textarea id="exWhy" rows="2" placeholder="Decision relevance"></textarea>
+          </div>
+          <div class="field">
+            <label>Implications</label>
+            <textarea id="exImp" rows="2" placeholder="What changes or actions follow"></textarea>
+          </div>
+        </div>
+        <div class="split">
+          <div class="field">
+            <label>Confidence</label>
+            <select id="exConf">
+              <option>High</option>
+              <option>Medium</option>
+              <option>Low</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Linked claim (optional)</label>
+            <input id="exClaim" placeholder="Concept or claim supported">
+          </div>
+        </div>
+        <div class="btnRow">
+          <button type="button" id="btnSaveExtraction" class="btn ok">Save extraction</button>
+          <button type="button" id="btnRemoveExtraction" class="btn secondary">Detach highlight</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <script>
+    // State
+    const state = {
+      meta:{ title:"", date:"", source:"" },
+      highlights:[], // {id, type, text, sourceRef, item, fields, why, imp, conf, claim}
+      insights:[] // rows from the table
+    };
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => Array.from(document.querySelectorAll(sel));
+    const docEl = $("#doc");
+    const hlList = $("#hlList");
+    const form = $("#extractForm");
+    const dynamicFields = $("#dynamicFields");
+    let currentHL = null;
+
+    // Theme
+    const themeToggle = $("#themeToggle");
+    function setTheme(mode){
+      document.body.setAttribute("data-theme", mode);
+      themeToggle.textContent = "Theme: " + (mode === "dark" ? "Dark" : "Light");
+      localStorage.setItem("pacer_theme", mode);
+    }
+    themeToggle.addEventListener("click", ()=>{
+      const cur = document.body.getAttribute("data-theme");
+      setTheme(cur === "dark" ? "light" : "dark");
+    });
+    setTheme(localStorage.getItem("pacer_theme") || "dark");
+
+    // Helpers
+    function uid(){ return "h" + Math.random().toString(36).slice(2) + Date.now().toString(36) }
+    function getSelectionHtml(){
+      const sel = window.getSelection();
+      if(!sel || sel.rangeCount === 0) return null;
+      const range = sel.getRangeAt(0);
+      if(!docEl.contains(range.commonAncestorContainer)) return null;
+      const frag = range.cloneContents();
+      const div = document.createElement("div");
+      div.appendChild(frag);
+      const text = div.textContent.trim();
+      if(!text) return null;
+      return {range, text};
+    }
+
+    function wrapSelectionWithMark(tag){
+      const sel = getSelectionHtml();
+      if(!sel) { alert("Select text in the document first"); return; }
+      const id = uid();
+      const mark = document.createElement("mark");
+      mark.className = "highlight " + tag;
+      mark.dataset.id = id;
+      mark.dataset.type = tag;
+      try{
+        const frag = sel.range.extractContents();
+        mark.appendChild(frag);
+        sel.range.insertNode(mark);
+      }catch(e){
+        alert("Could not tag this selection. Try a simpler selection within one paragraph.");
+        return;
+      }
+      const text = mark.textContent.trim();
+      const hl = { id, type:tag, text, sourceRef:"", item:"", fields:{}, why:"", imp:"", conf:"Medium", claim:"" };
+      state.highlights.push(hl);
+      renderHighlights();
+      selectHighlight(id);
+      save();
+    }
+
+    // Tag buttons
+    $$(".tagBtns button").forEach(b=>{
+      b.addEventListener("click", ()=> wrapSelectionWithMark(b.dataset.tag));
+    });
+
+    // Highlights list
+    function renderHighlights(){
+      hlList.innerHTML = "";
+      state.highlights.forEach(h=>{
+        const div = document.createElement("div");
+        div.className = "hlItem";
+        div.dataset.id = h.id;
+        div.innerHTML = \`
+          <span class="pill \${h.type}">\${h.type}</span>
+          <div class="hlText">\${h.text}</div>
+        \`;
+        div.addEventListener("click", ()=> selectHighlight(h.id));
+        hlList.appendChild(div);
+      });
+    }
+
+    function selectHighlight(id){
+      currentHL = state.highlights.find(x=>x.id===id) || null;
+      // find in doc to scroll into view
+      const mark = docEl.querySelector('mark.highlight[data-id="'+id+'"]');
+      if(mark){ mark.scrollIntoView({block:"center", behavior:"smooth"}); }
+      loadForm(currentHL);
+    }
+
+    // Form dynamic fields by type
+    const fieldSets = {
+      P:[
+        ["procedure_name","Procedure name"],
+        ["trigger","Trigger"],
+        ["inputs","Inputs"],
+        ["steps","Steps (numbered)","textarea"],
+        ["controls_and_checks","Controls and checks","textarea"],
+        ["failure_modes","Failure modes","textarea"],
+        ["owner_or_role","Owner or role"],
+        ["next_action","Next action"]
+      ],
+      A:[
+        ["anchor_model","Anchor model"],
+        ["new_model","New model"],
+        ["similarities","Similarities","textarea"],
+        ["differences","Differences","textarea"],
+        ["limits_of_analogy","Limits","textarea"],
+        ["transfer_rule","Transfer rule"]
+      ],
+      C:[
+        ["core_claim","Core claim"],
+        ["mechanism_or_causal_chain","Mechanism or causal chain","textarea"],
+        ["assumptions","Assumptions","textarea"],
+        ["dependencies","Dependencies","textarea"],
+        ["contrasting_case","Contrasting case","textarea"],
+        ["decision_relevance","Decision relevance","textarea"]
+      ],
+      E:[
+        ["claim_supported","Claim supported"],
+        ["datum","Datum"],
+        ["method_or_source_context","Method or source context","textarea"],
+        ["timestamp_or_period","Timestamp or period"],
+        ["quality_rating","Quality rating (High, Medium, Low)"],
+        ["link_or_citation","Link or citation"],
+        ["how_to_use","How to use","textarea"]
+      ],
+      R:[
+        ["entity_or_term","Entity or term"],
+        ["definition_or_identifier","Definition or identifier","textarea"],
+        ["where_to_find_again","Where to find again"],
+        ["card_question","Card question"],
+        ["card_answer","Card answer","textarea"]
+      ]
+    };
+
+    function buildFields(type, data={}){
+      dynamicFields.innerHTML = "";
+      const set = fieldSets[type] || [];
+      set.forEach(([key,label,kind])=>{
+        const wrap = document.createElement("div"); wrap.className = "field";
+        const id = "f_" + key;
+        const lab = document.createElement("label"); lab.textContent = label; lab.htmlFor = id;
+        let input;
+        if(kind === "textarea"){
+          input = document.createElement("textarea"); input.rows = 2;
+        }else{
+          input = document.createElement("input");
+        }
+        input.id = id;
+        input.value = data[key] || "";
+        input.addEventListener("input", ()=>{ if(currentHL){ currentHL.fields[key] = input.value; save(); }});
+        wrap.appendChild(lab); wrap.appendChild(input);
+        dynamicFields.appendChild(wrap);
+      });
+    }
+
+    function loadForm(h){
+      if(!h){
+        $("#exType").value = "P";
+        $("#exSourceRef").value = "";
+        $("#exItem").value = "";
+        $("#exWhy").value = "";
+        $("#exImp").value = "";
+        $("#exConf").value = "Medium";
+        $("#exClaim").value = "";
+        buildFields("P", {});
+        return;
+      }
+      $("#exType").value = h.type;
+      $("#exSourceRef").value = h.sourceRef || "";
+      $("#exItem").value = h.item || "";
+      $("#exWhy").value = h.why || "";
+      $("#exImp").value = h.imp || "";
+      $("#exConf").value = h.conf || "Medium";
+      $("#exClaim").value = h.claim || "";
+      buildFields(h.type, h.fields || {});
+    }
+
+    // Change type selector updates fields
+    $("#exType").addEventListener("change", e=>{
+      if(currentHL){ currentHL.type = e.target.value; updateMarkType(currentHL.id, currentHL.type); }
+      buildFields(e.target.value, currentHL ? currentHL.fields : {});
+      save();
+    });
+
+    function updateMarkType(id, type){
+      const mark = docEl.querySelector('mark.highlight[data-id="'+id+'"]');
+      if(mark){
+        mark.dataset.type = type;
+        mark.className = "highlight " + type;
+      }
+      renderHighlights();
+    }
+
+    // Save extraction
+    $("#btnSaveExtraction").addEventListener("click", ()=>{
+      if(!currentHL){ alert("Select or create a highlight first"); return; }
+      currentHL.sourceRef = $("#exSourceRef").value.trim();
+      currentHL.item = $("#exItem").value.trim() || currentHL.text.slice(0,80);
+      currentHL.why = $("#exWhy").value.trim();
+      currentHL.imp = $("#exImp").value.trim();
+      currentHL.conf = $("#exConf").value;
+      currentHL.claim = $("#exClaim").value.trim();
+      // dynamic fields already saved on input
+      renderHighlights();
+      save();
+      alert("Extraction saved");
+    });
+
+    // Detach highlight
+    $("#btnRemoveExtraction").addEventListener("click", ()=>{
+      if(!currentHL) return;
+      // remove mark in doc
+      const mark = docEl.querySelector('mark.highlight[data-id="'+currentHL.id+'"]');
+      if(mark){
+        const parent = mark.parentNode;
+        while(mark.firstChild) parent.insertBefore(mark.firstChild, mark);
+        parent.removeChild(mark);
+      }
+      state.highlights = state.highlights.filter(x=>x.id!==currentHL.id);
+      currentHL = null;
+      renderHighlights();
+      loadForm(null);
+      save();
+    });
+
+    // Add to insights
+    const insightsTable = $("#insightsTable").querySelector("tbody");
+    function addInsightRow(row){
+      const tr = document.createElement("tr");
+      tr.innerHTML = \`
+        <td contenteditable="true">\${row.type||""}</td>
+        <td contenteditable="true">\${row.item||""}</td>
+        <td contenteditable="true">\${row.why||""}</td>
+        <td contenteditable="true">\${row.imp||""}</td>
+        <td contenteditable="true">\${row.conf||"Medium"}</td>
+        <td contenteditable="true">\${row.sourceRef||""}</td>
+        <td><button class="btn ghost" title="Remove row">✕</button></td>
+      \`;
+      tr.querySelector("button").addEventListener("click", ()=>{
+        tr.remove(); save();
+      });
+      // Save on input
+      tr.querySelectorAll("[contenteditable]").forEach(td=>{
+        td.addEventListener("input", save);
+      });
+      insightsTable.appendChild(tr);
+    }
+
+    $("#btnAddInsight").addEventListener("click", ()=>{
+      if(!currentHL){ alert("Select or create a highlight first"); return; }
+      addInsightRow({
+        type: currentHL.type,
+        item: currentHL.item || currentHL.text.slice(0,80),
+        why: currentHL.why,
+        imp: currentHL.imp,
+        conf: currentHL.conf,
+        sourceRef: currentHL.sourceRef
+      });
+      save();
+    });
+    $("#btnAddEmpty").addEventListener("click", ()=> addInsightRow({}));
+
+    // Export JSON
+    $("#btnExportJSON").addEventListener("click", ()=>{
+      const data = buildExport();
+      const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      download(url, sanitize((state.meta.title||"pacer_export")) + ".json");
+    });
+
+    // Export CSV (insights only)
+    $("#btnExportCSV").addEventListener("click", ()=>{
+      const rows = readInsights();
+      const headers = ["Type","Item","Why it matters","Implications","Confidence","Source ref"];
+      const csv = [headers.join(",")].concat(rows.map(r=>[r.type,r.item,r.why,r.imp,r.conf,r.sourceRef].map(csvEscape).join(","))).join("\n");
+      const blob = new Blob([csv], {type:"text/csv"});
+      const url = URL.createObjectURL(blob);
+      download(url, sanitize((state.meta.title||"pacer_insights")) + ".csv");
+    });
+
+    function csvEscape(s=""){
+      s = String(s).replace(/"/g,'""');
+      if(/[",\n]/.test(s)) return '"' + s + '"';
+      return s;
+    }
+
+    function readInsights(){
+      const rows = [];
+      insightsTable.querySelectorAll("tr").forEach(tr=>{
+        const tds = tr.querySelectorAll("td");
+        rows.push({
+          type: tds[0].textContent.trim(),
+          item: tds[1].textContent.trim(),
+          why: tds[2].textContent.trim(),
+          imp: tds[3].textContent.trim(),
+          conf: tds[4].textContent.trim() || "Medium",
+          sourceRef: tds[5].textContent.trim()
+        });
+      });
+      return rows;
+    }
+
+    function buildExport(){
+      // sync meta
+      state.meta.title = $("#docTitle").value.trim();
+      state.meta.date = $("#docDate").value;
+      state.meta.source = $("#docSource").value.trim();
+      // insights
+      const insights = readInsights().map(r=>({
+        type:r.type || "",
+        item:r.item || "",
+        fields: findFieldsForItem(r.item, r.type),
+        why_it_matters:r.why || "",
+        implications:r.imp || "",
+        confidence:r.conf || "Medium",
+        source_ref:r.sourceRef || ""
+      }));
+      const data = {
+        doc_title: state.meta.title,
+        doc_date: state.meta.date,
+        source: state.meta.source,
+        insights
+      };
+      return data;
+    }
+
+    function findFieldsForItem(item, type){
+      // try to match by item or text
+      const h = state.highlights.find(h=> (h.item && h.item === item) || (!h.item && h.text.slice(0,80) === item.slice(0,80) && h.type===type));
+      return h ? h.fields : {};
+    }
+
+    function download(url, filename){
+      const a = document.createElement("a");
+      a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=> URL.revokeObjectURL(url), 2500);
+    }
+
+    function sanitize(name){
+      return name.replace(/[^\w\-]+/g,"_").slice(0,80);
+    }
+
+    // Print
+    $("#btnPrint").addEventListener("click", ()=> window.print());
+
+    // Meta inputs
+    $("#docTitle").addEventListener("input", save);
+    $("#docDate").addEventListener("change", save);
+    $("#docSource").addEventListener("input", save);
+    // Save document content
+    docEl.addEventListener("input", save);
+
+    // Persistence
+    function save(){
+      // build insights snapshot
+      const snapshot = {
+        meta:{
+          title: $("#docTitle").value.trim(),
+          date: $("#docDate").value,
+          source: $("#docSource").value.trim()
+        },
+        docHtml: docEl.innerHTML,
+        highlights: state.highlights,
+        insights: readInsights()
+      };
+      localStorage.setItem("pacer_state_v1", JSON.stringify(snapshot));
+    }
+
+    function load(){
+      const s = localStorage.getItem("pacer_state_v1");
+      if(!s) return;
+      try{
+        const snapshot = JSON.parse(s);
+        $("#docTitle").value = snapshot.meta.title || "";
+        $("#docDate").value = snapshot.meta.date || "";
+        $("#docSource").value = snapshot.meta.source || "";
+        docEl.innerHTML = snapshot.docHtml || "";
+        state.highlights = snapshot.highlights || [];
+        renderHighlights();
+        // Restore table
+        insightsTable.innerHTML = "";
+        (snapshot.insights || []).forEach(addInsightRow);
+      }catch(e){ console.warn("Failed to load saved state", e); }
+    }
+    load();
+
+    // Click on a mark to select its item
+    docEl.addEventListener("click", e=>{
+      const m = e.target.closest("mark.highlight");
+      if(m){ selectHighlight(m.dataset.id); }
+    });
+
+    // Clear state
+    $("#btnReset").addEventListener("click", ()=>{
+      if(!confirm("Clear highlights, insights, and document content")) return;
+      localStorage.removeItem("pacer_state_v1");
+      state.highlights = [];
+      insightsTable.innerHTML = "";
+      docEl.innerHTML = "";
+      renderHighlights();
+      loadForm(null);
+      save();
+    });
+  </script>
+</body>
+</html>
