@@ -3,13 +3,6 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Quanta Analytica Geo-Flashpoints & ReliefWeb News Aggregator: a tool for monitoring global flashpoints, humanitarian crises, and geopolitical events. Get the latest updates from humanitarian organizations, think tanks, and defense sources.">
-<meta name="keywords" content="geopolitical flashpoints, humanitarian crises, risk management, global security, news aggregator, ReliefWeb, Quanta Analytica, Lladner Business Solutions, ARAC International, international affairs, defense, intelligence">
-<meta name="author" content="M. Nuri Shakoor">
-<meta property="og:title" content="Quanta Analytica | Geo-Flashpoints & ReliefWeb News Aggregator">
-<meta property="og:description" content="A news aggregator for monitoring global flashpoints, humanitarian crises, and geopolitical events. Developed by M. Nuri Shakoor for Lladner Business Solutions.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://quanta-analytica.mnshakoor.com/resources/geo-flashpoints-news-aggregator.html">
   <title>Quanta Analytica | Flashpoints + ReliefWeb</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
@@ -163,7 +156,22 @@
 const BUILD_AT = new Date().toISOString();
 document.getElementById('build').textContent = 'Build ' + BUILD_AT.split('T')[0];
 
-const FEEDS = ["https://www.thenewhumanitarian.org/rss/all.xml", "https://theconversation.com/africa/articles.atom", "https://www.crisisgroup.org/rss/1", "https://news.un.org/feed/subscribe/en/news/region/africa/feed/rss.xml", "https://www.rand.org/pubs/articles.xml", "https://www.msf.org/rss/all", "https://www.africom.mil/syndication-feed/rss/press-releases", "https://travel.state.gov/_res/rss/TAsTWs.xml", "https://www.rusi.org/rss/latest-publications.xml", "https://www.google.com/alerts/feeds/09678322071861326813/15478561615984895730", "https://www.google.com/alerts/feeds/09678322071861326813/17729077320378208369", "https://www.google.com/alerts/feeds/09678322071861326813/10382831314055122160", "https://www.google.com/alerts/feeds/09678322071861326813/3724071121715750608", "https://www.google.com/alerts/feeds/09678322071861326813/16059299224477972089", "https://www.google.com/alerts/feeds/09678322071861326813/1198605801377290022", "https://www.google.com/alerts/feeds/09678322071861326813/3174126178415816884", "https://www.google.com/alerts/feeds/09678322071861326813/10778257038356429766", "https://www.google.com/alerts/feeds/09678322071861326813/13907740799062403631", "https://www.google.com/alerts/feeds/09678322071861326813/13583311032613923135", "https://www.google.com/alerts/feeds/09678322071861326813/3377241513725216927", "https://www.google.com/alerts/feeds/09678322071861326813/15536018237517902097", "https://www.google.com/alerts/feeds/09678322071861326813/6761969864493492596", "https://www.google.com/alerts/feeds/09678322071861326813/8525308065649173498", "https://www.google.com/alerts/feeds/09678322071861326813/9404830783107472102", "https://www.google.com/alerts/feeds/09678322071861326813/15223369397218074172", "https://www.google.com/alerts/feeds/09678322071861326813/13089685840883809940", "https://www.google.com/alerts/feeds/09678322071861326813/6461275839714976954", "https://www.google.com/alerts/feeds/09678322071861326813/1777354198294681489"];
+const FEEDS = ["https://www.thenewhumanitarian.org/rss/all.xml", "https://theconversation.com/africa/articles.atom", 
+"https://reliefweb.int/updates/rss.xml?advanced-search=%28C231_C75_C220_C149_C46_C49_C102_C69_C55_C164_C216_C174_C36_C208_C54_C87_C175%29",
+"https://www.crisisgroup.org/rss/1", "https://news.un.org/feed/subscribe/en/news/region/africa/feed/rss.xml", "https://www.rand.org/pubs/articles.xml", "https://www.msf.org/rss/all", "https://www.africom.mil/syndication-feed/rss/press-releases", "https://travel.state.gov/_res/rss/TAsTWs.xml", "https://www.rusi.org/rss/latest-publications.xml", 
+"https://www.nato.int/cps/rss/en/natohq/rssFeed.xsl/rssFeed.xml",
+"https://www.bellingcat.com/feed/",
+"https://www.icij.org/feed/",
+"https://reliefweb.int/updates/rss.xml",
+"https://www.unodc.org/unodc/feed/stories.xml",
+"https://www.gdacs.org/xml/rss.xml",
+"https://www.unodc.org/unodc/feed/press-releases.xml",
+"https://reliefweb.int/updates/rss.xml?view=headlines",
+"https://www.unodc.org/unodc/feed/publications.xml",
+"https://www.chathamhouse.org/path/news-releases.xml",
+"https://www.cisa.gov/cybersecurity-advisories/all.xml",
+"https://www.defense.gov/DesktopModules/ArticleCS/RSS.ashx?ContentType=2&Site=945&max=10",
+"https://www.google.com/alerts/feeds/09678322071861326813/15478561615984895730", "https://www.google.com/alerts/feeds/09678322071861326813/17729077320378208369", "https://www.google.com/alerts/feeds/09678322071861326813/10382831314055122160", "https://www.google.com/alerts/feeds/09678322071861326813/3724071121715750608", "https://www.google.com/alerts/feeds/09678322071861326813/16059299224477972089", "https://www.google.com/alerts/feeds/09678322071861326813/1198605801377290022", "https://www.google.com/alerts/feeds/09678322071861326813/3174126178415816884", "https://www.google.com/alerts/feeds/09678322071861326813/10778257038356429766", "https://www.google.com/alerts/feeds/09678322071861326813/13907740799062403631", "https://www.google.com/alerts/feeds/09678322071861326813/13583311032613923135", "https://www.google.com/alerts/feeds/09678322071861326813/3377241513725216927", "https://www.google.com/alerts/feeds/09678322071861326813/15536018237517902097", "https://www.google.com/alerts/feeds/09678322071861326813/6761969864493492596", "https://www.google.com/alerts/feeds/09678322071861326813/8525308065649173498", "https://www.google.com/alerts/feeds/09678322071861326813/9404830783107472102", "https://www.google.com/alerts/feeds/09678322071861326813/15223369397218074172", "https://www.google.com/alerts/feeds/09678322071861326813/13089685840883809940", "https://www.google.com/alerts/feeds/09678322071861326813/6461275839714976954", "https://www.google.com/alerts/feeds/09678322071861326813/1777354198294681489"];
 const COUNTRIES = [{"name": "Democratic Republic of the Congo", "alias": ["DRC", "Congo-Kinshasa", "DR Congo"], "lat": -2.5, "lng": 23.5}, {"name": "Sudan", "alias": [], "lat": 13.0, "lng": 30.0}, {"name": "Mozambique", "alias": [], "lat": -18.665695, "lng": 35.529562}, {"name": "Central African Republic", "alias": ["CAR"], "lat": 6.6111, "lng": 20.9394}, {"name": "Mali", "alias": [], "lat": 17.5707, "lng": -3.9962}, {"name": "Burkina Faso", "alias": [], "lat": 12.2383, "lng": -1.5616}, {"name": "Cote d'Ivoire", "alias": ["Cote dIvoire", "Ivory Coast", "C\u00f4te d\u2019Ivoire", "Cote d Ivoire"], "lat": 7.539989, "lng": -5.54708}, {"name": "Ghana", "alias": [], "lat": 7.9465, "lng": -1.0232}, {"name": "Benin", "alias": [], "lat": 9.30769, "lng": 2.315834}, {"name": "Niger", "alias": [], "lat": 17.6078, "lng": 8.0817}, {"name": "Togo", "alias": [], "lat": 8.6195, "lng": 0.8248}, {"name": "Chad", "alias": [], "lat": 15.4542, "lng": 18.7322}, {"name": "Somalia", "alias": [], "lat": 5.1521, "lng": 46.1996}, {"name": "Cameroon", "alias": [], "lat": 3.848, "lng": 11.5021}];
 const MONITORED = new Set(COUNTRIES.map(c => c.name));
 
