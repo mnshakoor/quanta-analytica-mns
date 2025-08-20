@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About - Quanta Analytica Global Security & Humanitarian Info Aggregator</title>
+<link rel="preconnect" href="https://unpkg.com">
+<link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f1216;--panel:#151a22cc;--muted:#a0a7b4;--text:#e9eef6;
+  --accent:#42c8ff;--green:#8affc1;--orange:#ffd166;--red:#ff6b6b;--violet:#c39bff;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:radial-gradient(1200px 800px at 80% -10%, #1b2432 0%, #0d1117 50%, #0b0e13 100%);
+  color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial}
+.container{max-width:1000px;margin:0 auto;padding:18px}
+.header{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(180deg,#121721cc,#0e141bcc);
+  border:1px solid #2a3446;border-radius:14px;padding:10px 14px;backdrop-filter:blur(10px)}
+.hleft{display:flex;align-items:center;gap:10px}
+.badge{display:inline-flex;align-items:center;gap:6px;background:#0e2a3b;border:1px solid #214a62;color:#a9e6ff;padding:6px 10px;border-radius:999px;font-size:12px}
+main{margin-top:14px;display:grid;grid-template-columns:1fr;gap:12px}
+.panel{background:var(--panel);border:1px solid #2a3446;border-radius:14px;padding:14px}
+h1{font-size:22px;margin:0}
+h2{font-size:18px;margin:10px 0}
+h3{font-size:16px;margin:10px 0}
+p{line-height:1.55;color:#d9e2f2}
+code, pre{background:#0e141b;border:1px solid #263246;border-radius:8px;padding:10px;color:#d7e4ff;display:block;overflow:auto}
+kbd{border:1px solid #2a3446;background:#0e141b;border-radius:6px;padding:2px 6px}
+ul{margin:8px 0 8px 20px}
+a{color:#86d5ff;text-decoration:none} a:hover{text-decoration:underline}
+.nav{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 2px 0}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid #2a3446;padding:6px 10px;border-radius:999px;font-size:12px}
+.callout{border-left:3px solid var(--accent);padding:8px 10px;background:#0e141bcc;border:1px solid #2a3446;border-radius:8px}
+.flex{display:flex;gap:12px;flex-wrap:wrap}
+.kv{flex:1 1 280px;background:#0e141bcc;border:1px solid #2a3446;border-radius:10px;padding:10px}
+.small{color:var(--muted);font-size:12px}
+.footer{margin-top:12px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px}
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid #2a3446;background:#0f1622cc;color:var(--text);
+  padding:8px 10px;border-radius:10px;cursor:pointer;text-decoration:none}
+.btn:hover{border-color:#39506e}
+hr{border:0;border-top:1px dashed #2a3446;margin:10px 0}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="hleft">
+      <i class='bx bx-shield-quarter' style="font-size:22px;color:#7bd3ff"></i>
+      <div>
+        <div style="font-weight:800;font-size:18px;letter-spacing:.2px">About this app</div>
+        <div class="small">Quanta Analytica Global Security & Humanitarian Info Aggregator</div>
+      </div>
+    </div>
+    <div class="badge"><i class='bx bx-info-circle'></i> v1 About</div>
+  </div>
+
+  <main>
+    <div class="panel">
+      <div class="nav">
+        <a class="pill" href="#overview"><i class='bx bx-compass'></i> Overview</a>
+        <a class="pill" href="#layout"><i class='bx bx-layout'></i> Layout</a>
+        <a class="pill" href="#use"><i class='bx bx-walk'></i> How to use</a>
+        <a class="pill" href="#custom"><i class='bx bx-cog'></i> Customize</a>
+        <a class="pill" href="#deploy"><i class='bx bx-cloud-upload'></i> Deploy</a>
+        <a class="pill" href="#trouble"><i class='bx bx-bug'></i> Troubleshoot</a>
+      </div>
+    </div>
+
+    <section id="overview" class="panel">
+      <h2>Overview</h2>
+      <p>This single file dashboard polls public RSS and Atom feeds, normalizes items into events, and renders three synchronized views. It runs in a browser with no backend. Feeds are cached in localStorage for 15 minutes for speed.</p>
+      <div class="callout small"><strong>Tip</strong>: use a small local web server in dev. Example <kbd>python3 -m http.server 8000</kbd> then open <kbd>http://localhost:8000</kbd>.</div>
+    </section>
+
+    <section id="layout" class="panel">
+      <h2>Layout</h2>
+      <div class="flex">
+        <div class="kv">
+          <h3>Header</h3>
+          <ul>
+            <li>Live status and event count</li>
+            <li>Last update time</li>
+            <li>Refresh and Theme buttons</li>
+          </ul>
+        </div>
+        <div class="kv">
+          <h3>Left sidebar</h3>
+          <ul>
+            <li>Search box for instant keyword filter</li>
+            <li>Filters for Date range, Event types, Sources, Region</li>
+            <li>Top 5 Countries widget</li>
+          </ul>
+        </div>
+        <div class="kv">
+          <h3>Main column</h3>
+          <ol>
+            <li>KPI dashboard</li>
+            <li>Satellite map with heatmap and markers</li>
+            <li>Event network visualization</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section id="use" class="panel">
+      <h2>How to use</h2>
+      <h3>Search and filter</h3>
+      <ul>
+        <li>Type keywords such as <em>cholera</em>, <em>ransomware</em>, <em>earthquake</em>, or a country name</li>
+        <li>Set a date window to 7, 30, or 90 days</li>
+        <li>Toggle event types to focus the view</li>
+        <li>Uncheck noisy sources</li>
+        <li>Pick a region to scope analysis</li>
+      </ul>
+      <h3>Map</h3>
+      <ul>
+        <li>Heatmap shows density. Circle markers show events by type color</li>
+        <li>Click a marker to see details and the source link</li>
+        <li>Use the JSON or CSV buttons for export from the current filtered set</li>
+      </ul>
+      <h3>Network</h3>
+      <ul>
+        <li>Nodes are events. Links show similarity by type, country, source, and time window</li>
+        <li>Drag nodes to inspect clusters. Use the zoom and reset controls</li>
+      </ul>
+    </section>
+
+    <section id="custom" class="panel">
+      <h2>Customize</h2>
+      <p>Open the HTML and find the block labeled <strong>CONFIG</strong>.</p>
+<pre><code>// Add or remove feeds
+const FEEDS = [
+  "https://www.thenewhumanitarian.org/rss/all.xml",
+  // Add more
+  "https://example.org/alerts/rss.xml",
+  "https://example.com/desk.atom"
+];
+
+// Use your own proxy
+const CORS_PROXY = "https://api.allorigins.win/raw?url=";
+// Example custom worker
+// const CORS_PROXY = "https://your-worker.example.workers.dev/?u=";
+
+// Cache and limit
+const REFRESH_MINUTES = 15;
+const SOFT_LIMIT_ITEMS = 400;</code></pre>
+      <p>Event types and colors:</p>
+<pre><code>const EVENT_TYPES = {
+  Security:{ color:"#ff6b6b" },
+  Humanitarian:{ color:"#8affc1" },
+  Conflict:{ color:"#46ccff" },
+  Disaster:{ color:"#c39bff" },
+  Cyber:{ color:"#ffd166" }
+};</code></pre>
+      <p>Country centroids and regions live in <code>COUNTRY_INDEX</code>. Add your own entries as shown below.</p>
+<pre><code>"Somaliland": { c:[9.55, 44.05], r:"Africa", iso:"SO" }</code></pre>
+      <p>Network link heuristics:</p>
+<pre><code>// link weight
+if (a.type === b.type) w += 1;
+if (a.country && b.country && a.country === b.country) w += 1;
+if (a.source === b.source) w += 0.8;
+if (Math.abs(a.date - b.date) &lt; 7*24*60*60*1000) w += 0.6;
+if (w &gt;= 1.4) addLink();</code></pre>
+    </section>
+
+    <section id="deploy" class="panel">
+      <h2>Deploy</h2>
+      <ul>
+        <li>Static hosts like GitHub Pages, Netlify, Cloudflare Pages, S3 are supported</li>
+        <li>Host your own proxy for reliability and to control CORS</li>
+        <li>Respect tile provider attribution if you swap map layers</li>
+      </ul>
+    </section>
+
+    <section id="trouble" class="panel">
+      <h2>Troubleshoot</h2>
+      <ul>
+        <li><strong>Blank map or no data</strong> - check the browser console. If CORS errors appear, set your own proxy URL</li>
+        <li><strong>Feeds stall</strong> - AllOrigins can rate limit. Reduce feed list or switch to your worker</li>
+        <li><strong>Markers missing</strong> - coordinates or country match not found. Add to <code>COUNTRY_INDEX</code> or enrich feeds server side</li>
+        <li><strong>Slow UI</strong> - lower <code>SOFT_LIMIT_ITEMS</code> and reduce heatmap radius</li>
+      </ul>
+    </section>
+
+    <div class="footer">
+      <span>Built by Quanta Analytica</span>
+      <a class="btn" href="javascript:history.back()"><i class='bx bx-left-arrow-alt'></i> Back</a>
+    </div>
+  </main>
+</div>
+</body>
+</html>

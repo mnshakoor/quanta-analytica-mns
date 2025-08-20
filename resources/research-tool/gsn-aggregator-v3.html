@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quanta Analytica - Global Security & Humanitarian Info Aggregator</title>
+<meta name="description" content="Real time global security and humanitarian event monitor with map, heatmap, network graph, filters, and CSV or JSON export.">
+<link rel="preconnect" href="https://unpkg.com">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+<script src="https://unpkg.com/d3@7/dist/d3.min.js"></script>
+<link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f1216;--panel:#151a22cc;--panel-strong:#1b2330e6;--muted:#a0a7b4;--text:#e9eef6;
+  --accent:#42c8ff;--danger:#ff6b6b;--warning:#ffd166;--success:#3ddc97;
+}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;background:radial-gradient(1200px 800px at 80% -10%, #1b2432 0%, #0d1117 50%, #0b0e13 100%);
+  color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial}
+/* Layout */
+.app{display:grid;grid-template-columns:320px 1fr;grid-template-rows:auto 1fr;gap:12px;max-width:1400px;margin:0 auto;padding:14px}
+.header{grid-column:1 / -1;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,#121721cc,#0e141bcc);
+  border:1px solid #2a3446;border-radius:14px;padding:10px 14px;backdrop-filter:blur(10px)}
+.brand{display:flex;gap:10px;align-items:center}
+.badge{display:inline-flex;align-items:center;gap:6px;background:#0e2a3b;border:1px solid #214a62;color:#a9e6ff;padding:6px 10px;border-radius:999px;font-size:12px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--success);box-shadow:0 0 12px var(--success)}
+.header-right{display:flex;gap:10px;align-items:center;font-size:12px;color:var(--muted)}
+.time{padding:6px 10px;border:1px solid #2a3446;border-radius:8px;background:#0e141bcc}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid #2a3446;background:#0f1622cc;color:var(--text);
+  padding:8px 10px;border-radius:10px;cursor:pointer;transition:0.2s;font-size:13px}
+.btn:hover{transform:translateY(-1px);border-color:#39506e}
+/* Panels */
+.sidebar{background:var(--panel);border:1px solid #2a3446;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:12px}
+.panel{background:var(--panel);border:1px solid #2a3446;border-radius:14px;padding:12px}
+.section-title{font-weight:700;margin:8px 0 10px 0;font-size:16px;letter-spacing:.2px}
+.small{font-size:12px;color:var(--muted)}
+.input, select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #2a3446;background:#0e141bcc;color:var(--text);outline:none}
+.checkbox{display:flex;align-items:center;gap:10px;margin:6px 0}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid #2a3446;padding:4px 8px;border-radius:999px;font-size:12px;margin-right:6px}
+.kpis{display:grid;grid-template-columns:repeat(4, minmax(0,1fr));gap:10px}
+.kpi{background:var(--panel-strong);border:1px solid #2a3446;border-radius:14px;padding:14px;min-height:90px;display:flex;flex-direction:column;justify-content:space-between}
+.kpi .value{font-size:22px;font-weight:800}.kpi .trend{font-size:12px}.kpi i{opacity:.9}
+/* Main column flow */
+.main-col{display:flex;flex-direction:column;gap:12px}
+.map-wrap{position:relative;height:440px;border-radius:14px;overflow:hidden;border:1px solid #2a3446}
+#map{height:100%;width:100%}
+.map-overlay{position:absolute;top:10px;left:10px;background:#0b0f15d0;border:1px solid #2a3446;border-radius:12px;padding:10px;font-size:12px;backdrop-filter:blur(8px)}
+.legend{position:absolute;bottom:10px;right:10px;background:#0b0f15d0;border:1px solid #2a3446;border-radius:12px;padding:10px;font-size:12px}
+.export{position:absolute;top:10px;right:10px;display:flex;gap:6px}.export .btn{padding:6px 8px}
+.country-list{display:grid;grid-template-columns:1fr;gap:8px}
+.country{display:flex;align-items:center;gap:10px;background:#0f1622cc;border:1px solid #2a3446;border-radius:12px;padding:10px}
+.bar{height:6px;background:#1d2634;border-radius:999px;flex:1;position:relative}
+.bar>span{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:linear-gradient(90deg,#46ccff,#8affc1)}
+.rank{font-size:11px;color:var(--muted)}
+/* Network */
+#network{height:380px;border-radius:12px;background:#0f1622cc;border:1px solid #2a3446;overflow:hidden;position:relative}
+.net-legend{display:flex;gap:10px;margin-top:8px}.legend-item{display:flex;align-items:center;gap:6px;font-size:12px}
+.dot-type{width:10px;height:10px;border-radius:50%}
+.controls{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:8px;z-index:2}.controls .btn{padding:8px}
+.footer-note{margin-top:6px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+.credit{opacity:.8}
+hr.sep{border:0;border-top:1px dashed #2a3446;margin:10px 0}
+.toast{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);background:#0f1622;border:1px solid #2a3446;color:var(--text);
+  padding:10px 14px;border-radius:12px;display:none;z-index:9999}
+.flag{font-size:18px}
+@media (max-width: 980px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Header -->
+  <div class="header">
+    <div class="brand">
+      <i class='bx bx-shield-quarter' style="font-size:22px;color:#7bd3ff"></i>
+      <div>
+        <div style="font-weight:800;font-size:18px;letter-spacing:.2px">Global Security & Humanitarian Info Aggregator</div>
+        <div class="small">Real time monitoring for researchers, analysts, and NGOs</div>
+      </div>
+      <span class="badge" style="margin-left:8px"><span class="dot"></span><strong id="eventCount">0</strong> Events</span>
+    </div>
+    <div class="header-right">
+      <span id="status" class="badge" title="Feed status"><i class='bx bx-wifi'></i> Online</span>
+      <span class="time" id="lastUpdate">Last update: --</span>
+      <button class="btn" id="refreshBtn" title="Refresh feeds"><i class='bx bx-refresh'></i> Refresh</button>
+      <button class="btn" id="themeBtn" title="Toggle theme"><i class='bx bx-sun'></i></button>
+    </div>
+  </div>
+
+  <!-- Sidebar: Search/Filters + Top 5 -->
+  <aside class="sidebar">
+    <div class="panel">
+      <div class="section-title">Search Events</div>
+      <input class="input" id="searchInput" placeholder="Search events, keywords, locations">
+      <hr class="sep">
+      <div class="section-title" style="margin-top:2px">Filters</div>
+      <div class="small">Date Range</div>
+      <select id="dateRange" class="input" style="margin-top:6px">
+        <option value="all">All time</option>
+        <option value="7">Last 7 days</option>
+        <option value="30">Last 30 days</option>
+        <option value="90">Last 90 days</option>
+      </select>
+      <div style="margin-top:10px" class="small">Event Types</div>
+      <div id="typeFilters"></div>
+      <div style="margin-top:10px" class="small">Sources</div>
+      <div id="sourceFilters" style="max-height:210px;overflow:auto"></div>
+      <div style="margin-top:10px" class="small">Regions</div>
+      <select id="regionFilter" class="input">
+        <option value="all">All regions</option>
+        <option value="Africa">Africa</option>
+        <option value="Americas">Americas</option>
+        <option value="Asia">Asia</option>
+        <option value="Europe">Europe</option>
+        <option value="Middle East">Middle East</option>
+        <option value="Oceania">Oceania</option>
+      </select>
+    </div>
+
+    <div class="panel">
+      <div class="section-title">Top 5 Countries</div>
+      <div id="countryTop" class="country-list"></div>
+    </div>
+  </aside>
+
+  <!-- Main column: KPIs above Map, Network below Map -->
+  <main class="main-col">
+    <div class="panel">
+      <div class="section-title">Dashboard KPIs</div>
+      <div class="kpis">
+        <div class="kpi"><div style="display:flex;align-items:center;gap:8px"><i class='bx bx-pulse'></i> Total Events</div><div class="value" id="kpiTotal">0</div><div class="trend small" id="kpiTotalTrend">+0%</div></div>
+        <div class="kpi"><div style="display:flex;align-items:center;gap:8px"><i class='bx bx-globe'></i> Active Countries</div><div class="value" id="kpiCountries">0</div><div class="trend small" id="kpiCountriesTrend">+0%</div></div>
+        <div class="kpi"><div style="display:flex;align-items:center;gap:8px"><i class='bx bx-error-circle'></i> Critical Alerts</div><div class="value" id="kpiCritical">0</div><div class="trend small">~</div></div>
+        <div class="kpi"><div style="display:flex;align-items:center;gap:8px"><i class='bx bx-group'></i> Affected Pop.</div><div class="value" id="kpiAffected">0</div><div class="trend small" id="kpiAffectedTrend">+0%</div></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="map-wrap">
+        <div id="map"></div>
+        <div class="map-overlay small">
+          <div><strong>Map Controls</strong></div>
+          <ul style="margin:6px 0 0 14px;line-height:1.5">
+            <li>Click markers for event details</li>
+            <li>Heatmap shows event density</li>
+            <li>Zoom to explore regions</li>
+            <li>Use filters to refine view</li>
+          </ul>
+          <div style="margin-top:6px"><a id="shownCount">0 events shown</a></div>
+        </div>
+        <div class="legend small">
+          <div><strong>Event Types</strong></div>
+          <div style="display:flex;gap:10px;margin-top:6px">
+            <span class="legend-item"><span class="dot-type" style="background:#ff6b6b"></span>Security</span>
+            <span class="legend-item"><span class="dot-type" style="background:#8affc1"></span>Humanitarian</span>
+            <span class="legend-item"><span class="dot-type" style="background:#46ccff"></span>Conflict</span>
+            <span class="legend-item"><span class="dot-type" style="background:#c39bff"></span>Disaster</span>
+            <span class="legend-item"><span class="dot-type" style="background:#ffd166"></span>Cyber</span>
+          </div>
+          <div style="margin-top:6px"><strong>Event Density</strong></div>
+          <div style="height:8px;width:180px;background:linear-gradient(90deg,#00f,#0ff,#0f0,#ff0,#f00);border-radius:999px;border:1px solid #2a3446"></div>
+        </div>
+        <div class="export">
+          <button id="jsonBtn" class="btn"><i class='bx bx-download'></i> JSON</button>
+          <button id="csvBtn" class="btn"><i class='bx bx-download'></i> CSV</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="section-title">Event Network Visualization</div>
+      <div id="network"></div>
+      <div class="net-legend">
+        <span class="legend-item"><span class="dot-type" style="background:#ff6b6b"></span> Security</span>
+        <span class="legend-item"><span class="dot-type" style="background:#8affc1"></span> Humanitarian</span>
+        <span class="legend-item"><span class="dot-type" style="background:#46ccff"></span> Conflict</span>
+        <span class="legend-item"><span class="dot-type" style="background:#c39bff"></span> Disaster</span>
+        <span class="legend-item"><span class="dot-type" style="background:#ffd166"></span> Cyber</span>
+      </div>
+      <div class="footer-note">
+        <div class="small" id="netStats">Nodes: 0 | Connections: 0 | Clusters: 0</div>
+        <div class="credit small">Built by Quanta Analytica</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* =================== CONFIG =================== */
+const FEEDS = [
+  "https://www.thenewhumanitarian.org/rss/all.xml",
+  "https://theconversation.com/africa/articles.atom",
+  "https://reliefweb.int/updates/rss.xml?advanced-search=%28C231_C75_C220_C149_C46_C49_C102_C69_C55_C164_C216_C174_C36_C208_C54_C87_C175%29",
+  "https://www.crisisgroup.org/rss/1",
+  "https://news.un.org/feed/subscribe/en/news/region/africa/feed/rss.xml",
+  "https://www.rand.org/pubs/articles.xml",
+  "https://www.msf.org/rss/all",
+  "https://www.africom.mil/syndication-feed/rss/press-releases",
+  "https://travel.state.gov/_res/rss/TAsTWs.xml",
+  "https://www.rusi.org/rss/latest-publications.xml",
+  "https://www.nato.int/cps/rss/en/natohq/rssFeed.xsl/rssFeed.xml",
+  "https://www.bellingcat.com/feed/",
+  "https://www.icij.org/feed/",
+  "https://reliefweb.int/updates/rss.xml",
+  "https://www.unodc.org/unodc/feed/stories.xml",
+  "https://www.gdacs.org/xml/rss.xml",
+  "https://www.unodc.org/unodc/feed/press-releases.xml",
+  "https://reliefweb.int/updates/rss.xml?view=headlines",
+  "https://www.unodc.org/unodc/feed/publications.xml",
+  "https://www.chathamhouse.org/path/news-releases.xml",
+  "https://www.cisa.gov/cybersecurity-advisories/all.xml",
+  "https://www.defense.gov/DesktopModules/ArticleCS/RSS.ashx?ContentType=2&Site=945&max=10",
+  "https://www.google.com/alerts/feeds/09678322071861326813/15478561615984895730",
+  "https://www.google.com/alerts/feeds/09678322071861326813/17729077320378208369",
+  "https://www.google.com/alerts/feeds/09678322071861326813/10382831314055122160",
+  "https://www.google.com/alerts/feeds/09678322071861326813/3724071121715750608",
+  "https://www.google.com/alerts/feeds/09678322071861326813/16059299224477972089",
+  "https://www.google.com/alerts/feeds/09678322071861326813/1198605801377290022",
+  "https://www.google.com/alerts/feeds/09678322071861326813/3174126178415816884",
+  "https://www.google.com/alerts/feeds/09678322071861326813/10778257038356429766",
+  "https://www.google.com/alerts/feeds/09678322071861326813/13907740799062403631",
+  "https://www.google.com/alerts/feeds/09678322071861326813/13583311032613923135",
+  "https://www.google.com/alerts/feeds/09678322071861326813/3377241513725216927",
+  "https://www.google.com/alerts/feeds/09678322071861326813/15536018237517902097",
+  "https://www.google.com/alerts/feeds/09678322071861326813/6761969864493492596",
+  "https://www.google.com/alerts/feeds/09678322071861326813/8525308065649173498",
+  "https://www.google.com/alerts/feeds/09678322071861326813/9404830783107472102",
+  "https://www.google.com/alerts/feeds/09678322071861326813/15223369397218074172",
+  "https://www.google.com/alerts/feeds/09678322071861326813/13089685840883809940",
+  "https://www.google.com/alerts/feeds/09678322071861326813/6461275839714976954",
+  "https://www.google.com/alerts/feeds/09678322071861326813/1777354198294681489"
+];
+
+const CORS_PROXY = "https://api.allorigins.win/raw?url="; // change to your proxy for reliability
+const REFRESH_MINUTES = 15;
+const SOFT_LIMIT_ITEMS = 400;
+
+/* ============== Helper Data ============== */
+const EVENT_TYPES = {
+  Security:{color:"#ff6b6b"}, Humanitarian:{color:"#8affc1"},
+  Conflict:{color:"#46ccff"}, Disaster:{color:"#c39bff"}, Cyber:{color:"#ffd166"}
+};
+const COUNTRY_INDEX = {
+"Afghanistan":{c:[33.9391,67.7100],r:"Asia",iso:"AF"},
+"Algeria":{c:[28.0339,1.6596],r:"Africa",iso:"DZ"},
+"Angola":{c:[-11.2027,17.8739],r:"Africa",iso:"AO"},
+"Benin":{c:[9.3077,2.3158],r:"Africa",iso:"BJ"},
+"Burkina Faso":{c:[12.2383,-1.5616],r:"Africa",iso:"BF"},
+"Cameroon":{c:[7.3697,12.3547],r:"Africa",iso:"CM"},
+"Central African Republic":{c:[6.6111,20.9394],r:"Africa",iso:"CF"},
+"Chad":{c:[15.4542,18.7322],r:"Africa",iso:"TD"},
+"Cote d'Ivoire":{c:[7.54,-5.55],r:"Africa",iso:"CI"},
+"Democratic Republic of Congo":{c:[-4.0383,21.7587],r:"Africa",iso:"CD"},
+"DR Congo":{c:[-4.0383,21.7587],r:"Africa",iso:"CD"},
+"Republic of the Congo":{c:[-0.228,15.8277],r:"Africa",iso:"CG"},
+"Djibouti":{c:[11.8251,42.5903],r:"Africa",iso:"DJ"},
+"Egypt":{c:[26.8206,30.8025],r:"Africa",iso:"EG"},
+"Ethiopia":{c:[9.145,40.4897],r:"Africa",iso:"ET"},
+"Ghana":{c:[7.9465,-1.0232],r:"Africa",iso:"GH"},
+"Guinea":{c:[9.9456,-9.6966],r:"Africa",iso:"GN"},
+"Kenya":{c:[-0.0236,37.9062],r:"Africa",iso:"KE"},
+"Libya":{c:[26.3351,17.2283],r:"Africa",iso:"LY"},
+"Mali":{c:[17.5707,-3.9962],r:"Africa",iso:"ML"},
+"Mauritania":{c:[21.0079,-10.9408],r:"Africa",iso:"MR"},
+"Morocco":{c:[31.7917,-7.0926],r:"Africa",iso:"MA"},
+"Mozambique":{c:[-18.6657,35.5296],r:"Africa",iso:"MZ"},
+"Niger":{c:[17.6078,8.0817],r:"Africa",iso:"NE"},
+"Nigeria":{c:[9.082,8.6753],r:"Africa",iso:"NG"},
+"Somalia":{c:[5.1521,46.1996],r:"Africa",iso:"SO"},
+"South Sudan":{c:[6.877,31.307],r:"Africa",iso:"SS"},
+"Sudan":{c:[12.8628,30.2176],r:"Africa",iso:"SD"},
+"Tanzania":{c:[-6.3690,34.8888],r:"Africa",iso:"TZ"},
+"Togo":{c:[8.6195,0.8248],r:"Africa",iso:"TG"},
+"Uganda":{c:[1.3733,32.2903],r:"Africa",iso:"UG"},
+"Rwanda":{c:[-1.9403,29.8739],r:"Africa",iso:"RW"},
+"Burundi":{c:[-3.3731,29.9189],r:"Africa",iso:"BI"},
+"Somaliland":{c:[9.55,44.05],r:"Africa",iso:"SO"},
+"Yemen":{c:[15.5527,48.5164],r:"Middle East",iso:"YE"},
+"Syria":{c:[34.8021,38.9968],r:"Middle East",iso:"SY"},
+"Iraq":{c:[33.2232,43.6793],r:"Middle East",iso:"IQ"},
+"Ukraine":{c:[48.3794,31.1656],r:"Europe",iso:"UA"},
+"Russia":{c:[61.524,105.3188],r:"Europe",iso:"RU"},
+"Israel":{c:[31.0461,34.8516],r:"Middle East",iso:"IL"},
+"Gaza":{c:[31.4,34.35],r:"Middle East",iso:"PS"},
+"West Bank":{c:[31.9,35.2],r:"Middle East",iso:"PS"},
+"Lebanon":{c:[33.8547,35.8623],r:"Middle East",iso:"LB"},
+"Turkey":{c:[38.9637,35.2433],r:"Europe",iso:"TR"},
+"Iran":{c:[32.4279,53.688],r:"Middle East",iso:"IR"},
+"Pakistan":{c:[30.3753,69.3451],r:"Asia",iso:"PK"},
+"India":{c:[20.5937,78.9629],r:"Asia",iso:"IN"},
+"China":{c:[35.8617,104.1954],r:"Asia",iso:"CN"},
+"Haiti":{c:[18.9712,-72.2852],r:"Americas",iso:"HT"},
+"Venezuela":{c:[6.4238,-66.5897],r:"Americas",iso:"VE"},
+"Colombia":{c:[4.5709,-74.2973],r:"Americas",iso:"CO"},
+"Peru":{c:[-9.19,-75.0152],r:"Americas",iso:"PE"},
+"United States":{c:[39.7837,-100.445],r:"Americas",iso:"US"},
+"USA":{c:[39.7837,-100.445],r:"Americas",iso:"US"},
+"United Kingdom":{c:[55.3781,-3.4360],r:"Europe",iso:"GB"},
+"UK":{c:[55.3781,-3.4360],r:"Europe",iso:"GB"},
+"France":{c:[46.2276,2.2137],r:"Europe",iso:"FR"},
+"Germany":{c:[51.1657,10.4515],r:"Europe",iso:"DE"},
+"Italy":{c:[41.8719,12.5674],r:"Europe",iso:"IT"},
+"Spain":{c:[40.4637,-3.7492],r:"Europe",iso:"ES"}
+};
+
+/* ============== State ============== */
+let rawEvents = [];      // all normalized events
+let filtered = [];       // events after filters
+let map, heatLayer, markers=[];
+let theme = "dark"; // one declaration only
+
+/* ============== Utils ============== */
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+function toast(msg){const t=document.getElementById("toast"); t.textContent=msg; t.style.display="block"; setTimeout(()=>t.style.display="none",2000)}
+function proxied(url){return CORS_PROXY + encodeURIComponent(url)}
+function parseXML(text){const parser = new DOMParser(); return parser.parseFromString(text,"text/xml")}
+function textContent(el,tag){const node = el.getElementsByTagName(tag)[0]; return node? (node.textContent || "").trim() : ""}
+function htmlToText(html){const div=document.createElement("div"); div.innerHTML=html; return (div.textContent || div.innerText || "").trim()}
+function toDate(s){const d=new Date(s); return isNaN(d)? new Date() : d}
+function hashId(s){let h=0; for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i); h|=0} return Math.abs(h).toString(36)}
+function extractKeywords(str){return (str||"").toLowerCase().match(/[a-z]{5,}/g)?.slice(0,30) || []}
+function detectType(item){
+  const s=(item.source||"").toLowerCase();
+  const t=(item.title+" "+item.description).toLowerCase();
+  if(s.includes("cisa")||t.includes("ransomware")||t.includes("malware")||t.includes("cyber")) return "Cyber";
+  if(s.includes("gdacs")||t.includes("earthquake")||t.includes("flood")||t.includes("cyclone")||t.includes("wildfire")) return "Disaster";
+  if(s.includes("msf")||s.includes("humanitarian")||t.includes("aid")||t.includes("ngo")) return "Humanitarian";
+  if(s.includes("africom")||s.includes("defense.gov")||t.includes("military")||t.includes("attack")||t.includes("armed")) return "Security";
+  if(s.includes("crisisgroup")||t.includes("ceasefire")||t.includes("insurgent")||t.includes("conflict")) return "Conflict";
+  if(t.includes("alert")||t.includes("evacuate")) return "Security";
+  return "Humanitarian";
+}
+function detectCritical(item){
+  const t=(item.title+" "+item.description).toLowerCase();
+  return /(earthquake|attack|explosion|mass casualty|evacuate|warning|state\.gov|cisa|critical alert|tsunami|category [34|5]|cyclone|cholera|ebola)/.test(t) || /gdacs|cisa|travel\.state\.gov/.test((item.source||"").toLowerCase());
+}
+function parseAffected(text){
+  const m = text.match(/([0-9]+(\.[0-9]+)?)\s*(million|m|thousand|k)?\s*(people|persons|residents|refugees)/i);
+  if(!m) return 0;
+  let num = parseFloat(m[1]); const unit = (m[3]||"").toLowerCase();
+  if(unit==="million"||unit==="m") num*=1_000_000; if(unit==="thousand"||unit==="k") num*=1_000;
+  return Math.round(num);
+}
+function guessCountryRegion(text){
+  const names = Object.keys(COUNTRY_INDEX).sort((a,b)=>b.length-a.length);
+  for(const name of names){
+    const re = new RegExp("\\b"+name.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\b","i");
+    if(re.test(text)) return {country:name, region:COUNTRY_INDEX[name].r, iso:COUNTRY_INDEX[name].iso, coord:COUNTRY_INDEX[name].c};
+  }
+  return {country:null, region:null, iso:null, coord:null};
+}
+function extractCoords(txt){
+  const m = txt.match(/(-?\d{1,2}\.\d{2,6})\s*,\s*(-?\d{1,3}\.\d{2,6})/);
+  return m? [parseFloat(m[1]), parseFloat(m[2])] : null;
+}
+
+/* ============== Feed Fetch ============== */
+async function fetchFeed(url){
+  const cacheKey = "feed:"+url;
+  const cached = localStorage.getItem(cacheKey);
+  if(cached){
+    try{ const obj=JSON.parse(cached); if(Date.now()-obj.ts < REFRESH_MINUTES*60*1000) return obj.data; }catch{}
+  }
+  try{
+    const res = await fetch(proxied(url), {headers:{'Accept':'application/xml, text/xml, */*'}});
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    const txt = await res.text();
+    localStorage.setItem(cacheKey, JSON.stringify({ts:Date.now(), data:txt}));
+    return txt;
+  }catch(e){
+    console.warn("Feed fetch failed:", url, e);
+    return null;
+  }
+}
+function normalizeItem(obj){
+  const id = obj.guid||obj.id||obj.link||obj.title;
+  const title = htmlToText(obj.title||"Untitled");
+  const description = htmlToText(obj.description||obj.summary||"");
+  const date = toDate(obj.pubDate||obj.published||obj.updated||new Date());
+  const source = obj.source || obj.feed || "Unknown";
+  const url = obj.link||obj.url||"#";
+  const mergedText = [title, description, source].join(" ");
+  let coords = extractCoords(mergedText);
+  let country=null, region=null, iso=null;
+  if(!coords){
+    const guess=guessCountryRegion(mergedText);
+    if(guess.coord){coords=guess.coord; country=guess.country; region=guess.region; iso=guess.iso;}
+  }else{
+    const guess=guessCountryRegion(mergedText);
+    country=guess.country; region=guess.region; iso=guess.iso;
+  }
+  const type = detectType({title, description, source});
+  const critical = detectCritical({title, description, source});
+  const affected = parseAffected(mergedText);
+  return {
+    id:hashId(id+date.toISOString()), title, description, date:date.toISOString(),
+    source, url, type, critical, affected,
+    lat: coords? coords[0] : null, lon: coords? coords[1] : null,
+    country, region, iso, keywords: extractKeywords(title+" "+description)
+  };
+}
+function parseRSS(xmlText, origin){
+  try{
+    const xml=parseXML(xmlText);
+    const items = [...xml.getElementsByTagName("item")];
+    if(items.length){
+      return items.map(it=>normalizeItem({
+        guid:textContent(it,"guid"),
+        title:textContent(it,"title"),
+        description:textContent(it,"description"),
+        pubDate:textContent(it,"pubDate"),
+        link:textContent(it,"link"),
+        source: origin
+      }));
+    }
+    const entries = [...xml.getElementsByTagName("entry")];
+    if(entries.length){
+      return entries.map(e=>normalizeItem({
+        id:textContent(e,"id"),
+        title:textContent(e,"title"),
+        description:textContent(e,"summary")||textContent(e,"content"),
+        published:textContent(e,"published"),
+        updated:textContent(e,"updated"),
+        link: (e.getElementsByTagName("link")[0]?.getAttribute("href")) || "",
+        source: origin
+      }));
+    }
+  }catch(e){
+    console.warn("Parse error",origin,e);
+  }
+  return [];
+}
+
+/* ============== App Core ============== */
+async function loadAllFeeds(){
+  document.getElementById("status").innerHTML = "<span class='dot'></span> Loading";
+  const results = await Promise.allSettled(FEEDS.map(async url=>{
+    const xml = await fetchFeed(url);
+    if(!xml) return [];
+    return parseRSS(xml, url);
+  }));
+  const items = results.flatMap(r=>r.status==="fulfilled" ? r.value : []);
+  items.sort((a,b)=> new Date(b.date) - new Date(a.date));
+  rawEvents = items.slice(0, SOFT_LIMIT_ITEMS);
+  document.getElementById("status").innerHTML = "<span class='dot'></span> Online";
+  document.getElementById("eventCount").textContent = rawEvents.length.toString();
+  document.getElementById("lastUpdate").textContent = "Last update: " + new Date().toLocaleString();
+  applyFilters();
+}
+
+/* ============== Filters ============== */
+const ALL_TYPES = Object.keys(EVENT_TYPES);
+function buildFilters(){
+  const typeBox = document.getElementById("typeFilters");
+  typeBox.innerHTML = ALL_TYPES.map(t => (
+    `<label class="checkbox"><input type="checkbox" class="typeCheck" value="${t}" checked> ${t}</label>`
+  )).join("");
+  const srcBox = document.getElementById("sourceFilters");
+  srcBox.innerHTML = FEEDS.map(u => (
+    `<label class="checkbox"><input type="checkbox" class="srcCheck" value="${u}" checked> ${new URL(u).hostname}</label>`
+  )).join("");
+
+  document.getElementById("searchInput").addEventListener("input", applyFilters);
+  document.getElementById("dateRange").addEventListener("change", applyFilters);
+  document.getElementById("regionFilter").addEventListener("change", applyFilters);
+  typeBox.querySelectorAll("input").forEach(el => el.addEventListener("change", applyFilters));
+  srcBox.querySelectorAll("input").forEach(el => el.addEventListener("change", applyFilters));
+}
+
+function applyFilters(){
+  const q = document.getElementById("searchInput").value.toLowerCase().trim();
+  const days = document.getElementById("dateRange").value;
+  const cutoff = days==="all" ? 0 : Date.now() - parseInt(days)*24*60*60*1000;
+  const region = document.getElementById("regionFilter").value;
+  const enabledTypes = new Set([...document.querySelectorAll(".typeCheck:checked")].map(x=>x.value));
+  const enabledSrcs  = new Set([...document.querySelectorAll(".srcCheck:checked")].map(x=>x.value));
+
+  filtered = rawEvents.filter(e=>{
+    if(!enabledTypes.has(e.type)) return false;
+    if(!enabledSrcs.has(e.source)) return false;
+    if(region!=="all" && e.region && e.region!==region) return false;
+    if(days!=="all" && new Date(e.date).getTime() < cutoff) return false;
+    if(q && !(e.title.toLowerCase().includes(q) || e.description.toLowerCase().includes(q) || (e.country||"").toLowerCase().includes(q))) return false;
+    return true;
+  });
+
+  document.getElementById("shownCount").textContent = filtered.length + " events shown";
+
+  document.getElementById("kpiTotal").textContent = filtered.length.toString();
+  const uniqueCountries = new Set(filtered.filter(x=>x.country).map(x=>x.country)).size;
+  document.getElementById("kpiCountries").textContent = uniqueCountries.toString();
+  const critical = filtered.filter(x=>x.critical).length;
+  document.getElementById("kpiCritical").textContent = critical.toString();
+  const affected = filtered.reduce((a,c)=>a+(c.affected||0),0);
+  document.getElementById("kpiAffected").textContent = affected.toLocaleString();
+
+  updateMap();
+  updateTopCountries();
+  renderNetwork();
+}
+
+/* ============== Map ============== */
+function initMap(){
+  map = L.map('map',{ zoomControl:true }).setView([15, 15], 2.1);
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 18, attribution: 'Leaflet • Esri'
+  }).addTo(map);
+  heatLayer = L.heatLayer([], {radius:18, blur:20, maxZoom:7, minOpacity:0.35}).addTo(map);
+}
+function markerColor(type){ return EVENT_TYPES[type]?.color || "#46ccff" }
+function updateMap(){
+  markers.forEach(m=>map.removeLayer(m)); markers=[];
+  const points = [];
+  filtered.forEach(e=>{
+    if(e.lat!=null && e.lon!=null){
+      points.push([e.lat,e.lon, 0.6]);
+      const marker = L.circleMarker([e.lat,e.lon],{
+        radius:7, color:markerColor(e.type), fillColor:markerColor(e.type), fillOpacity:.9, weight:1.2
+      });
+      const html = `<div style="min-width:260px">
+        <div style="font-weight:800;font-size:16px;margin-bottom:6px">${escapeHtml(e.title.substring(0,120))}</div>
+        <div class="small" style="opacity:.9">${e.type} • ${new Date(e.date).toISOString().slice(0,10)} • <span style="opacity:.8">${new URL(e.source).hostname}</span></div>
+        <div style="margin-top:6px;font-size:13px;line-height:1.4">${escapeHtml(e.description).slice(0,240)}...</div>
+        <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+          <span class="pill">${e.country || 'Unknown'}</span> <a class="btn" href="${e.url}" target="_blank" rel="noopener">Read More</a>
+        </div>
+      </div>`;
+      marker.bindPopup(html).addTo(map);
+      markers.push(marker);
+    }
+  });
+  heatLayer.setLatLngs(points);
+}
+
+function escapeHtml(str){return (str||"").replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
+
+/* ============== Top Countries ============== */
+function updateTopCountries(){
+  const box = document.getElementById("countryTop");
+  const counts = new Map();
+  filtered.forEach(e=>{ if(e.country){ counts.set(e.country, (counts.get(e.country)||0)+1) }});
+  const top = [...counts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const max = Math.max(...top.map(t=>t[1]),1);
+  box.innerHTML = top.map((t, i)=>{
+      const entry = COUNTRY_INDEX[t[0]]||{};
+      const iso = entry.iso||"";
+      const flag = iso? String.fromCodePoint(...[...iso.toUpperCase()].map(c=>127397+c.charCodeAt(0))) : "🏳️";
+      const pct = Math.round((t[1]/max)*100);
+      return `<div class="country">
+        <span class="flag">${flag}</span>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between"><strong>${t[0]}</strong><span class="rank">#${i+1}</span></div>
+          <div class="bar"><span style="width:${pct}%;"></span></div>
+        </div>
+        <div class="pill">${t[1]}</div>
+      </div>`;
+  }).join("") || `<div class="small">No country-tagged events</div>`;
+}
+
+/* ============== Network Graph ============== */
+function buildGraph(){
+  const nodes = filtered.slice(0,160).map(e=>({
+    id:e.id, title:e.title, type:e.type, country:e.country, date:new Date(e.date), source:new URL(e.source).hostname
+  }));
+  const edges = [];
+  for(let i=0;i<nodes.length;i++){
+    for(let j=i+1;j<nodes.length;j++){
+      const a=nodes[i], b=nodes[j]; let w=0;
+      if(a.type===b.type) w+=1;
+      if(a.country && b.country && a.country===b.country) w+=1;
+      if(a.source===b.source) w+=0.8;
+      if(Math.abs(a.date - b.date) < 7*24*60*60*1000) w+=0.6;
+      if(w>=1.4) edges.push({source:a.id,target:b.id,weight:w});
+    }
+  }
+  return {nodes, links: edges};
+}
+function renderNetwork(){
+  const el = document.getElementById("network");
+  el.innerHTML = "";
+  const {nodes, links} = buildGraph();
+  document.getElementById("netStats").textContent = `Nodes: ${nodes.length} | Connections: ${links.length} | Clusters: ~${Math.max(1, Math.round(nodes.length/12))}`;
+
+  const width = el.clientWidth, height = el.clientHeight;
+  const svg = d3.select(el).append("svg").attr("width", width).attr("height", height);
+  const g = svg.append("g");
+
+  const zoom = d3.zoom().on("zoom", (event)=>{ g.attr("transform", event.transform); });
+  svg.call(zoom);
+
+  const link = g.selectAll("line").data(links).enter().append("line")
+    .attr("stroke", "#2a3446").attr("stroke-width", d=>d.weight);
+
+  const color = t => EVENT_TYPES[t]?.color || "#46ccff";
+
+  const node = g.selectAll("circle").data(nodes).enter().append("circle")
+    .attr("r", 8).attr("fill", d=>color(d.type)).attr("stroke", "#0b0f15").attr("stroke-width", 1.5)
+    .call(d3.drag()
+      .on("start",(event,d)=>{ if(!event.active) sim.alphaTarget(0.3).restart(); d.fx=d.x; d.fy=d.y; })
+      .on("drag",(event,d)=>{ d.fx=event.x; d.fy=event.y; })
+      .on("end",(event,d)=>{ if(!event.active) sim.alphaTarget(0); d.fx=null; d.fy=null; }));
+
+  const label = g.selectAll("text").data(nodes).enter().append("text")
+    .text(d=>d.title.slice(0,40))
+    .attr("font-size","10px").attr("fill","#c9d4e7").attr("opacity",0.85)
+    .attr("dx",10).attr("dy",3);
+
+  node.append("title").text(d=>`${d.title}\n${d.country||"Unknown"} • ${d.type}`);
+
+  const sim = d3.forceSimulation(nodes)
+    .force("link", d3.forceLink(links).id(d=>d.id).distance(d=>40+(80/(d.weight||1))))
+    .force("charge", d3.forceManyBody().strength(-160))
+    .force("center", d3.forceCenter(width/2, height/2))
+    .on("tick", ()=>{
+      link.attr("x1", d=>d.source.x).attr("y1", d=>d.source.y).attr("x2", d=>d.target.x).attr("y2", d=>d.target.y);
+      node.attr("cx", d=>d.x).attr("cy", d=>d.y);
+      label.attr("x", d=>d.x).attr("y", d=>d.y);
+    });
+
+  const controls = d3.select(el).append("div").attr("class","controls");
+  controls.append("button").attr("class","btn").html("<i class='bx bx-search-alt-2'></i>").on("click",()=>svg.transition().duration(300).call(zoom.scaleBy,1.2));
+  controls.append("button").attr("class","btn").html("<i class='bx bx-zoom-out'></i>").on("click",()=>svg.transition().duration(300).call(zoom.scaleBy,0.8));
+  controls.append("button").attr("class","btn").html("<i class='bx bx-target-lock'></i>").on("click",()=>svg.transition().duration(300).call(zoom.transform, d3.zoomIdentity));
+}
+
+/* ============== Export ============== */
+function exportJSON(){
+  const data = { generated:new Date().toISOString(), filters:getFilterState(), events: filtered };
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a=document.createElement("a"); a.href=url; a.download="quanta_aggregator.json"; a.click(); URL.revokeObjectURL(url);
+}
+function exportCSV(){
+  const header = ["id","title","date","type","source","country","region","lat","lon","critical","url"];
+  const rows = filtered.map(e=>header.map(k=>{
+    let v=e[k]; if(v==null) v=""; v=String(v).replace(/"/g,'""'); return `"${v}"`;
+  }).join(","));
+  const csv = [header.join(","), ...rows].join("\n");
+  const blob = new Blob([csv], {type:"text/csv"});
+  const url = URL.createObjectURL(blob);
+  const a=document.createElement("a"); a.href=url; a.download="quanta_aggregator.csv"; a.click(); URL.revokeObjectURL(url);
+}
+function getFilterState(){
+  const types=[...document.querySelectorAll(".typeCheck")].map(x=>({type:x.value, enabled:x.checked}));
+  const sources=[...document.querySelectorAll(".srcCheck")].map(x=>({source:x.value, enabled:x.checked}));
+  return {q:document.getElementById("searchInput").value, dateRange:document.getElementById("dateRange").value, region:document.getElementById("regionFilter").value, types, sources};
+}
+
+/* ============== Theme Toggle ============== */
+function initTheme(){
+  const btn=document.getElementById("themeBtn");
+  btn.addEventListener("click",()=>{
+    if(theme==="dark"){ document.body.style.filter="invert(1) hue-rotate(180deg)"; theme="light"; btn.innerHTML="<i class='bx bx-moon'></i>"; }
+    else { document.body.style.filter="none"; theme="dark"; btn.innerHTML="<i class='bx bx-sun'></i>"; }
+  });
+}
+
+/* ============== Events ============== */
+document.getElementById("jsonBtn").addEventListener("click", exportJSON);
+document.getElementById("csvBtn").addEventListener("click", exportCSV);
+document.getElementById("refreshBtn").addEventListener("click",()=>{toast("Refreshing feeds"); loadAllFeeds()});
+
+/* ============== Boot ============== */
+buildFilters();
+initMap();
+initTheme();
+loadAllFeeds();
+
+setInterval(()=>{ document.getElementById("lastUpdate").textContent = "Last update: " + new Date().toLocaleString(); }, 30*1000);
+</script>
+</body>
+</html>
