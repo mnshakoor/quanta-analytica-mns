@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -556,13 +556,81 @@
     // ---------- File load ----------
     $("#fileInput").addEventListener("change", async e => {
       const f = e.target.files[0];
-      if(!f) return;
-      if(f.name.endsWith('.txt')){
-        const text = await f.text();
+      if (!f) return;
+      
+      // Show loading state
+      const uploadBtn = $('label[for="fileInput"]');
+      const originalText = uploadBtn.textContent;
+      uploadBtn.textContent = 'Processing...';
+      uploadBtn.style.opacity = '0.6';
+      
+      try {
+        // Validate file size (5MB limit)
+        if (f.size > 5 * 1024 * 1024) {
+          throw new Error('File too large. Please use files under 5MB.');
+        }
+        
+        let text = '';
+        
+        // Handle different file types
+        if (f.name.endsWith('.txt') || f.type === 'text/plain') {
+          text = await f.text();
+        } else if (f.name.endsWith('.csv') || f.type === 'text/csv') {
+          // Basic CSV handling - treat as plain text
+          text = await f.text();
+        } else if (f.name.endsWith('.json') || f.type === 'application/json') {
+          // Try to extract text from JSON
+          const jsonContent = await f.text();
+          const parsed = JSON.parse(jsonContent);
+          
+          // Look for common text fields in JSON
+          if (typeof parsed === 'string') {
+            text = parsed;
+          } else if (parsed.text) {
+            text = parsed.text;
+          } else if (parsed.content) {
+            text = parsed.content;
+          } else if (parsed.description) {
+            text = parsed.description;
+          } else if (Array.isArray(parsed)) {
+            // If it's an array, try to extract text from objects
+            text = parsed.map(item => {
+              if (typeof item === 'string') return item;
+              return item.text || item.content || item.description || JSON.stringify(item);
+            }).join('\n\n');
+          } else {
+            // Fallback: stringify the JSON
+            text = JSON.stringify(parsed, null, 2);
+          }
+        } else {
+          throw new Error('Unsupported file type. Please use .txt, .csv, or .json files.');
+        }
+        
+        // Validate text content
+        if (!text || text.trim().length === 0) {
+          throw new Error('File appears to be empty or contains no readable text.');
+        }
+        
+        // Truncate if too long and warn user
+        if (text.length > 5000) {
+          text = text.slice(0, 5000);
+          toast('File was truncated to 5000 characters for processing.');
+        }
+        
+        // Process the text
         updateFromPlain(text);
-      } else {
-        alert('This build supports .txt import. Convert .docx to .txt and try again.');
+        
+        // Show success feedback
+        toast(`Successfully loaded ${f.name} (${text.length} characters)`);
+        
+      } catch (error) {
+        console.error('File processing error:', error);
+        alert(`Error processing file: ${error.message}`);
       }
+      
+      // Reset upload button state
+      uploadBtn.textContent = originalText;
+      uploadBtn.style.opacity = '1';
       e.target.value = "";
     });
 
@@ -972,9 +1040,16 @@
     // ---------- Reset and Theme ----------
     $("#resetBtn").addEventListener('click', () => {
       if(!confirm('Clear all inputs and results?')) return;
-      editor.innerHTML = ""; rawText = ""; tokenInfo = []; updateAll();
+      editor.innerHTML = ""; 
+      rawText = ""; 
+      tokenInfo = []; 
       $("#srcUrl").value = ""; $("#srcAuthor").value = ""; $("#srcCred").value = "High"; $("#srcNotes").value = "";
       $("#stakeTable tbody").innerHTML = ""; $("#insightsTable tbody").innerHTML = "";
+      // Reset all sliders to neutral
+      $("#urgency").value = "0"; $("#confidence").value = "0"; $("#anxiety").value = "0"; $("#defensiveness").value = "0";
+      setBadge('#urgencyBadge', 0); setBadge('#confidenceBadge', 0); setBadge('#anxietyBadge', 0); setBadge('#defensivenessBadge', 0);
+      updateAll();
+      toast('All data cleared successfully');
     });
 
     function toggleTheme(){
