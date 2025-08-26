@@ -1,0 +1,1352 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quanta Analytica - SitRep Template</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #0b1220;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #60a5fa;
+      --ok: #10b981;
+      --warn: #f59e0b;
+      --high: #f97316;
+      --veryhigh: #fb7185;
+      --crit: #ef4444;
+      --low: #22c55e;
+      --card: #0b1220;
+      --border: #1f2937;
+      --table-stripe: #0d182e;
+      --kpi: #0b1220;
+      --chip: #1f2937;
+    }
+    .light {
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --panel-2: #f1f5f9;
+      --text: #0f172a;
+      --muted: #475569;
+      --accent: #2563eb;
+      --ok: #047857;
+      --warn: #b45309;
+      --high: #c2410c;
+      --veryhigh: #db2777;
+      --crit: #b91c1c;
+      --low: #16a34a;
+      --card: #ffffff;
+      --border: #e5e7eb;
+      --table-stripe: #f8fafc;
+      --kpi: #ffffff;
+      --chip: #e2e8f0;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+    header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo-img { width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, var(--accent), #34d399); box-shadow: 0 6px 18px rgba(0,0,0,0.25); }
+    h1 { font-size: 1.25rem; margin: 0; letter-spacing: 0.25px; }
+    .sub { color: var(--muted); font-size: 0.9rem; }
+    .controls { display: flex; gap: 10px; align-items: center; }
+    button, .btn { border: 1px solid var(--border); background: var(--panel); color: var(--text); padding: 8px 12px; border-radius: 10px; cursor: pointer; font-weight: 600; transition: transform 0.08s ease, background 0.2s ease; }
+    button:hover, .btn:hover { transform: translateY(-1px); }
+    .muted { color: var(--muted); }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    @media (min-width: 860px) {
+      .grid-2 { grid-template-columns: 1.2fr 1fr; }
+      .grid-3 { grid-template-columns: repeat(3, 1fr); }
+      .grid-4 { grid-template-columns: repeat(4, 1fr); }
+    }
+    .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 16px; box-shadow: 0 10px 24px rgba(0,0,0,0.15); }
+    .kpi { background: var(--kpi); border: 1px solid var(--border); border-radius: 16px; padding: 16px; }
+    .kpi h3 { margin: 0; font-size: 0.9rem; color: var(--muted); font-weight: 600; }
+    .kpi .val { font-size: 1.6rem; font-weight: 800; margin-top: 8px; }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .chip { background: var(--chip); border: 1px solid var(--border); padding: 6px 10px; border-radius: 20px; font-size: 0.85rem; color: var(--muted); }
+    details { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 12px 16px; }
+    details + details { margin-top: 12px; }
+    summary { list-style: none; font-weight: 700; cursor: pointer; position: relative; padding-left: 28px; }
+    summary::before { content: "+"; position: absolute; left: 0; top: 0; width: 20px; height: 20px; border-radius: 6px; border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; background: var(--panel-2); color: var(--muted); font-weight: 900; }
+    details[open] summary::before { content: "-"; }
+    .table-wrap { overflow: auto; border-radius: 12px; border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; background: var(--card); }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); white-space: nowrap; font-size: 0.94rem; }
+    thead th { position: sticky; top: 0; background: var(--panel-2); text-align: left; font-weight: 800; cursor: pointer; }
+    tbody tr:nth-child(even) { background: var(--table-stripe); }
+    .badge { padding: 6px 10px; border-radius: 999px; font-weight: 700; font-size: 0.85rem; display: inline-block; }
+    .low { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.25); }
+    .moderate { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.25); }
+    .high { background: rgba(249,115,22,0.15); color: #f97316; border: 1px solid rgba(249,115,22,0.25); }
+    .very-high { background: rgba(251,113,133,0.15); color: var(--veryhigh); border: 1px solid rgba(251,113,133,0.25); }
+    .critical { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.25); }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    select, input[type="search"], textarea { border: 1px solid var(--border); background: var(--panel-2); color: var(--text); padding: 8px 10px; border-radius: 10px; }
+    textarea { width: 100%; min-height: 160px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    footer { margin-top: 22px; color: var(--muted); font-size: 0.85rem; }
+    .note { color: var(--muted); font-size: 0.9rem; }
+    @media print {
+      /* General print styles */
+      body { font-family: 'Times New Roman', serif; background-color: white; color: black; margin: 0; padding: 0; }
+      .container { max-width: 100%; padding: 0; margin: 0; box-shadow: none; }
+      header, .controls, #uploadPanel, #schemaPanel, #promptPanel, #exportPanel, .btn, .logo, .grid, .chips, details > summary::before, details[open] summary::before { display: none !important; }
+      h1 { font-size: 24pt; margin-bottom: 12pt; }
+      h2 { font-size: 18pt; margin-top: 18pt; margin-bottom: 10pt; border-bottom: 1px solid #ccc; padding-bottom: 5pt; }
+      h3 { font-size: 14pt; margin-top: 12pt; margin-bottom: 8pt; }
+      p, li { font-size: 12pt; line-height: 1.5; }
+      .panel, .kpi { background: #fff; border: 1px solid #ddd; padding: 15px; box-shadow: none; border-radius: 0; margin-bottom: 15px; }
+      .kpi .val { font-size: 24pt; font-weight: bold; }
+      table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 20px; }
+      th, td { padding: 8px 10px; border: 1px solid #ccc; text-align: left; white-space: normal; font-size: 11pt; }
+      thead th { position: sticky; top: 0; background: #f0f0f0; }
+      tbody tr:nth-child(even) { background: #f9f9f9; }
+      .badge { padding: 4px 8px; border-radius: 5px; font-size: 10pt; }
+      .low, .moderate, .high, .very-high, .critical { background: #eee; border: none; }
+
+      /* Specific layout for PDF/Word export */
+      #reportContent { display: block !important; }
+      #mainContent { display: none !important; }
+
+      /* Re-create the structure from the desired format */
+      #reportContent h1, #reportContent h2, #reportContent h3, #reportContent p, #reportContent table, #reportContent ul, #reportContent li {
+        margin-top: 0; margin-bottom: 0;
+      }
+      #reportContent h1 {
+        font-size: 24pt;
+        margin-bottom: 12pt;
+        border-bottom: 2px solid black;
+        padding-bottom: 6pt;
+      }
+      #reportContent h2 {
+        font-size: 18pt;
+        margin-top: 18pt;
+        margin-bottom: 10pt;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 5pt;
+      }
+      #reportContent h3 {
+        font-size: 14pt;
+        margin-top: 12pt;
+        margin-bottom: 8pt;
+      }
+      #reportContent p, #reportContent li {
+        font-size: 12pt;
+        line-height: 1.6;
+      }
+      #reportContent table {
+        margin-top: 10px;
+        margin-bottom: 20px;
+        width: 100%;
+        border-collapse: collapse;
+      }
+      #reportContent th, #reportContent td {
+        border: 1px solid #ccc;
+        padding: 8px 10px;
+        text-align: left;
+        white-space: normal;
+        font-size: 11pt;
+      }
+      #reportContent th {
+        background-color: #f0f0f0;
+        font-weight: bold;
+      }
+      #reportContent td {
+        background-color: #fff;
+      }
+      #reportContent td:nth-child(even) {
+        background-color: #f9f9f9; /* Simulate stripe for visual clarity */
+      }
+      #reportContent .badge {
+        padding: 4px 8px;
+        border-radius: 5px;
+        font-size: 10pt;
+        color: #000; /* Ensure badge text is visible */
+        background: #eee;
+        border: none;
+      }
+    }
+
+    /* Fixed CSS for the Risk Matrix and Layout */
+    .chart-and-matrix-wrapper {
+      display: grid;
+      grid-template-columns: 0.7fr 1.3fr;
+      gap: 30px;
+      align-items: start;
+      margin-top: 16px;
+    }
+
+    .radar-container {
+      max-width: 350px;
+      max-height: 350px;
+    }
+
+    .risk-matrix-section {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      width: 100%;
+      margin-left: 40px;
+    }
+
+    .risk-matrix-with-labels {
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      grid-template-rows: 1fr 25px;
+      gap: 4px;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .y-axis-labels {
+      grid-column: 1;
+      grid-row: 1;
+      display: flex;
+      flex-direction: column-reverse;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0;
+      height: 100%;
+    }
+
+    .y-axis-labels .label-item {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .risk-matrix {
+      grid-column: 2;
+      grid-row: 1;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      gap: 1px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      aspect-ratio: 1;
+      background: var(--border);
+      width: 100%;
+      height: 250px;
+    }
+
+    .x-axis-labels {
+      grid-column: 2;
+      grid-row: 2;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1px;
+      text-align: center;
+      padding-top: 2px;
+      margin-left: 1px;
+      margin-right: 1px;
+    }
+
+    .x-axis-labels .label-item {
+      font-size: 0.75rem;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .axis-title {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 600;
+      margin: 4px 0;
+    }
+
+    .y-axis-title {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      position: absolute;
+      left: -20px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .matrix-cell {
+      background: var(--panel);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text);
+      transition: all 0.2s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .matrix-cell:hover {
+      transform: scale(1.05);
+      z-index: 10;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .matrix-cell.highlight {
+      border: 3px solid var(--accent);
+      box-shadow: 0 0 0 1px var(--accent), 0 4px 12px rgba(96, 165, 250, 0.3);
+      z-index: 5;
+      transform: scale(1.1);
+    }
+
+    /* Risk level colors for matrix cells */
+    .matrix-cell.risk-1 { background: #dcfce7; color: #166534; }
+    .matrix-cell.risk-2 { background: #fef3c7; color: #92400e; }
+    .matrix-cell.risk-3 { background: #fef3c7; color: #92400e; }
+    .matrix-cell.risk-4 { background: #fed7aa; color: #c2410c; }
+    .matrix-cell.risk-5 { background: #fed7aa; color: #c2410c; }
+    .matrix-cell.risk-6 { background: #fed7aa; color: #c2410c; }
+    .matrix-cell.risk-8 { background: #fecaca; color: #b91c1c; }
+    .matrix-cell.risk-9 { background: #fecaca; color: #b91c1c; }
+    .matrix-cell.risk-10 { background: #fecaca; color: #b91c1c; }
+    .matrix-cell.risk-12 { background: #fca5a5; color: #991b1b; }
+    .matrix-cell.risk-15 { background: #fca5a5; color: #991b1b; }
+    .matrix-cell.risk-16 { background: #f87171; color: #7f1d1d; }
+    .matrix-cell.risk-20 { background: #f87171; color: #7f1d1d; }
+    .matrix-cell.risk-25 { background: #ef4444; color: #ffffff; }
+
+    /* Dark theme adjustments */
+    body:not(.light) .matrix-cell.risk-1 { background: rgba(34,197,94,0.2); color: #22c55e; }
+    body:not(.light) .matrix-cell.risk-2 { background: rgba(245,158,11,0.2); color: #f59e0b; }
+    body:not(.light) .matrix-cell.risk-3 { background: rgba(245,158,11,0.2); color: #f59e0b; }
+    body:not(.light) .matrix-cell.risk-4 { background: rgba(249,115,22,0.2); color: #f97316; }
+    body:not(.light) .matrix-cell.risk-5 { background: rgba(249,115,22,0.2); color: #f97316; }
+    body:not(.light) .matrix-cell.risk-6 { background: rgba(249,115,22,0.2); color: #f97316; }
+    body:not(.light) .matrix-cell.risk-8 { background: rgba(251,113,133,0.2); color: #fb7185; }
+    body:not(.light) .matrix-cell.risk-9 { background: rgba(251,113,133,0.2); color: #fb7185; }
+    body:not(.light) .matrix-cell.risk-10 { background: rgba(251,113,133,0.2); color: #fb7185; }
+    body:not(.light) .matrix-cell.risk-12 { background: rgba(239,68,68,0.3); color: #ef4444; }
+    body:not(.light) .matrix-cell.risk-15 { background: rgba(239,68,68,0.3); color: #ef4444; }
+    body:not(.light) .matrix-cell.risk-16 { background: rgba(239,68,68,0.4); color: #ef4444; }
+    body:not(.light) .matrix-cell.risk-20 { background: rgba(239,68,68,0.4); color: #ef4444; }
+    body:not(.light) .matrix-cell.risk-25 { background: rgba(239,68,68,0.6); color: #ffffff; }
+
+    .matrix-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+      border: 1px solid var(--border);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 860px) {
+      .chart-and-matrix-wrapper {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .risk-matrix-with-labels {
+        max-width: 300px;
+      }
+    }
+
+    /* Styles for the generated report content */
+    #reportContent {
+        display: none; /* Hidden by default, shown on print/export */
+        background-color: white;
+        color: black;
+        font-family: 'Times New Roman', serif;
+        padding: 20mm; /* Standard page margins */
+        max-width: 210mm; /* A4 width */
+        margin: 0 auto; /* Center the content */
+    }
+    #reportContent h1 {
+        font-size: 24pt;
+        margin-bottom: 12pt;
+        border-bottom: 2px solid black;
+        padding-bottom: 6pt;
+        text-align: center;
+    }
+    #reportContent h2 {
+        font-size: 18pt;
+        margin-top: 18pt;
+        margin-bottom: 10pt;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 5pt;
+    }
+    #reportContent h3 {
+        font-size: 14pt;
+        margin-top: 12pt;
+        margin-bottom: 8pt;
+    }
+    #reportContent p, #reportContent li {
+        font-size: 12pt;
+        line-height: 1.6;
+        margin-bottom: 10pt;
+    }
+    #reportContent table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+    #reportContent th, #reportContent td {
+        border: 1px solid #ccc;
+        padding: 8px 10px;
+        text-align: left;
+        white-space: normal;
+        font-size: 11pt;
+    }
+    #reportContent th {
+        background-color: #f0f0f0;
+        font-weight: bold;
+    }
+    #reportContent td {
+        background-color: #fff;
+    }
+     #reportContent td:nth-child(even) { /* Zebra striping for readability */
+        background-color: #f9f9f9;
+    }
+    #reportContent .badge {
+        padding: 4px 8px;
+        border-radius: 5px;
+        font-size: 10pt;
+        color: #000; /* Ensure badge text is visible */
+        background: #eee;
+        border: none;
+    }
+    /* Specific styles for KPI Snapshot table */
+    #kpiTable th, #kpiTable td {
+        font-size: 12pt;
+        padding: 8px;
+        border: none;
+        text-align: left;
+        white-space: normal;
+    }
+     #kpiTable th {
+        background-color: transparent;
+        font-weight: bold;
+        width: 150px; /* Fixed width for Metric column */
+    }
+     #kpiTable td {
+        font-weight: bold;
+     }
+     #kpiTable tr {
+        border-bottom: 1px solid #eee; /* Separator between KPI rows */
+     }
+     #kpiTable tr:last-child {
+        border-bottom: none;
+     }
+
+  </style>
+</head>
+<body>
+  <div class="container" id="mainContent">
+    <header>
+      <div class="brand">
+        <img src="https://quanta-analytica.mnshakoor.com/logo-mns120.png" alt="Quanta Analytica" class="logo-img" />
+        <div>
+          <h1>Quanta Analytica - SitRep Template</h1>
+          <div class="sub">Standard one page format for Strategic Communications. P(a) uses Total CARVER divided by 30. Risk scale is 5 tier.</div>
+        </div>
+      </div>
+      <div class="controls">
+        <button id="themeBtn" title="Toggle theme">Toggle Theme</button>
+        <button id="printBtn" title="Print or Save to PDF">Export PDF</button>
+        <button id="saveHtmlBtn" title="Export full HTML">Export HTML</button>
+        <button id="saveDocBtn" title="Export Word .doc">Export Word</button>
+        <button id="exportCsvBtn" title="Export table to CSV">Export CSV</button>
+        <button id="exportJsonBtn" title="Export table to JSON">Export JSON</button>
+        <button id="savePngBtn" title="Save radar to PNG">Save Radar PNG</button>
+      </div>
+    </header>
+
+    <section id="uploadPanel" class="panel">
+      <h2 style="margin:6px 0 8px 0">Load your data</h2>
+      <p class="note">Upload a JSON, CSV, or XML file that matches the SitRep schema. The table, radar, KPIs, and ratings update automatically. You can also click Load Sample to preview.</p>
+      <div class="row" style="margin:8px 0">
+        <input type="file" id="fileInput" accept=".json,.csv,.xml" />
+        <button id="loadSampleBtn">Load Sample</button>
+      </div>
+      <div id="uploadMsg" class="note"></div>
+    </section>
+
+    <section class="grid grid-2">
+      <div class="panel">
+        <h2 style="margin:6px 0 12px 0">Executive Overview</h2>
+        <p class="note">The humanitarian center of gravity is shaped by dependency ratios and verification throughput. This template expresses CARVER priorities with a five tier risk scale suitable for NGO crisis reporting.</p>
+        <div class="chips" style="margin-top:10px">
+          <span class="chip">P(a) = Total CARVER / 30</span>
+          <span class="chip">Risk scale Low, Moderate, High, Very High, Critical</span>
+          <span class="chip">Recuperability rule high score means lower resilience</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h2 style="margin:6px 0 12px 0">KPI Snapshot</h2>
+        <div class="grid grid-4">
+          <div class="kpi"><h3>Avg C</h3><div class="val" id="avgC">-</div></div>
+          <div class="kpi"><h3>Avg A</h3><div class="val" id="avgA">-</div></div>
+          <div class="kpi"><h3>Avg R</h3><div class="val" id="avgR">-</div></div>
+          <div class="kpi"><h3>Avg V</h3><div class="val" id="avgV">-</div></div>
+          <div class="kpi"><h3>Avg E</h3><div class="val" id="avgE">-</div></div>
+          <div class="kpi"><h3>Avg Rz</h3><div class="val" id="avgRz">-</div></div>
+          <div class="kpi"><h3>Avg Total CARVER</h3><div class="val" id="avgTotal">-</div></div>
+          <div class="kpi"><h3>Avg Risk</h3><div class="val" id="avgRisk">-</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Radar Chart and Risk Matrix Section -->
+    <details open>
+      <summary>CARVER Profile: Radar & Risk Matrix</summary>
+      <div class="panel" style="margin-top:12px">
+        <div class="row" style="justify-content: space-between">
+          <div class="row">
+            <label for="assetSelect" class="muted">Choose asset</label>
+            <select id="assetSelect"></select>
+          </div>
+          <div class="row">
+            <span class="chip">Total CARVER: <strong id="totalCarver">-</strong></span>
+            <span class="chip">Likelihood: <strong id="lScore">-</strong></span>
+            <span class="chip">Impact: <strong id="iScore">-</strong></span>
+            <span class="chip">P(a): <strong id="pa">-</strong></span>
+            <span class="chip">Risk: <strong id="riskScore">-</strong></span>
+            <span class="chip">Rating: <strong id="riskRating">-</strong></span>
+          </div>
+        </div>
+
+        <!-- Wrapper for Radar Chart and Risk Matrix -->
+        <div class="chart-and-matrix-wrapper">
+          <!-- Container for the radar chart -->
+          <div class="radar-container">
+            <canvas id="radar" style="width: 100%; height: 100%;"></canvas>
+          </div>
+
+          <!-- Risk Matrix Section -->
+          <div class="risk-matrix-section">
+            <h3 style="margin: 0; font-size: 1rem; color: var(--text);">Risk Matrix</h3>
+            <div class="risk-matrix-with-labels" style="position: relative;">
+              <div class="y-axis-labels">
+                <div class="label-item">5</div>
+                <div class="label-item">4</div>
+                <div class="label-item">3</div>
+                <div class="label-item">2</div>
+                <div class="label-item">1</div>
+              </div>
+              <div id="riskMatrix" class="risk-matrix">
+                <!-- Matrix cells will be generated by JavaScript -->
+              </div>
+              <div class="x-axis-labels">
+                <div class="label-item">1</div>
+                <div class="label-item">2</div>
+                <div class="label-item">3</div>
+                <div class="label-item">4</div>
+                <div class="label-item">5</div>
+              </div>
+              <div class="y-axis-title">Likelihood</div>
+            </div>
+            <div class="axis-title" style="text-align: center; width: 100%; margin-top: 2px;">Impact</div>
+            <div class="note" style="text-align: left; margin-top: 4px; font-size: 0.8rem;">
+              Highlighted cell shows current asset's risk.
+            </div>
+          </div>
+        </div>
+
+        <div class="note" style="margin-top:8px">P(a) is computed as Total CARVER divided by 30 on a 1-5 scale with six dimensions.</div>
+      </div>
+    </details>
+
+    <details open>
+      <summary>Full Scores Table - sortable and filterable</summary>
+      <div class="panel" style="margin-top:12px">
+        <div class="row" style="justify-content: space-between; margin-bottom:8px">
+          <input type="search" id="searchBox" placeholder="Filter by name or location" />
+          <div class="chips">
+            <span class="chip"><span class="badge low">Low</span></span>
+            <span class="chip"><span class="badge moderate">Moderate</span></span>
+            <span class="chip"><span class="badge high">High</span></span>
+            <span class="chip"><span class="badge very-high">Very High</span></span>
+            <span class="chip"><span class="badge critical">Critical</span></span>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table id="scoresTable">
+            <thead>
+              <tr>
+                <th data-key="name">Asset</th>
+                <th data-key="type">Type</th>
+                <th data-key="country">Country</th>
+                <th data-key="location">Location</th>
+                <th data-key="C">C</th>
+                <th data-key="A">A</th>
+                <th data-key="R">R</th>
+                <th data-key="V">V</th>
+                <th data-key="E">E</th>
+                <th data-key="Rz">Rz</th>
+                <th data-key="total">Total</th>
+                <th data-key="likelihood">L</th>
+                <th data-key="impact">I</th>
+                <th data-key="pa">P(a)</th>
+                <th data-key="risk">Risk</th>
+                <th data-key="rating">Rating</th>
+                <th data-key="notes">Notes</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </details>
+
+    <details id="schemaPanel">
+      <summary>Schema Templates</summary>
+      <div class="panel" style="margin-top:12px">
+        <p class="note">Use these templates to format your data. Click a button to view the schema, then download or copy it.</p>
+        <div class="row" style="margin:8px 0">
+          <button id="viewJsonSchemaBtn">View JSON Schema</button>
+          <button id="viewCsvSchemaBtn">View CSV Schema</button>
+          <button id="viewXmlSchemaBtn">View XML Schema</button>
+        </div>
+        <div class="row" style="margin:8px 0">
+          <button id="downloadJsonSchemaBtn">Download JSON Template</button>
+          <button id="downloadCsvSchemaBtn">Download CSV Template</button>
+          <button id="downloadXmlSchemaBtn">Download XML Template</button>
+        </div>
+        <textarea id="schemaBox" placeholder="Schema will appear here..."></textarea>
+      </div>
+    </details>
+
+    <details id="promptPanel">
+      <summary>AI Prompt Builder</summary>
+      <div class="panel" style="margin-top:12px">
+        <p class="note">Copy this prompt to convert your data using AI tools like ChatGPT or Claude. Paste your raw data after the prompt.</p>
+        <div class="row" style="margin:8px 0">
+          <button id="copyPromptBtn">Copy Prompt to Clipboard</button>
+        </div>
+        <textarea id="promptBox" readonly></textarea>
+      </div>
+    </details>
+
+    <details id="exportPanel">
+      <summary>Export Options</summary>
+      <div class="panel" style="margin-top:12px">
+        <p class="note">Export your completed SitRep in various formats for sharing and archival.</p>
+        <div class="row" style="margin:8px 0">
+          <button id="printBtn2">Print / Save PDF</button>
+          <button id="saveHtmlBtn2">Export HTML</button>
+          <button id="saveDocBtn2">Export Word</button>
+        </div>
+      </div>
+    </details>
+
+    <footer>
+      <p>Quanta Analytica SitRep Template v3.1 | Designed for humanitarian and crisis response teams | <a href="https://quanta-analytica.mnshakoor.com" style="color:var(--accent)">quanta-analytica.mnshakoor.com</a></p>
+    </footer>
+  </div>
+
+  <!-- Content for PDF/Word Export -->
+  <div id="reportContent">
+    <h1>Strategic Situation Report (SitRep)</h1>
+    <p><strong>Prepared by:</strong> Quanta Analytica – MNS Consulting</p>
+    <p><strong>Analyst:</strong> <span id="reportAnalyst">-</span></p>
+    <p><strong>Date:</strong> <span id="reportDate">-</span></p>
+
+    <h2>1. Executive Summary</h2>
+    <p id="reportExecutiveSummary">
+      The humanitarian center of gravity is shaped by dependency ratios and verification throughput.
+      This template expresses CARVER priorities with a five tier risk scale suitable for NGO crisis reporting.
+      P(a) is computed as Total CARVER divided by 30 on a 1-5 scale with six dimensions.
+    </p>
+
+    <h2>2. KPI Snapshot</h2>
+    <table id="kpiTable">
+      <tr>
+        <th>Metric</th>
+        <th>Value</th>
+      </tr>
+      <tr>
+        <td>Avg C</td>
+        <td id="kpiAvgC">-</td>
+      </tr>
+      <tr>
+        <td>Avg A</td>
+        <td id="kpiAvgA">-</td>
+      </tr>
+      <tr>
+        <td>Avg R</td>
+        <td id="kpiAvgR">-</td>
+      </tr>
+      <tr>
+        <td>Avg V</td>
+        <td id="kpiAvgV">-</td>
+      </tr>
+      <tr>
+        <td>Avg E</td>
+        <td id="kpiAvgE">-</td>
+      </tr>
+      <tr>
+        <td>Avg Rz</td>
+        <td id="kpiAvgRz">-</td>
+      </tr>
+      <tr>
+        <td>Avg Total CARVER</td>
+        <td id="kpiAvgTotal">-</td>
+      </tr>
+      <tr>
+        <td>Avg P(a)</td>
+        <td id="kpiAvgPa">-</td>
+      </tr>
+      <tr>
+        <td>Avg Risk Score</td>
+        <td id="kpiAvgRisk">-</td>
+      </tr>
+    </table>
+
+    <h2>3. Threat Table (Ranked by Risk Score)</h2>
+    <div class="table-wrap">
+      <table id="exportThreatTable">
+        <thead>
+          <tr>
+            <th>Threat Name</th>
+            <th>C</th><th>A</th><th>R</th><th>V</th><th>E</th><th>Rz</th><th>CARVER</th><th>L</th><th>I</th><th>P(a)</th><th>Risk</th><th>Rating</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Threat rows will be populated here -->
+        </tbody>
+      </table>
+    </div>
+
+    <h2>4. Threat Narratives</h2>
+    <!-- Threat narratives will be populated here -->
+
+  </div>
+
+<script>
+// -------------------- Data and Schema --------------------
+const schemaKeys = ["name", "type", "country", "location", "C", "A", "R", "V", "E", "Rz", "likelihood", "impact", "notes"];
+let assets = [
+  { name: "Koursigue camp services", type: "Infrastructure", country: "Chad", location: "Koursigue, Sila", C: 4, A: 3, R: 3, V: 4, E: 4, Rz: 3, likelihood: 4, impact: 4, notes: "Primary water and sanitation hub" },
+  { name: "Adre border crossing", type: "Logistics", country: "Chad", location: "Adre, Ouaddai", C: 5, A: 4, R: 2, V: 5, E: 3, Rz: 2, likelihood: 5, impact: 5, notes: "Critical supply route from Sudan" },
+  { name: "Farchana camp clinic", type: "Health", country: "Chad", location: "Farchana, Ouaddai", C: 3, A: 4, R: 4, V: 3, E: 5, Rz: 4, likelihood: 3, impact: 4, notes: "Serves 25,000 refugees" }
+];
+
+function normalizeItem(item) {
+  const nums = ["C", "A", "R", "V", "E", "Rz", "likelihood", "impact"];
+  const obj = { ...item };
+  nums.forEach(k => { obj[k] = Number(obj[k]) || 0; });
+  obj.total = (obj.C + obj.A + obj.R + obj.V + obj.E + obj.Rz) || 0;
+  obj.pa = obj.total / 30;
+  obj.risk = obj.likelihood * obj.impact;
+  obj.rating = getRiskRating(obj.risk);
+  return obj;
+}
+
+function getRiskRating(risk) {
+  if (risk <= 2) return "Low";
+  if (risk <= 6) return "Moderate";
+  if (risk <= 12) return "High";
+  if (risk <= 20) return "Very High";
+  return "Critical";
+}
+
+function getRiskRatingFromLI(l, i) {
+  const risk = l * i;
+  return getRiskRating(risk).toLowerCase().replace(" ", "-");
+}
+
+// -------------------- Risk Matrix --------------------
+let riskMatrixContainer;
+
+function initRiskMatrix() {
+  if (!riskMatrixContainer) return;
+  
+  riskMatrixContainer.innerHTML = "";
+  
+  // Create matrix cells (5x5 grid, likelihood 5 at top, 1 at bottom)
+  for (let l = 5; l >= 1; l--) {
+    for (let i = 1; i <= 5; i++) {
+      const cell = document.createElement("div");
+      cell.classList.add("matrix-cell");
+      cell.dataset.l = l;
+      cell.dataset.i = i;
+      
+      const riskProduct = l * i;
+      cell.textContent = riskProduct;
+      cell.classList.add(`risk-${riskProduct}`);
+      
+      riskMatrixContainer.appendChild(cell);
+    }
+  }
+}
+
+function updateRiskMatrixHighlight(asset) {
+  // Remove previous highlight from all cells
+  riskMatrixContainer.querySelectorAll(".matrix-cell.highlight").forEach(cell => {
+    cell.classList.remove("highlight");
+  });
+
+  const l = asset.likelihood;
+  const i = asset.impact;
+
+  if (l && i && riskMatrixContainer) {
+    // Ensure L and I are within the 1-5 range for matrix lookup
+    const validL = Math.max(1, Math.min(5, l));
+    const validI = Math.max(1, Math.min(5, i));
+
+    // Find the cell corresponding to the Likelihood and Impact
+    const targetCell = riskMatrixContainer.querySelector(`.matrix-cell[data-l="${validL}"][data-i="${validI}"]`);
+    if (targetCell) {
+      targetCell.classList.add("highlight");
+    }
+  }
+}
+
+function refreshAll() {
+  // KPIs
+  const n = assets.length || 1;
+  const sum = k => assets.reduce((acc, a) => acc + (a[k] ?? 0), 0);
+  const avg = k => sum(k) / n;
+  const fmt = val => Number.isFinite(val) ? val.toFixed(2) : "-";
+  document.getElementById("avgC").textContent = fmt(avg("C"));
+  document.getElementById("avgA").textContent = fmt(avg("A"));
+  document.getElementById("avgR").textContent = fmt(avg("R"));
+  document.getElementById("avgV").textContent = fmt(avg("V"));
+  document.getElementById("avgE").textContent = fmt(avg("E"));
+  document.getElementById("avgRz").textContent = fmt(avg("Rz"));
+  document.getElementById("avgTotal").textContent = fmt(avg("total"));
+  document.getElementById("avgRisk").textContent = fmt(avg("risk"));
+
+  // Populate report KPIs
+  document.getElementById("kpiAvgC").textContent = fmt(avg("C"));
+  document.getElementById("kpiAvgA").textContent = fmt(avg("A"));
+  document.getElementById("kpiAvgR").textContent = fmt(avg("R"));
+  document.getElementById("kpiAvgV").textContent = fmt(avg("V"));
+  document.getElementById("kpiAvgE").textContent = fmt(avg("E"));
+  document.getElementById("kpiAvgRz").textContent = fmt(avg("Rz"));
+  document.getElementById("kpiAvgTotal").textContent = fmt(avg("total"));
+  document.getElementById("kpiAvgPa").textContent = fmt(avg("pa"));
+  document.getElementById("kpiAvgRisk").textContent = fmt(avg("risk"));
+
+  // Select
+  const sel = document.getElementById("assetSelect");
+  sel.innerHTML = "";
+  assets.forEach((a, i) => {
+    const opt = document.createElement("option");
+    opt.value = i;
+    opt.textContent = a.name || `Asset ${i+1}`;
+    sel.appendChild(opt);
+  });
+
+  // Initialize or update the risk matrix
+  if (riskMatrixContainer && !riskMatrixContainer.dataset.initialized) {
+      initRiskMatrix();
+      riskMatrixContainer.dataset.initialized = "true";
+  }
+
+  // Update the highlight on the matrix if assets exist
+  if (assets.length > 0) {
+    updateRiskMatrixHighlight(assets[0]);
+  } else {
+      if (riskMatrixContainer) {
+          riskMatrixContainer.querySelectorAll(".matrix-cell.highlight").forEach(cell => cell.classList.remove("highlight"));
+      }
+  }
+
+  // Select the first asset in the dropdown if available
+  if (assets.length > 0) {
+    sel.value = "0";
+    updateRadar(0);
+  }
+
+  // Table
+  renderTable(assets);
+  renderExportTable(assets); // Render table for export
+}
+
+// -------------------- Radar --------------------
+let radarChart;
+function initRadar() {
+  const ctx = document.getElementById("radar");
+  radarChart = new Chart(ctx, {
+    type: "radar",
+    data: {
+      labels: ["C", "A", "R", "V", "E", "Rz"],
+      datasets: [{
+        label: "CARVER",
+        data: [0, 0, 0, 0, 0, 0],
+        fill: true,
+        borderColor: "rgba(159, 139, 191, 0.7)",
+        backgroundColor: "rgba(159, 139, 191, 0.3)",
+        pointBackgroundColor: "rgba(159, 139, 191, 0.8)",
+        pointBorderColor: "rgba(159, 139, 191, 0.9)",
+        pointHoverBackgroundColor: "#ffffff",
+        pointHoverBorderColor: "rgba(159, 139, 191, 1)"
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      elements: { line: { borderWidth: 2 } },
+      scales: {
+        r: {
+          suggestedMin: 0,
+          suggestedMax: 5,
+          ticks: {
+            stepSize: 1,
+            showLabelBackdrop: false,
+            color: getComputedStyle(document.body).getPropertyValue('--muted')
+          },
+          grid: {
+            color: getComputedStyle(document.body).getPropertyValue('--border')
+          },
+          angleLines: {
+            color: getComputedStyle(document.body).getPropertyValue('--border')
+          },
+          pointLabels: {
+            color: getComputedStyle(document.body).getPropertyValue('--muted')
+          }
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: true }
+      }
+    }
+  });
+}
+
+function updateRadar(idx) {
+  const a = assets[idx];
+  if (!a) return;
+
+  radarChart.data.datasets[0].data = [a.C, a.A, a.R, a.V, a.E, a.Rz];
+  radarChart.update();
+
+  // Update score display
+  document.getElementById("totalCarver").textContent = a.total;
+  document.getElementById("lScore").textContent = a.likelihood;
+  document.getElementById("iScore").textContent = a.impact;
+  document.getElementById("pa").textContent = a.pa.toFixed(2);
+  document.getElementById("riskScore").textContent = a.risk;
+  document.getElementById("riskRating").textContent = a.rating;
+
+  // Update the risk matrix highlight
+  updateRiskMatrixHighlight(a);
+}
+
+document.addEventListener("change", e => {
+  if (e.target && e.target.id === "assetSelect") {
+    updateRadar(+e.target.value);
+  }
+});
+
+// -------------------- Table --------------------
+const tbody = () => document.querySelector("#scoresTable tbody");
+function ratingClass(r) {
+  const v = String(r).toLowerCase();
+  if (v === "critical") return "critical";
+  if (v === "very high") return "very-high";
+  if (v === "high") return "high";
+  if (v === "moderate") return "moderate";
+  return "low";
+}
+function renderTable(rows) {
+  const body = tbody();
+  body.innerHTML = "";
+  rows.forEach(a => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${a.name}</td>
+      <td>${a.type}</td>
+      <td>${a.country}</td>
+      <td>${a.location}</td>
+      <td>${a.C}</td>
+      <td>${a.A}</td>
+      <td>${a.R}</td>
+      <td>${a.V}</td>
+      <td>${a.E}</td>
+      <td>${a.Rz}</td>
+      <td>${a.total}</td>
+      <td>${a.likelihood}</td>
+      <td>${a.impact}</td>
+      <td>${a.pa.toFixed(2)}</td>
+      <td>${a.risk}</td>
+      <td><span class="badge ${ratingClass(a.rating)}">${a.rating}</span></td>
+      <td>${a.notes}</td>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+// Rendering for Export Table
+function renderExportTable(rows) {
+  const exportTbody = document.querySelector("#reportContent #exportThreatTable tbody");
+  if (!exportTbody) return;
+  exportTbody.innerHTML = "";
+
+  // Sort rows by Risk Score descending for the report table
+  const sortedRows = [...rows].sort((a, b) => b.risk - a.risk);
+
+  sortedRows.forEach(a => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${a.name}</td>
+      <td>${a.C}</td>
+      <td>${a.A}</td>
+      <td>${a.R}</td>
+      <td>${a.V}</td>
+      <td>${a.E}</td>
+      <td>${a.Rz}</td>
+      <td>${a.total}</td>
+      <td>${a.likelihood}</td>
+      <td>${a.impact}</td>
+      <td>${a.pa.toFixed(2)}</td>
+      <td>${a.risk}</td>
+      <td><span class="badge ${ratingClass(a.rating)}">${a.rating}</span></td>
+    `;
+    exportTbody.appendChild(tr);
+  });
+
+  // Populate Threat Narratives section
+  const narrativesContainer = document.querySelector("#reportContent #reportExecutiveSummary").nextElementSibling.nextElementSibling.nextElementSibling; // This targets the element after the KPI table
+  if (!narrativesContainer) return;
+
+  let narrativesHtml = "";
+  sortedRows.forEach(a => {
+    narrativesHtml += `
+      <h3>${a.name}</h3>
+      <p><strong>Type:</strong> ${a.type}</p>
+      <p><strong>Location:</strong> ${a.location}</p>
+      <p><strong>Risk Rating:</strong> <span class="badge ${ratingClass(a.rating)}">${a.rating}</span></p>
+      <p><strong>P(a):</strong> ${a.pa.toFixed(2)} | <strong>Total CARVER Score:</strong> ${a.total}</p>
+      <p><strong>Likelihood:</strong> ${a.likelihood} | <strong>Impact:</strong> ${a.impact}</p>
+      <p><strong>Summary:</strong> ${a.notes}</p>
+      <hr style="border-top: 1px solid #ccc; margin: 15px 0;">
+    `;
+  });
+  // Insert narratives into the DOM
+  const narrativesDiv = document.createElement('div');
+  narrativesDiv.innerHTML = narrativesHtml;
+  // Insert the narratives div right after the last existing element in #reportContent
+  const reportContent = document.getElementById('reportContent');
+  let lastChild = reportContent.lastElementChild;
+  while(lastChild && lastChild.tagName === 'BR') { // Skip any lingering <br> tags from previous inserts
+    lastChild = lastChild.previousElementSibling;
+  }
+  if (lastChild) {
+    lastChild.parentNode.insertBefore(narrativesDiv, lastChild.nextSibling);
+  } else {
+    reportContent.appendChild(narrativesDiv);
+  }
+}
+
+// Sorting
+let sortKey = null, sortAsc = true;
+document.addEventListener("click", e => {
+  const th = e.target.closest("#scoresTable thead th");
+  if (!th) return;
+  const key = th.getAttribute("data-key"); if (!key) return;
+  if (sortKey === key) sortAsc = !sortAsc; else { sortKey = key; sortAsc = true; }
+  const rows = [...assets];
+  rows.sort((a,b) => {
+    const va = a[key], vb = b[key];
+    if (typeof va === "number" && typeof vb === "number") return sortAsc ? va - vb : vb - va;
+    return sortAsc ? String(va).localeCompare(String(vb)) : String(vb).localeCompare(String(va));
+  });
+  renderTable(rows);
+});
+
+// Filtering
+document.addEventListener("input", e => {
+  if (e.target && e.target.id === "searchBox") {
+    const q = e.target.value.toLowerCase();
+    const rows = assets.filter(a =>
+      (a.name||"").toLowerCase().includes(q) ||
+      (a.location||"").toLowerCase().includes(q) ||
+      (a.type||"").toLowerCase().includes(q) ||
+      (a.country||"").toLowerCase().includes(q)
+    );
+    renderTable(rows);
+  }
+});
+
+// -------------------- Upload and parse --------------------
+document.getElementById("loadSampleBtn").addEventListener("click", () => {
+  assets = assets.map(a => normalizeItem(a));
+  refreshAll();
+  document.getElementById("uploadMsg").textContent = "Loaded sample data.";
+});
+
+document.getElementById("fileInput").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const ext = file.name.split(".").pop().toLowerCase();
+  const text = await file.text();
+  try {
+    let parsed = [];
+    if (ext === "json") {
+      const data = JSON.parse(text);
+      if (Array.isArray(data)) parsed = data;
+      else if (Array.isArray(data.assets)) parsed = data.assets;
+      else throw new Error("JSON must be an array or have an 'assets' array.");
+    } else if (ext === "csv") {
+      parsed = parseCSV(text);
+    } else if (ext === "xml") {
+      parsed = parseXML(text);
+    } else {
+      throw new Error("Unsupported file type. Use JSON, CSV, or XML.");
+    }
+    const missing = new Set();
+    const normalized = parsed.map(item => {
+      const obj = normalizeItem(item);
+      schemaKeys.forEach(k => { if (!(k in item)) missing.add(k); });
+      return obj;
+    });
+    assets = normalized;
+    refreshAll();
+    const missMsg = missing.size ? " Missing keys seen in some rows: " + [...missing].join(", ") : "";
+    document.getElementById("uploadMsg").textContent = "Data loaded successfully." + missMsg;
+  } catch (err) {
+    console.error(err);
+    document.getElementById("uploadMsg").textContent = "Error loading data: " + err.message;
+  }
+});
+
+function parseCSV(text) {
+  const rows = text.split(/\r\n|\n/);
+  if (rows.length === 0) return [];
+
+  const headers = rows[0].split(',').map(h => h.trim());
+  const output = [];
+
+  for (let i = 1; i < rows.length; i++) {
+    const values = rows[i].split(',');
+    const rowObject = {};
+    headers.forEach((header, index) => {
+      if (header) {
+        rowObject[header] = values[index] ? values[index].trim() : '';
+      }
+    });
+    output.push(rowObject);
+  }
+  return output;
+}
+
+function parseXML(xmlText) {
+  const doc = new DOMParser().parseFromString(xmlText, "application/xml");
+  const out = [];
+  const assetNodes = doc.querySelectorAll("asset");
+  assetNodes.forEach(node => {
+    const obj = {};
+    schemaKeys.forEach(k => {
+      const el = node.querySelector(k);
+      if (el) obj[k] = el.textContent;
+    });
+    out.push(obj);
+  });
+  return out;
+}
+
+// -------------------- Schema viewers and downloads --------------------
+const jsonTemplate = JSON.stringify([{
+  "name": "Asset Name",
+  "type": "Infrastructure",
+  "country": "Country",
+  "location": "City, Region",
+  "C": 4,
+  "A": 3,
+  "R": 3,
+  "V": 4,
+  "E": 4,
+  "Rz": 3,
+  "likelihood": 4,
+  "impact": 4,
+  "notes": "Additional context"
+}], null, 2);
+
+const csvHeaders = "name,type,country,location,C,A,R,V,E,Rz,likelihood,impact,notes\nAsset Name,Infrastructure,Country,City Region,4,3,3,4,4,3,4,4,Additional context";
+
+const xmlTemplate = `<assets>
+  <asset>
+    <name>Asset Name</name>
+    <type>Infrastructure</type>
+    <country>Country</country>
+    <location>City, Region</location>
+    <C>4</C><A>3</A><R>3</R><V>4</V><E>4</E><Rz>3</Rz>
+    <likelihood>4</likelihood>
+    <impact>4</impact>
+    <notes>Additional context</notes>
+  </asset>
+</assets>`;
+
+document.getElementById("viewJsonSchemaBtn").addEventListener("click", () => { document.getElementById("schemaBox").value = jsonTemplate; });
+document.getElementById("viewCsvSchemaBtn").addEventListener("click", () => { document.getElementById("schemaBox").value = csvHeaders; });
+document.getElementById("viewXmlSchemaBtn").addEventListener("click", () => { document.getElementById("schemaBox").value = xmlTemplate; });
+
+function downloadText(filename, text, mime) {
+  const blob = new Blob([text], {type: mime});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+document.getElementById("downloadJsonSchemaBtn").addEventListener("click", () => downloadText("SitRep_Schema_Template.json", jsonTemplate, "application/json"));
+document.getElementById("downloadCsvSchemaBtn").addEventListener("click", () => downloadText("SitRep_Schema_Template.csv", csvHeaders, "text/csv"));
+document.getElementById("downloadXmlSchemaBtn").addEventListener("click", () => downloadText("SitRep_Schema_Template.xml", xmlTemplate, "application/xml"));
+
+// -------------------- Prompt builder --------------------
+const promptText = `You are a data analyst. Convert the dataset I provide into the SitRep schema below. Return only valid output in the target format with no commentary.
+
+Schema fields and types:
+- name: string
+- type: string
+- country: string
+- location: string
+- C: number 1 to 5
+- A: number 1 to 5
+- R: number 1 to 5
+- V: number 1 to 5
+- E: number 1 to 5
+- Rz: number 1 to 5
+- likelihood: number 1 to 5
+- impact: number 1 to 5
+- notes: string
+
+Target format examples:
+JSON array:
+${jsonTemplate}
+
+CSV with headers:
+${csvHeaders}
+
+XML:
+${xmlTemplate}
+
+Instructions:
+1. Infer missing numeric scores conservatively if not provided. Use integers 1 to 5.
+2. Keep names, countries, and locations as text. Do not invent assets.
+3. Output must match one format only. Do not include explanations. Return the full file content.
+
+Now transform the following data to the target format:`;
+document.getElementById("promptBox").value = promptText;
+document.getElementById("copyPromptBtn").addEventListener("click", async () => {
+  await navigator.clipboard.writeText(promptText);
+  alert("Prompt copied.");
+});
+
+// -------------------- Exports --------------------
+function exportHTML() {
+  const html = "<!doctype html>" + document.documentElement.outerHTML;
+  downloadText("SitRep_Report.html", html, "text/html");
+}
+function exportDoc() {
+  // Create a Blob from the reportContent div
+  const reportContentDiv = document.getElementById('reportContent');
+  if (!reportContentDiv) {
+      console.error("Report content not found.");
+      return;
+  }
+
+  // Use document.body.innerHTML for simplicity in this context for Word export.
+  // For more complex documents, a dedicated HTML-to-DOCX library might be needed.
+  // This approach captures the styles applied to the reportContent div.
+  const htmlForWord = `<html><head><meta charset='utf-8'><title>SitRep Report</title></head><body>${reportContentDiv.innerHTML}</body></html>`;
+  downloadText("SitRep_Report.doc", htmlForWord, "application/msword");
+}
+
+function prepareAndShowReportContent() {
+  const reportContent = document.getElementById('reportContent');
+  if (!reportContent) return;
+
+  // Update dynamic content in the report template
+  const today = new Date();
+  const formattedDate = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  document.getElementById('reportDate').textContent = formattedDate;
+  // Assuming analyst name is not dynamically set elsewhere, we can leave it as placeholder or get from a known source if available.
+  // document.getElementById('reportAnalyst').textContent = "Your Name";
+
+  // Update the executive summary text from the current overview section
+  const executiveSummaryText = document.querySelector("#mainContent .grid-2 > div:first-child p").textContent;
+  document.querySelector("#reportContent #reportExecutiveSummary").textContent = executiveSummaryText;
+
+  // Hide the main interactive content
+  document.getElementById('mainContent').style.display = 'none';
+  // Show the report content
+  reportContent.style.display = 'block';
+}
+
+document.getElementById("printBtn").addEventListener("click", () => {
+  prepareAndShowReportContent();
+  window.print();
+  // After printing, revert the display for continued interaction
+  document.getElementById('reportContent').style.display = 'none';
+  document.getElementById('mainContent').style.display = 'block';
+});
+document.getElementById("printBtn2").addEventListener("click", () => {
+  prepareAndShowReportContent();
+  window.print();
+  document.getElementById('reportContent').style.display = 'none';
+  document.getElementById('mainContent').style.display = 'block';
+});
+
+document.getElementById("saveHtmlBtn").addEventListener("click", exportHTML);
+document.getElementById("saveHtmlBtn2").addEventListener("click", exportHTML);
+document.getElementById("saveDocBtn").addEventListener("click", exportDoc);
+document.getElementById("saveDocBtn2").addEventListener("click", exportDoc);
+
+// Existing CSV and JSON exports for table
+function toCSV(rows) {
+  const headers = ["name","type","country","location","C","A","R","V","E","Rz","total","likelihood","impact","pa","risk","rating","notes"];
+  const esc = s => `"${String(s ?? "").replace(/"/g, '""')}"`;
+  const lines = [headers.join(",")].concat(rows.map(a => headers.map(h => esc(a[h])).join(",")));
+  return lines.join("\n");
+}
+document.getElementById("exportCsvBtn").addEventListener("click", () => downloadText("SitRep_CARVER_Scores.csv", toCSV(assets), "text/csv"));
+document.getElementById("exportJsonBtn").addEventListener("click", () => downloadText("SitRep_CARVER_Scores.json", JSON.stringify(assets, null, 2), "application/json"));
+
+// Save radar PNG
+document.getElementById("savePngBtn").addEventListener("click", () => {
+  const url = document.getElementById("radar").toDataURL("image/png");
+  const a = document.createElement("a"); a.href = url; a.download = "CARVER_Radar.png"; a.click();
+});
+
+// Theme toggle
+document.getElementById("themeBtn").addEventListener("click", () => document.body.classList.toggle("light"));
+
+// Initialize on page load
+document.addEventListener("DOMContentLoaded", () => {
+    assets = assets.map(a => normalizeItem(a));
+    initRadar();
+    riskMatrixContainer = document.getElementById("riskMatrix");
+    if (riskMatrixContainer) {
+        initRiskMatrix();
+        riskMatrixContainer.dataset.initialized = "true";
+    }
+    refreshAll();
+});
+</script>
+</body>
+</html>
