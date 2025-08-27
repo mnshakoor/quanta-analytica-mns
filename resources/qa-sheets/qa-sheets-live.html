@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QA Spreadsheets Live</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable@16.0.1/dist/handsontable.full.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/handsontable@16.0.1/dist/handsontable.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hyperformula@3.0.1/dist/hyperformula.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <h1>QA Spreadsheets Live</h1>
+    <div id="spreadsheet"></div>
+    <div style="margin-top: 20px;">
+        <button id="export-csv">Export to CSV</button>
+        <button id="export-excel">Export to Excel</button>
+        <button id="export-json">Export to JSON</button>
+        <input type="file" id="import-file" accept=".csv,.xlsx,.json">
+        <button id="import-btn">Import File</button>
+    </div>
+    <div style="margin-top: 20px;">
+        <h2>Data Visualizations</h2>
+        <p>Select data in the spreadsheet. For charts, assume top row as headers, left column as labels, and remaining cells as data values.</p>
+        <button id="create-bar-chart">Create Bar Chart</button>
+        <button id="create-line-chart">Create Line Chart</button>
+        <canvas id="chart" width="800" height="400"></canvas>
+    </div>
+    <script>
+        const hyperformulaInstance = HyperFormula.buildEmpty({
+            licenseKey: 'internal-use-in-handsontable',
+        });
+
+        const container = document.getElementById('spreadsheet');
+        const hot = new Handsontable(container, {
+            data: Handsontable.helper.createSpreadsheetData(100, 26),
+            rowHeaders: true,
+            colHeaders: true,
+            contextMenu: true,
+            manualRowResize: true,
+            manualColumnResize: true,
+            minSpareRows: 1,
+            minSpareCols: 1,
+            formulas: {
+                engine: hyperformulaInstance,
+                sheetName: 'Sheet1'
+            },
+            stretchH: 'all',
+            width: '100%',
+            height: 600,
+            licenseKey: 'non-commercial-and-evaluation'
+        });
+
+        // Export to CSV
+        document.getElementById('export-csv').addEventListener('click', () => {
+            const data = hot.getData();
+            const csv = data.map(row => row.join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'spreadsheet.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        // Export to Excel
+        document.getElementById('export-excel').addEventListener('click', () => {
+            const data = hot.getData();
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+            XLSX.writeFile(wb, 'spreadsheet.xlsx');
+        });
+
+        // Export to JSON
+        document.getElementById('export-json').addEventListener('click', () => {
+            const data = hot.getData();
+            const json = JSON.stringify(data);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'spreadsheet.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        // Import file
+        document.getElementById('import-btn').addEventListener('click', () => {
+            const file = document.getElementById('import-file').files[0];
+            if (!file) return alert('Please select a file');
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const content = e.target.result;
+                let importedData;
+                if (file.name.endsWith('.json')) {
+                    importedData = JSON.parse(content);
+                } else {
+                    const workbook = XLSX.read(content, { type: file.name.endsWith('.csv') ? 'string' : 'binary' });
+                    const sheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[sheetName];
+                    importedData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                }
+                hot.loadData(importedData);
+            };
+            if (file.name.endsWith('.json') || file.name.endsWith('.csv')) {
+                reader.readAsText(file);
+            } else {
+                reader.readAsBinaryString(file);
+            }
+        });
+
+        // Create Chart function
+        function createChart(type) {
+            const ctx = document.getElementById('chart').getContext('2d');
+            if (window.myChart) window.myChart.destroy();
+            const data = hot.getData();
+            if (data.length < 2 || data[0].length < 2) return alert('Not enough data for chart');
+            const labels = data.slice(1).map(row => row[0] || ''); // Left column as labels (skip header)
+            const datasets = [];
+            const colors = ['rgba(75,192,192,0.6)', 'rgba(255,99,132,0.6)', 'rgba(54,162,235,0.6)', 'rgba(255,206,86,0.6)'];
+            for (let col = 1; col < data[0].length; col++) {
+                if (data[0][col]) { // Only if header exists
+                    datasets.push({
+                        label: data[0][col] || `Series ${col}`,
+                        data: data.slice(1).map(row => parseFloat(row[col]) || 0),
+                        backgroundColor: colors[col % colors.length],
+                        borderColor: colors[col % colors.length].replace('0.6', '1'),
+                        borderWidth: 1
+                    });
+                }
+            }
+            window.myChart = new Chart(ctx, {
+                type: type,
+                data: { labels, datasets },
+                options: { scales: { y: { beginAtZero: true } } }
+            });
+        }
+
+        document.getElementById('create-bar-chart').addEventListener('click', () => createChart('bar'));
+        document.getElementById('create-line-chart').addEventListener('click', () => createChart('line'));
+    </script>
+</body>
+</html>
