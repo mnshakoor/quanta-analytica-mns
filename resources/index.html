@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Resources | Quanta Analytica MNS Consulting</title>
+  <meta name="description" content="All Quanta Analytica resources organized by folder with quick links." />
+  <meta name="theme-color" content="#0c0f12" />
+
+  <style>
+    :root {
+      --bg:#0c0f12; --bg-soft:#10161c;
+      --text:#e8ecef; --muted:#a7b1bb;
+      --brand:#00e0a4; --brand-2:#16b3ff;
+      --border:#26313c; --shadow:0 10px 30px rgba(3,17,38,.25);
+      --radius:18px; --radius-sm:12px; --maxw:1200px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial}
+    a{color:var(--brand-2);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .container{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+
+    /* Header (mirrors your site) */
+    header{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,rgba(12,15,18,.95),rgba(12,15,18,.85));border-bottom:1px solid var(--border);backdrop-filter:saturate(140%) blur(6px)}
+    .nav{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:700;letter-spacing:.4px}
+    .brand img.logo{width:40px;height:40px;border-radius:12px;box-shadow:var(--shadow);display:block}
+    .brand b{color:var(--text)}
+    nav ul{display:flex;gap:18px;list-style:none;margin:0;padding:0}
+    nav a{color:var(--muted);font-weight:600;padding:10px 12px;border-radius:10px}
+    nav a.active, nav a:hover{background:var(--bg-soft);color:var(--text)}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:var(--bg-soft);color:var(--text);font-weight:700;cursor:pointer}
+    .btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#042015;border:none}
+    .menu{display:none}
+
+    /* Page intro */
+    .hero{padding:36px 0 8px}
+    .kicker{color:var(--brand-2);font-weight:800;letter-spacing:.6px;text-transform:uppercase;font-size:12px}
+    h1{margin:.2rem 0 .6rem;font-size:clamp(28px,4.2vw,40px);line-height:1.07}
+
+    /* Folder list */
+    section{padding:20px 0}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .card{background:var(--bg-soft);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+    .card h3{margin:0 0 8px;font-size:18px}
+    .card small{color:var(--muted)}
+    .links{margin-top:8px}
+    .links a{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:#0f141a}
+    .links a + a{margin-top:8px}
+    .links code{color:#bfe3ff;font-size:.9em}
+    .empty{color:var(--muted);font-style:italic}
+
+    footer{padding:26px 0 56px;color:var(--muted);border-top:1px solid var(--border);margin-top:24px}
+
+    /* Mobile */
+    @media (max-width:1024px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:640px){nav ul{display:none}.menu{display:inline-flex}.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <!-- resources/ is a subdir, so go up one level for the logo -->
+        <img src="../logo-mns120.png" alt="Quanta Analytica logo" class="logo">
+        <div>
+          <div style="font-size:13px;color:var(--muted);line-height:1;">QUANTA ANALYTICA</div>
+          <b>MNS Consulting</b>
+        </div>
+      </div>
+      <nav aria-label="Primary">
+        <ul>
+          <li><a href="../index.html">Home</a></li>
+          <li><a href="../index.html#services">Services</a></li>
+          <li><a href="../index.html#csrf">CSRF</a></li>
+          <li><a class="active" href="./index.html">Resources</a></li>
+          <li><a href="../index.html#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="actions">
+        <a class="btn" href="../index.html#contact">Start a project</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="kicker">Resource hub</div>
+        <h1>Browse project tools and pages</h1>
+        <p style="max-width:70ch;color:var(--muted)">Quick links into the <code>/resources</code> directory. Use this page as your stable launchpad for internal tools and public demos.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div id="folders" class="grid" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div>Quanta Analytica. Better data. Better insight. Better outcomes.</div>
+      <div style="font-size:12px;margin-top:6px">© <span id="year"></span> Quanta Analytica MNS Consulting</div>
+    </div>
+  </footer>
+
+  <script>
+    // Data model of your /resources tree based on your screenshot
+    // Add or remove entries as you create files
+    const DATA = [
+      {
+        folder: "content-analysis",
+        note: "Content analysis tools",
+        items: [
+          { title: "Sentiment & Content Analysis Tool", path: "content-analysis/sentiment-content-analysis-tool.html" }
+        ]
+      },
+      {
+        folder: "qa-sheets",
+        note: "Quanta Sheets prototype",
+        items: [
+          { title: "QA Sheets Live", path: "qa-sheets/qa-sheets-live.html" }
+        ]
+      },
+      {
+        folder: "research-tool",
+        note: "GSN research utilities",
+        items: [
+          { title: "About GSN", path: "research-tool/about-gsn.html" },
+          { title: "GSN Aggregator v3", path: "research-tool/gsn-aggregator-v3.html" },
+          { title: "GSN Aggregator v4", path: "research-tool/gsn-aggregator-v4.html" }
+        ]
+      },
+      {
+        folder: "sitrep",
+        note: "Situation report templates",
+        items: [
+          { title: "QA SitRep Risk Assessment v3.6", path: "sitrep/QA-SitRep-Risk-Assessment_v3.6.html" }
+        ]
+      }
+    ];
+
+    // Render cards
+    const grid = document.getElementById("folders");
+    function makeCard(section) {
+      const card = document.createElement("article");
+      card.className = "card";
+      const hasItems = section.items && section.items.length;
+
+      card.innerHTML = `
+        <h3>${section.folder}</h3>
+        <small>${section.note || ""}</small>
+        <div class="links">${hasItems ? "" : `<div class="empty">No links found</div>`}</div>
+      `;
+      const links = card.querySelector(".links");
+      if (hasItems) {
+        section.items.forEach(it => {
+          const a = document.createElement("a");
+          a.href = it.path;
+          a.target = "_blank";
+          a.rel = "noopener";
+          a.innerHTML = `<span>${it.title}</span><code>/${it.path}</code>`;
+          links.appendChild(a);
+        });
+      }
+      return card;
+    }
+    DATA.forEach(sec => grid.appendChild(makeCard(sec)));
+
+    // Year
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
