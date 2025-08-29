@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Primary Meta Tags -->
+<title>QA Sheets Live Pro — Quanta Analytica | M. Nuri Shakoor</title>
+<meta name="title" content="QA Sheets Live Pro — Quanta Analytica | M. Nuri Shakoor">
+<meta name="description" content="QA Sheets Live Pro is a web-based analytics platform by M. Nuri Shakoor. Built under Quanta Analytica, it merges spreadsheet editing, CARVER visualizations, dynamic filtering, and exportable dashboards for global security and humanitarian intelligence.">
+<meta name="keywords" content="QA Sheets Live Pro, Quanta Analytica, M. Nuri Shakoor, conflict systems analysis, CARVER dashboard, humanitarian analytics, security risk assessment, Excel replacement app, risk visualization, data intelligence app">
+
+
+<!-- Google / Search Engine Tags -->
+<meta itemprop="name" content="QA Sheets Live Pro">
+<meta itemprop="description" content="Built by M. Nuri Shakoor under Quanta Analytica, this web app replaces Power BI and Tableau with an integrated spreadsheet-visualization dashboard for risk and intelligence analysis.">
+<meta itemprop="image" content="https://quanta-analytica.mnshakoor.com/logo-mns120.png">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://quanta-analytica.mnshakoor.com/qa-sheets-live-pro">
+<meta property="og:title" content="QA Sheets Live Pro — Built by M. Nuri Shakoor">
+<meta property="og:description" content="A modern Excel-meets-analytics platform for security risk professionals and humanitarian analysts. Spreadsheet editing, CARVER scoring, map overlays, and export-ready dashboards.">
+<meta property="og:image" content="https://quanta-analytica.mnshakoor.com/logo-mns120.png">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://quanta-analytica.mnshakoor.com/qa-sheets-live-pro">
+<meta name="twitter:title" content="QA Sheets Live Pro — Quanta Analytica">
+<meta name="twitter:description" content="Developed by M. Nuri Shakoor, QA Sheets Live Pro is a tactical analytics dashboard for CARVER scoring, KPI tracking, and security-intelligence workflows.">
+<meta name="twitter:image" content="https://quanta-analytica.mnshakoor.com/logo-mns120.png">
+
+<!-- Favicon and Branding -->
+<link rel="icon" type="image/png" href="https://quanta-analytica.mnshakoor.com/logo-mns120.png">
+<link rel="apple-touch-icon" href="https://quanta-analytica.mnshakoor.com/logo-mns120.png">
+
+<!-- Structured Data (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "QA Sheets Live Pro",
+  "operatingSystem": "Web",
+  "applicationCategory": "BusinessApplication",
+  "url": "https://quanta-analytica.mnshakoor.com/qa-sheets-live-pro",
+  "logo": "https://quanta-analytica.mnshakoor.com/logo-mns120.png",
+  "creator": {
+    "@type": "Person",
+    "name": "M. Nuri Shakoor",
+    "url": "https://mnshakoor.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Quanta Analytica | MNS Consulting",
+    "url": "https://quanta-analytica.mnshakoor.com"
+  },
+  "description": "Web-based spreadsheet and analytics platform designed for conflict analysis, security risk, and humanitarian insight. Built by M. Nuri Shakoor as a modern alternative to Power BI and Tableau."
+}
+</script>
+
+  <!-- Bootstrap and dependencies -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Chart.js and plugins -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Updated treemap plugin to latest 3.x series which is compatible with Chart.js v4 -->
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-treemap@3.1.0/dist/chartjs-chart-treemap.min.js"></script>
+  <!-- PapaParse for CSV parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+  <!-- XLSX for Excel parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- AG Grid for tables and spreadsheet editing -->
+  <link href="https://cdn.jsdelivr.net/npm/ag-grid-community@28.2.1/dist/styles/ag-grid.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/ag-grid-community@28.2.1/dist/styles/ag-theme-alpine.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@28.2.1/dist/ag-grid-community.min.js"></script>
+  <!-- Leaflet for maps -->
+  <link href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" rel="stylesheet" />
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <!-- html2canvas and jsPDF for PDF export -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <!-- Bootstrap JS for modal and other UI interactions -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Leaflet heat plugin for heatmaps on maps -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js"></script>
+  <!-- Handsontable and HyperFormula for advanced spreadsheet editing with formulas -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/handsontable/16.0.1/handsontable.full.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handsontable/16.0.1/handsontable.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hyperformula/3.0.1/hyperformula.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+    }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      height: 100vh;
+      background-color: #2c3e50;
+      color: #fff;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .main-content {
+      margin-left: 280px;
+      padding: 20px;
+    }
+    .visualization-option {
+      padding: 8px 12px;
+      background-color: #34495e;
+      margin-bottom: 6px;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #fff;
+    }
+    .visualization-option:hover {
+      background-color: #3e5870;
+    }
+    .dashboard-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 15px;
+    }
+    .dashboard-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      padding: 15px;
+      position: relative;
+    }
+    .dashboard-card h5 {
+      margin-top: 0;
+    }
+    .dashboard-card .actions {
+      margin-top: 10px;
+    }
+    #dataPreview table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    #dataPreview th, #dataPreview td {
+      border: 1px solid #dee2e6;
+      padding: 6px 8px;
+      font-size: 0.9rem;
+    }
+    #dataPreview th {
+      background-color: #e9ecef;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h4>Analytics Dashboard</h4>
+    <div class="mb-3">
+      <label for="fileUpload" class="form-label">Upload Data</label>
+      <input type="file" class="form-control" id="fileUpload" accept=".csv, .xlsx, .json" />
+    </div>
+    <div class="mb-3">
+      <button id="createSpreadsheetBtn" class="btn btn-sm btn-primary w-100">Create Spreadsheet</button>
+    </div>
+    <div class="mb-3">
+      <button id="filterDataBtn" class="btn btn-sm btn-warning w-100">Filter Data</button>
+    </div>
+    <div class="mb-3">
+      <button id="spreadsheetEditorBtn" class="btn btn-sm btn-secondary w-100">Spreadsheet Editor</button>
+    </div>
+    <div class="mb-3">
+      <h6>Visualizations</h6>
+      <div id="visualizationOptions">
+        <div class="visualization-option" data-type="bar">Bar Chart</div>
+        <div class="visualization-option" data-type="line">Line Chart</div>
+        <div class="visualization-option" data-type="pie">Pie Chart</div>
+        <div class="visualization-option" data-type="radar">Radar Chart</div>
+        <div class="visualization-option" data-type="treemap">TreeMap</div>
+        <div class="visualization-option" data-type="table">Table</div>
+        <div class="visualization-option" data-type="map">Map</div>
+        <div class="visualization-option" data-type="kpi">KPI</div>
+      </div>
+    </div>
+    <div class="mb-3">
+      <button id="exportPDF" class="btn btn-sm btn-danger w-100">Export as PDF</button>
+      <button id="exportCSV" class="btn btn-sm btn-success w-100 mt-2">Export as CSV</button>
+      <button id="exportJSON" class="btn btn-sm btn-success w-100 mt-2">Export as JSON</button>
+      <button id="exportXML" class="btn btn-sm btn-success w-100 mt-2">Export as XML</button>
+      <button id="exportExcel" class="btn btn-sm btn-success w-100 mt-2">Export as Excel</button>
+      <button id="exportHTML" class="btn btn-sm btn-success w-100 mt-2">Export HTML</button>
+    </div>
+  </div>
+  <div class="main-content">
+    <h2>Data Preview</h2>
+    <div id="dataPreview" class="mb-4"></div>
+    <h2>Dashboard</h2>
+    <div id="dashboard" class="dashboard-container"></div>
+  </div>
+  <!-- Chart Field Selection Modal -->
+  <div class="modal fade" id="fieldSelectorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Select Fields for Chart</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="labelColumnSelect" class="form-label">Label Column</label>
+            <select id="labelColumnSelect" class="form-select"></select>
+          </div>
+          <div class="mb-3">
+            <label for="dataColumnSelect" class="form-label">Data Column(s)</label>
+            <select id="dataColumnSelect" class="form-select" multiple></select>
+            <small class="form-text text-muted">Hold Ctrl or Cmd to select multiple fields for stacked or nested charts.</small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="confirmFieldSelection">Generate Chart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- KPI Modal -->
+  <div class="modal fade" id="kpiModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Create KPI</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="kpiColumnSelect" class="form-label">Column</label>
+            <select id="kpiColumnSelect" class="form-select"></select>
+          </div>
+          <div class="mb-3">
+            <label for="kpiOperationSelect" class="form-label">Operation</label>
+            <select id="kpiOperationSelect" class="form-select">
+              <option value="sum">Sum</option>
+              <option value="avg">Average</option>
+              <option value="min">Minimum</option>
+              <option value="max">Maximum</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="confirmKpi">Add KPI</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Spreadsheet Modal -->
+  <div class="modal fade" id="spreadsheetModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Create Spreadsheet</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="spreadsheetGrid" class="ag-theme-alpine" style="height: 400px; width: 100%"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="saveSpreadsheet">Save Spreadsheet</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Data Modal -->
+  <div class="modal fade" id="filterModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Filter Data</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="filterFields" class="container-fluid"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-outline-secondary" id="resetFilters">Reset</button>
+          <button type="button" class="btn btn-primary" id="applyFilters">Apply Filters</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Spreadsheet Editor Modal with multiple sheets -->
+  <div class="modal fade" id="sheetEditorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Spreadsheet Editor</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <ul class="nav nav-tabs mb-2" id="sheetTabs"></ul>
+          <div id="hotContainer" style="width: 100%; height: 400px;"></div>
+          <button type="button" class="btn btn-sm btn-secondary mt-2" id="addSheet">Add Sheet</button>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="saveSheet">Save Sheet</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Global state
+    let data = [];
+    let headers = [];
+    const charts = {};
+    const chartConfig = {};
+    const kpiConfig = {};
+    let currentChartId = 0;
+    let currentKpiId = 0;
+    let selectedChartType = null;
+    let spreadsheetGridOptions;
+
+    // Preserve original unfiltered data for resetting filters
+    let originalData = [];
+
+    // Workbook for spreadsheet editor with multiple sheets
+    let workbook = [];
+    let activeSheetIndex = 0;
+    let sheetHot = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const fileUpload = document.getElementById('fileUpload');
+      fileUpload.addEventListener('change', handleFileUpload);
+      document.getElementById('createSpreadsheetBtn').addEventListener('click', openSpreadsheetModal);
+      // Open filter modal
+      document.getElementById('filterDataBtn').addEventListener('click', openFilterModal);
+      // Open spreadsheet editor with multiple sheets
+      document.getElementById('spreadsheetEditorBtn').addEventListener('click', openSheetEditor);
+      document.getElementById('confirmFieldSelection').addEventListener('click', confirmFieldSelection);
+      document.getElementById('confirmKpi').addEventListener('click', confirmKpi);
+      document.getElementById('saveSpreadsheet').addEventListener('click', saveSpreadsheet);
+      document.getElementById('exportCSV').addEventListener('click', exportCSV);
+      document.getElementById('exportPDF').addEventListener('click', exportPDF);
+      document.getElementById('exportJSON').addEventListener('click', exportJSON);
+      document.getElementById('exportXML').addEventListener('click', exportXML);
+      document.getElementById('exportExcel').addEventListener('click', exportExcel);
+      document.getElementById('exportHTML').addEventListener('click', exportHTML);
+
+      // Filter modal buttons
+      document.getElementById('applyFilters').addEventListener('click', applyFilters);
+      document.getElementById('resetFilters').addEventListener('click', resetFilters);
+
+      // Spreadsheet editor modal controls
+      document.getElementById('addSheet').addEventListener('click', addSheet);
+      document.getElementById('saveSheet').addEventListener('click', saveSheet);
+
+      // Attach click handlers to visualization options
+      document.querySelectorAll('.visualization-option').forEach(option => {
+        option.addEventListener('click', () => {
+          const type = option.getAttribute('data-type');
+          // Immediately handle special visualizations that do not need field selection
+          if (type === 'kpi') {
+            openKpiModal();
+            return;
+          }
+          if (type === 'map') {
+            addMap();
+            return;
+          }
+          if (type === 'table') {
+            // Render the full data table immediately without showing the field selector
+            if (data.length === 0) {
+              alert('Please upload or create data first.');
+              return;
+            }
+            addTable();
+            return;
+          }
+          if (data.length === 0) {
+            alert('Please upload or create data first.');
+            return;
+          }
+          selectedChartType = type;
+          populateFieldSelectors(type);
+          new bootstrap.Modal(document.getElementById('fieldSelectorModal')).show();
+        });
+      });
+    });
+
+    // Handle file upload
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const content = e.target.result;
+        if (file.name.endsWith('.csv')) {
+          Papa.parse(content, {
+            header: true,
+            skipEmptyLines: true,
+            complete: (results) => {
+              data = results.data;
+              headers = results.meta.fields;
+              renderDataPreview();
+              updateSelectOptions();
+              originalData = data.slice();
+            }
+          });
+        } else if (file.name.endsWith('.xlsx')) {
+          const workbookObj = XLSX.read(content, { type: 'binary' });
+          const sheetName = workbookObj.SheetNames[0];
+          const sheet = workbookObj.Sheets[sheetName];
+          data = XLSX.utils.sheet_to_json(sheet);
+          headers = data.length > 0 ? Object.keys(data[0]) : [];
+          renderDataPreview();
+          updateSelectOptions();
+          originalData = data.slice();
+        } else if (file.name.endsWith('.json')) {
+          try {
+            const jsonData = JSON.parse(content);
+            if (Array.isArray(jsonData)) {
+              data = jsonData;
+              headers = data.length > 0 ? Object.keys(data[0]) : [];
+              renderDataPreview();
+              updateSelectOptions();
+              originalData = data.slice();
+            } else {
+              alert('JSON file must contain an array of objects.');
+            }
+          } catch (err) {
+            alert('Invalid JSON file');
+          }
+        }
+      };
+      if (file.name.endsWith('.xlsx')) {
+        reader.readAsBinaryString(file);
+      } else {
+        reader.readAsText(file);
+      }
+    }
+
+    // Render a small preview of the data (first 10 rows)
+    function renderDataPreview() {
+      const preview = document.getElementById('dataPreview');
+      preview.innerHTML = '';
+      if (data.length === 0) {
+        preview.innerHTML = '<p>No data loaded.</p>';
+        return;
+      }
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      const headerRow = document.createElement('tr');
+      headers.forEach(col => {
+        const th = document.createElement('th');
+        th.textContent = col;
+        headerRow.appendChild(th);
+      });
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+      const tbody = document.createElement('tbody');
+      data.slice(0, 10).forEach(row => {
+        const tr = document.createElement('tr');
+        headers.forEach(col => {
+          const td = document.createElement('td');
+          td.textContent = row[col];
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      preview.appendChild(table);
+    }
+
+    // Update dropdown lists for chart and KPI selection
+    function updateSelectOptions() {
+      const labelSelect = document.getElementById('labelColumnSelect');
+      const dataSelect = document.getElementById('dataColumnSelect');
+      const kpiColSelect = document.getElementById('kpiColumnSelect');
+      if (!labelSelect || !dataSelect || !kpiColSelect) return;
+      labelSelect.innerHTML = '';
+      dataSelect.innerHTML = '';
+      kpiColSelect.innerHTML = '';
+      headers.forEach(h => {
+        const opt1 = new Option(h, h);
+        const opt2 = new Option(h, h);
+        const opt3 = new Option(h, h);
+        labelSelect.appendChild(opt1);
+        dataSelect.appendChild(opt2);
+        kpiColSelect.appendChild(opt3);
+      });
+    }
+
+    // Populate field selectors before showing modal
+    function populateFieldSelectors(type) {
+      const labelSelect = document.getElementById('labelColumnSelect');
+      const dataSelect = document.getElementById('dataColumnSelect');
+      labelSelect.innerHTML = '';
+      dataSelect.innerHTML = '';
+      headers.forEach(h => {
+        const opt1 = new Option(h, h);
+        const opt2 = new Option(h, h);
+        labelSelect.appendChild(opt1);
+        dataSelect.appendChild(opt2);
+      });
+    }
+
+    // Confirm chart field selection
+    function confirmFieldSelection() {
+      const labelField = document.getElementById('labelColumnSelect').value;
+      const dataSelectEl = document.getElementById('dataColumnSelect');
+      // Collect all selected data columns (multi-select)
+      const selectedDataFields = Array.from(dataSelectEl.selectedOptions).map(opt => opt.value);
+      bootstrap.Modal.getInstance(document.getElementById('fieldSelectorModal')).hide();
+      if (selectedChartType === 'table') {
+        addTable();
+      } else {
+        let fieldsToUse = selectedDataFields;
+        // For pie and treemap charts only use first selected field
+        if (selectedChartType === 'pie' || selectedChartType === 'treemap') {
+          if (fieldsToUse.length === 0) {
+            fieldsToUse = [headers[1] || headers[0]];
+          } else {
+            fieldsToUse = [fieldsToUse[0]];
+          }
+        }
+        addChart(selectedChartType, labelField, fieldsToUse);
+      }
+    }
+
+    // Open KPI modal
+    function openKpiModal(id = null) {
+      const kpiColSelect = document.getElementById('kpiColumnSelect');
+      kpiColSelect.innerHTML = '';
+      headers.forEach(h => {
+        const opt = new Option(h, h);
+        kpiColSelect.appendChild(opt);
+      });
+      if (id !== null) {
+        const cfg = kpiConfig[id];
+        if (cfg) {
+          document.getElementById('kpiColumnSelect').value = cfg.column;
+          document.getElementById('kpiOperationSelect').value = cfg.operation;
+          document.getElementById('confirmKpi').onclick = () => {
+            const col = document.getElementById('kpiColumnSelect').value;
+            const op = document.getElementById('kpiOperationSelect').value;
+            updateKpi(id, col, op);
+            bootstrap.Modal.getInstance(document.getElementById('kpiModal')).hide();
+            document.getElementById('confirmKpi').onclick = confirmKpi;
+          };
+        }
+      } else {
+        document.getElementById('confirmKpi').onclick = confirmKpi;
+      }
+      new bootstrap.Modal(document.getElementById('kpiModal')).show();
+    }
+
+    // Confirm KPI creation
+    function confirmKpi() {
+      const column = document.getElementById('kpiColumnSelect').value;
+      const operation = document.getElementById('kpiOperationSelect').value;
+      bootstrap.Modal.getInstance(document.getElementById('kpiModal')).hide();
+      addKpi(column, operation);
+    }
+
+    // Add KPI component
+    function addKpi(column, operation) {
+      if (data.length === 0) {
+        alert('Please upload or create data first.');
+        return;
+      }
+      const id = currentKpiId++;
+      const values = data.map(row => parseFloat(row[column])).filter(v => !isNaN(v));
+      let result = 0;
+      if (values.length === 0) {
+        result = 0;
+      } else {
+        switch (operation) {
+          case 'sum':
+            result = values.reduce((a, b) => a + b, 0);
+            break;
+          case 'avg':
+            result = values.reduce((a, b) => a + b, 0) / values.length;
+            break;
+          case 'min':
+            result = Math.min(...values);
+            break;
+          case 'max':
+            result = Math.max(...values);
+            break;
+        }
+      }
+      const dashboard = document.getElementById('dashboard');
+      const card = document.createElement('div');
+      card.className = 'dashboard-card';
+      card.id = `kpi-${id}`;
+      const title = document.createElement('h5');
+      title.textContent = `${operation.toUpperCase()} of ${column}`;
+      const valueElem = document.createElement('h2');
+      valueElem.textContent = (typeof result === 'number' ? result.toFixed(2) : result);
+      const actions = document.createElement('div');
+      actions.className = 'actions';
+      actions.innerHTML = `<button class='btn btn-sm btn-outline-primary me-2' onclick='editKpi(${id})'>Change</button><button class='btn btn-sm btn-outline-danger' onclick='deleteKpi(${id})'>Delete</button>`;
+      card.appendChild(title);
+      card.appendChild(valueElem);
+      card.appendChild(actions);
+      dashboard.appendChild(card);
+      kpiConfig[id] = { column: column, operation: operation };
+    }
+
+    // Update KPI
+    function updateKpi(id, column, operation) {
+      const values = data.map(row => parseFloat(row[column])).filter(v => !isNaN(v));
+      let result = 0;
+      if (values.length === 0) {
+        result = 0;
+      } else {
+        switch (operation) {
+          case 'sum':
+            result = values.reduce((a, b) => a + b, 0);
+            break;
+          case 'avg':
+            result = values.reduce((a, b) => a + b, 0) / values.length;
+            break;
+          case 'min':
+            result = Math.min(...values);
+            break;
+          case 'max':
+            result = Math.max(...values);
+            break;
+        }
+      }
+      const card = document.getElementById(`kpi-${id}`);
+      if (card) {
+        card.querySelector('h5').textContent = `${operation.toUpperCase()} of ${column}`;
+        card.querySelector('h2').textContent = (typeof result === 'number' ? result.toFixed(2) : result);
+      }
+      kpiConfig[id] = { column: column, operation: operation };
+    }
+
+    // Edit KPI handler
+    window.editKpi = function(id) {
+      openKpiModal(id);
+    };
+
+    // Delete KPI handler
+    window.deleteKpi = function(id) {
+      const card = document.getElementById(`kpi-${id}`);
+      if (card) card.remove();
+      delete kpiConfig[id];
+    };
+
+    // Add chart card
+    function addChart(type, labelField, dataField) {
+      const id = currentChartId++;
+      const dashboard = document.getElementById('dashboard');
+      const card = document.createElement('div');
+      card.className = 'dashboard-card';
+      card.id = `chart-${id}`;
+      const title = document.createElement('h5');
+      title.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} Chart`;
+      const canvas = document.createElement('canvas');
+      canvas.id = `canvas-${id}`;
+      const actions = document.createElement('div');
+      actions.className = 'actions';
+      actions.innerHTML = `<button class='btn btn-sm btn-outline-primary me-2' onclick='editChart(${id})'>Change</button><button class='btn btn-sm btn-outline-danger' onclick='deleteChart(${id})'>Delete</button>`;
+      card.appendChild(title);
+      card.appendChild(canvas);
+      card.appendChild(actions);
+      dashboard.appendChild(card);
+      chartConfig[id] = { type: type, labelField: labelField, dataField: dataField };
+      renderChart(id, type, labelField, dataField);
+    }
+
+    // Render chart
+    function renderChart(id, type, labelField, dataField) {
+      let labels = data.map(row => row[labelField]);
+      // Determine if multiple data fields are selected
+      const fields = Array.isArray(dataField) ? dataField : [dataField];
+      // Base color palettes
+      const palette = [
+        'rgba(54, 162, 235, 0.5)',
+        'rgba(255, 99, 132, 0.5)',
+        'rgba(255, 206, 86, 0.5)',
+        'rgba(75, 192, 192, 0.5)',
+        'rgba(153, 102, 255, 0.5)',
+        'rgba(255, 159, 64, 0.5)'
+      ];
+      const paletteBorder = [
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 99, 132, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)'
+      ];
+      // Build dataset array for normal orientation (each field is a series across rows)
+      let datasets = fields.map((field, idx) => {
+        const raw = data.map(row => parseFloat(row[field]));
+        const vals = raw.map(v => isNaN(v) ? 0 : v);
+        return {
+          label: field,
+          data: vals,
+          backgroundColor: (type === 'line' || type === 'radar') ? palette[idx % palette.length] : palette[idx % palette.length],
+          borderColor: paletteBorder[idx % paletteBorder.length],
+          borderWidth: 1,
+          fill: type === 'line' ? false : true
+        };
+      });
+      // Special handling for radar charts with multiple fields: pivot orientation
+      if (type === 'radar' && fields.length > 1) {
+        // Axis labels become the selected data fields
+        labels = fields.slice();
+        // Each dataset corresponds to a row in data
+        datasets = data.map((row, rowIndex) => {
+          const rowValues = fields.map(field => {
+            const val = parseFloat(row[field]);
+            return isNaN(val) ? 0 : val;
+          });
+          return {
+            label: row[labelField] || `Row ${rowIndex + 1}`,
+            data: rowValues,
+            backgroundColor: palette[rowIndex % palette.length],
+            borderColor: paletteBorder[rowIndex % paletteBorder.length],
+            borderWidth: 1,
+            fill: true
+          };
+        });
+      }
+      const ctx = document.getElementById(`canvas-${id}`).getContext('2d');
+      if (charts[id]) {
+        charts[id].destroy();
+      }
+      let options = { responsive: true };
+      if (type === 'bar' || type === 'line') {
+        options.scales = { y: { beginAtZero: true }, x: {} };
+      }
+      if (type === 'bar' && datasets.length > 1) {
+        options.scales.x.stacked = true;
+        options.scales.y.stacked = true;
+      }
+      if (type === 'radar') {
+        options.scales = { r: { suggestedMin: 0, suggestedMax: 5 } };
+      }
+      if (type === 'treemap') {
+        /*
+         * The treemap plugin may not be available in all environments. We attempt
+         * to create a treemap chart using the plugin. If that fails we fall back
+         * to a simple bar chart to ensure a visualization is still presented.
+         */
+        // Use the first selected data field to build treemap values
+        const treemapField = fields[0];
+        const treemapValues = data.map(row => {
+          const val = parseFloat(row[treemapField]);
+          return isNaN(val) ? 0 : val;
+        });
+        const tree = labels.map((label, idx) => ({ label: label, value: treemapValues[idx] }));
+        try {
+          charts[id] = new Chart(ctx, {
+            type: 'treemap',
+            data: {
+              datasets: [{
+              label: treemapField,
+                tree: tree,
+                key: 'value',
+                groups: ['label'],
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: '#ffffff',
+                borderWidth: 1
+              }]
+            },
+            options: options
+          });
+        } catch (err) {
+          // Fallback to bar chart if treemap creation fails
+          charts[id] = new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: labels,
+              datasets: [{
+              label: treemapField,
+              data: treemapValues,
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+              }]
+            },
+            options: { responsive: true, scales: { y: { beginAtZero: true } } }
+          });
+        }
+        return;
+      }
+      if (type === 'table') {
+        const card = document.getElementById(`chart-${id}`);
+        const canv = card.querySelector('canvas');
+        if (canv) canv.remove();
+        const tableDiv = document.createElement('div');
+        tableDiv.style.height = '350px';
+        tableDiv.style.width = '100%';
+        tableDiv.className = 'ag-theme-alpine';
+        card.insertBefore(tableDiv, card.querySelector('.actions'));
+        const columnDefs = headers.map(h => ({ field: h }));
+        const rowData = data.map(row => ({ ...row }));
+        const gridOptions = {
+          columnDefs: columnDefs,
+          rowData: rowData,
+          defaultColDef: { sortable: true, filter: true, resizable: true },
+          animateRows: true
+        };
+        new agGrid.Grid(tableDiv, gridOptions);
+        charts[id] = null;
+        return;
+      }
+      if (type === 'map') {
+        return;
+      }
+      let chartData;
+      if (type === 'pie') {
+        // Pie chart uses only first dataset; Chart.js expects a single dataset of values with a colors array
+        const firstDs = datasets[0] || { data: [], label: '' };
+        chartData = {
+          labels: labels,
+          datasets: [
+            {
+              label: firstDs.label,
+              data: firstDs.data,
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.5)',
+                'rgba(54, 162, 235, 0.5)',
+                'rgba(255, 206, 86, 0.5)',
+                'rgba(75, 192, 192, 0.5)',
+                'rgba(153, 102, 255, 0.5)',
+                'rgba(255, 159, 64, 0.5)'
+              ],
+              borderColor: []
+            }
+          ]
+        };
+      } else {
+        chartData = {
+          labels: labels,
+          datasets: datasets
+        };
+      }
+      charts[id] = new Chart(ctx, {
+        type: type,
+        data: chartData,
+        options: options
+      });
+    }
+
+    // Edit chart handler
+    window.editChart = function(id) {
+      const cfg = chartConfig[id];
+      if (!cfg) return;
+      selectedChartType = cfg.type;
+      populateFieldSelectors(cfg.type);
+      document.getElementById('labelColumnSelect').value = cfg.labelField;
+      // Preselect data fields (supports multiple)
+      const dataSelectEl = document.getElementById('dataColumnSelect');
+      // Clear previous selections
+      Array.from(dataSelectEl.options).forEach(opt => {
+        opt.selected = false;
+      });
+      const fieldsArray = Array.isArray(cfg.dataField) ? cfg.dataField : [cfg.dataField];
+      Array.from(dataSelectEl.options).forEach(opt => {
+        if (fieldsArray.includes(opt.value)) {
+          opt.selected = true;
+        }
+      });
+      const confirmBtn = document.getElementById('confirmFieldSelection');
+      confirmBtn.onclick = () => {
+        const newLabel = document.getElementById('labelColumnSelect').value;
+        const newFields = Array.from(dataSelectEl.selectedOptions).map(opt => opt.value);
+        let useFields = newFields;
+        if (cfg.type === 'pie' || cfg.type === 'treemap') {
+          useFields = newFields.length > 0 ? [newFields[0]] : [headers[1] || headers[0]];
+        }
+        chartConfig[id] = { type: cfg.type, labelField: newLabel, dataField: useFields };
+        bootstrap.Modal.getInstance(document.getElementById('fieldSelectorModal')).hide();
+        renderChart(id, cfg.type, newLabel, useFields);
+        confirmBtn.onclick = confirmFieldSelection;
+      };
+      new bootstrap.Modal(document.getElementById('fieldSelectorModal')).show();
+    };
+
+    // Edit map handler: remove the existing map card and re-add a new map
+    // Since maps do not have configurable axes, editing simply refreshes the map
+    window.editMap = function(id) {
+      // Remove the current map card
+      deleteChart(id);
+      // Recreate a new map with the latest data
+      addMap();
+    };
+
+    // Delete chart handler
+    window.deleteChart = function(id) {
+      const card = document.getElementById(`chart-${id}`);
+      if (card) card.remove();
+      if (charts[id]) {
+        if (typeof charts[id].destroy === 'function') {
+          charts[id].destroy();
+        }
+      }
+      delete charts[id];
+      delete chartConfig[id];
+    };
+
+    // Add table wrapper
+    function addTable() {
+      addChart('table', headers[0], headers[1]);
+    }
+
+    // Add map component
+    function addMap() {
+      const id = currentChartId++;
+      const dashboard = document.getElementById('dashboard');
+      const card = document.createElement('div');
+      card.className = 'dashboard-card';
+      card.id = `chart-${id}`;
+      const title = document.createElement('h5');
+      title.textContent = 'Map';
+      const mapDiv = document.createElement('div');
+      mapDiv.id = `map-${id}`;
+      mapDiv.style.height = '350px';
+      mapDiv.style.width = '100%';
+      const actions = document.createElement('div');
+      actions.className = 'actions';
+      // Provide both Change and Delete buttons for map to align with other components
+      actions.innerHTML = `<button class='btn btn-sm btn-outline-primary me-2' onclick='editMap(${id})'>Change</button>` +
+        `<button class='btn btn-sm btn-outline-danger' onclick='deleteChart(${id})'>Delete</button>`;
+      card.appendChild(title);
+      card.appendChild(mapDiv);
+      card.appendChild(actions);
+      dashboard.appendChild(card);
+      const map = L.map(mapDiv.id).setView([20, 0], 2);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+      const latField = headers.find(h => /lat/i.test(h));
+      const lngField = headers.find(h => /lon|lng/i.test(h));
+      if (latField && lngField) {
+        const heatPoints = [];
+        data.forEach(row => {
+          const lat = parseFloat(row[latField]);
+          const lng = parseFloat(row[lngField]);
+          if (!isNaN(lat) && !isNaN(lng)) {
+            // Add marker for each point
+            L.marker([lat, lng]).addTo(map).bindPopup(`${row[headers[0]]}`);
+            heatPoints.push([lat, lng, 1]);
+          }
+        });
+        if (heatPoints.length > 0 && L.heatLayer) {
+          L.heatLayer(heatPoints, { radius: 25 }).addTo(map);
+        }
+      }
+      charts[id] = null;
+      chartConfig[id] = { type: 'map' };
+    }
+
+    // Open spreadsheet modal with a blank grid
+    function openSpreadsheetModal() {
+      const columnDefs = [];
+      const rowData = [];
+      for (let i = 1; i <= 5; i++) {
+        columnDefs.push({ headerName: 'Column' + i, field: 'Column' + i, editable: true });
+      }
+      for (let r = 0; r < 5; r++) {
+        const row = {};
+        columnDefs.forEach(col => {
+          row[col.field] = '';
+        });
+        rowData.push(row);
+      }
+      spreadsheetGridOptions = {
+        columnDefs: columnDefs,
+        rowData: rowData,
+        defaultColDef: { editable: true, resizable: true },
+        animateRows: true
+      };
+      const gridDiv = document.getElementById('spreadsheetGrid');
+      gridDiv.innerHTML = '';
+      new agGrid.Grid(gridDiv, spreadsheetGridOptions);
+      new bootstrap.Modal(document.getElementById('spreadsheetModal')).show();
+    }
+
+    // Save spreadsheet data as new dataset
+    function saveSpreadsheet() {
+      const newData = [];
+      spreadsheetGridOptions.api.forEachNode(node => newData.push(node.data));
+      data = newData;
+      headers = spreadsheetGridOptions.columnDefs.map(col => col.field);
+      renderDataPreview();
+      updateSelectOptions();
+      originalData = data.slice();
+      bootstrap.Modal.getInstance(document.getElementById('spreadsheetModal')).hide();
+    }
+
+    // Export data as CSV
+    function exportCSV() {
+      if (data.length === 0) {
+        alert('No data to export.');
+        return;
+      }
+      let csvContent = headers.join(',') + '\n';
+      data.forEach(row => {
+        csvContent += headers.map(h => row[h]).join(',') + '\n';
+      });
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'data_export.csv';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    // Export dashboard as PDF
+    function exportPDF() {
+      const dashboard = document.getElementById('dashboard');
+      if (!dashboard) return;
+      html2canvas(dashboard).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jspdf.jsPDF('l', 'mm', [canvas.width * 0.264583, canvas.height * 0.264583]);
+        pdf.addImage(imgData, 'PNG', 0, 0, canvas.width * 0.264583, canvas.height * 0.264583);
+        pdf.save('dashboard.pdf');
+      });
+    }
+
+    // ============ New functionality ============
+
+    // Show filter modal and populate fields
+    function openFilterModal() {
+      if (originalData.length === 0) {
+        alert('Please upload or create data first.');
+        return;
+      }
+      const container = document.getElementById('filterFields');
+      container.innerHTML = '';
+      headers.forEach(col => {
+        const label = document.createElement('label');
+        label.className = 'form-label mt-2';
+        label.textContent = col;
+        const select = document.createElement('select');
+        select.className = 'form-select';
+        select.multiple = true;
+        select.id = 'filter-' + col;
+        const uniqueVals = [...new Set(originalData.map(row => row[col]))];
+        uniqueVals.forEach(v => {
+          const opt = document.createElement('option');
+          opt.value = v;
+          opt.textContent = v;
+          select.appendChild(opt);
+        });
+        container.appendChild(label);
+        container.appendChild(select);
+      });
+      new bootstrap.Modal(document.getElementById('filterModal')).show();
+    }
+
+    // Apply filters to the data
+    function applyFilters() {
+      let temp = originalData.slice();
+      headers.forEach(col => {
+        const sel = document.getElementById('filter-' + col);
+        if (sel) {
+          const selected = Array.from(sel.selectedOptions).map(opt => opt.value);
+          if (selected.length > 0) {
+            temp = temp.filter(row => selected.includes(row[col]));
+          }
+        }
+      });
+      data = temp;
+      renderDataPreview();
+      updateSelectOptions();
+      // re-render all charts and KPIs
+      Object.keys(chartConfig).forEach(id => {
+        const cfg = chartConfig[id];
+        renderChart(id, cfg.type, cfg.labelField, cfg.dataField);
+      });
+      Object.keys(kpiConfig).forEach(id => {
+        const cfg = kpiConfig[id];
+        updateKpi(id, cfg.column, cfg.operation);
+      });
+      bootstrap.Modal.getInstance(document.getElementById('filterModal')).hide();
+    }
+
+    // Reset filters and restore original data
+    function resetFilters() {
+      data = originalData.slice();
+      renderDataPreview();
+      updateSelectOptions();
+      Object.keys(chartConfig).forEach(id => {
+        const cfg = chartConfig[id];
+        renderChart(id, cfg.type, cfg.labelField, cfg.dataField);
+      });
+      Object.keys(kpiConfig).forEach(id => {
+        const cfg = kpiConfig[id];
+        updateKpi(id, cfg.column, cfg.operation);
+      });
+      bootstrap.Modal.getInstance(document.getElementById('filterModal')).hide();
+    }
+
+    // Open the spreadsheet editor with multiple sheets
+    function openSheetEditor() {
+      // If workbook is empty, initialize it with current data
+      if (workbook.length === 0) {
+        const sheetName = 'Sheet1';
+        workbook.push({ name: sheetName, data: JSON.parse(JSON.stringify(data)), headers: headers.slice() });
+        activeSheetIndex = 0;
+      }
+      renderSheetTabs();
+      loadSheet(activeSheetIndex);
+      new bootstrap.Modal(document.getElementById('sheetEditorModal')).show();
+    }
+
+    // Render sheet tabs
+    function renderSheetTabs() {
+      const tabContainer = document.getElementById('sheetTabs');
+      tabContainer.innerHTML = '';
+      workbook.forEach((sheet, idx) => {
+        const li = document.createElement('li');
+        li.className = 'nav-item';
+        const a = document.createElement('a');
+        a.href = '#';
+        a.className = 'nav-link' + (idx === activeSheetIndex ? ' active' : '');
+        a.textContent = sheet.name;
+        a.onclick = function(e) {
+          e.preventDefault();
+          saveCurrentSheetData();
+          activeSheetIndex = idx;
+          renderSheetTabs();
+          loadSheet(activeSheetIndex);
+        };
+        li.appendChild(a);
+        tabContainer.appendChild(li);
+      });
+    }
+
+    // Save current sheet data back into workbook
+    function saveCurrentSheetData() {
+      if (!sheetHot) return;
+      const allData = sheetHot.getData();
+      if (!allData || allData.length === 0) return;
+      const headersRow = allData[0];
+      const newRows = [];
+      for (let i = 1; i < allData.length; i++) {
+        const row = allData[i];
+        // Skip empty rows
+        if (row.every(cell => cell === null || cell === undefined || cell === '')) continue;
+        const obj = {};
+        headersRow.forEach((h, j) => {
+          obj[h] = row[j];
+        });
+        newRows.push(obj);
+      }
+      workbook[activeSheetIndex].headers = headersRow.slice();
+      workbook[activeSheetIndex].data = newRows;
+    }
+
+    // Load a sheet into Handsontable
+    function loadSheet(index) {
+      // Destroy previous instance
+      if (sheetHot) {
+        sheetHot.destroy();
+        sheetHot = null;
+      }
+      const sheet = workbook[index];
+      const container = document.getElementById('hotContainer');
+      container.innerHTML = '';
+      // Build a 2D array for HOT: first row headers, then rows
+      const hotData = [];
+      hotData.push(sheet.headers.slice());
+      sheet.data.forEach(row => {
+        const rowArr = sheet.headers.map(h => row[h]);
+        hotData.push(rowArr);
+      });
+      sheetHot = new Handsontable(container, {
+        data: hotData,
+        rowHeaders: true,
+        colHeaders: true,
+        contextMenu: true,
+        formulas: { engine: HyperFormula },
+        licenseKey: 'non-commercial-and-evaluation'
+      });
+    }
+
+    // Add a new blank sheet
+    function addSheet() {
+      saveCurrentSheetData();
+      const index = workbook.length + 1;
+      // default blank sheet with 5 columns
+      const defaultHeaders = ['Column1','Column2','Column3','Column4','Column5'];
+      workbook.push({ name: 'Sheet' + index, data: [], headers: defaultHeaders.slice() });
+      activeSheetIndex = workbook.length - 1;
+      renderSheetTabs();
+      loadSheet(activeSheetIndex);
+    }
+
+    // Save the current sheet and set dataset to active sheet
+    function saveSheet() {
+      saveCurrentSheetData();
+      const sheet = workbook[activeSheetIndex];
+      data = JSON.parse(JSON.stringify(sheet.data));
+      headers = sheet.headers.slice();
+      originalData = data.slice();
+      renderDataPreview();
+      updateSelectOptions();
+      // re-render all charts and KPIs
+      Object.keys(chartConfig).forEach(id => {
+        const cfg = chartConfig[id];
+        renderChart(id, cfg.type, cfg.labelField, cfg.dataField);
+      });
+      Object.keys(kpiConfig).forEach(id => {
+        const cfg = kpiConfig[id];
+        updateKpi(id, cfg.column, cfg.operation);
+      });
+      bootstrap.Modal.getInstance(document.getElementById('sheetEditorModal')).hide();
+    }
+
+    // Export data as JSON
+    function exportJSON() {
+      if (data.length === 0) {
+        alert('No data to export.');
+        return;
+      }
+      const jsonString = JSON.stringify(data, null, 2);
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'data_export.json';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    // Export data as XML
+    function exportXML() {
+      if (data.length === 0) {
+        alert('No data to export.');
+        return;
+      }
+      let xml = '<rows>\n';
+      data.forEach(row => {
+        xml += '  <row>\n';
+        headers.forEach(h => {
+          xml += `    <${h}>${row[h]}</${h}>\n`;
+        });
+        xml += '  </row>\n';
+      });
+      xml += '</rows>';
+      const blob = new Blob([xml], { type: 'application/xml' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'data_export.xml';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    // Export data as Excel
+    function exportExcel() {
+      if (data.length === 0) {
+        alert('No data to export.');
+        return;
+      }
+      const worksheet = XLSX.utils.json_to_sheet(data);
+      const workbookObj = { Sheets: { 'Sheet1': worksheet }, SheetNames: ['Sheet1'] };
+      XLSX.writeFile(workbookObj, 'data_export.xlsx');
+    }
+
+    // Export the current dashboard as a standalone HTML file with data and visuals
+    function exportHTML() {
+      // Clone current document
+      const docClone = document.documentElement.cloneNode(true);
+      // Inject serialized data and configuration into a script tag so that charts can be rebuilt on load
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      const cfgString = JSON.stringify({ data: data, headers: headers, chartConfig: chartConfig, kpiConfig: kpiConfig });
+      script.textContent = `window.__EXPORTED_STATE__ = ${cfgString};`;
+      docClone.querySelector('body').appendChild(script);
+      // Serialize the cloned document
+      const htmlString = '<!DOCTYPE html>' + docClone.outerHTML;
+      const blob = new Blob([htmlString], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'dashboard_export.html';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
