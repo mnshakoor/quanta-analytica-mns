@@ -61,6 +61,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <!-- Chart.js and plugins -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
   <!-- Updated treemap plugin to latest 3.x series which is compatible with Chart.js v4 -->
   <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-treemap@3.1.0/dist/chartjs-chart-treemap.min.js"></script>
   <!-- PapaParse for CSV parsing -->
@@ -149,6 +150,19 @@
     #dataPreview th {
       background-color: #e9ecef;
     }
+  
+/* Controls for every visual */
+.chart-controls{position:absolute;top:8px;right:8px;display:flex;gap:6px;z-index:5;
+  background:rgba(0,0,0,.35);border-radius:8px;padding:4px 6px;backdrop-filter:saturate(180%) blur(6px)}
+.chart-controls button{border:0;font:600 12px/1 system-ui,-apple-system,Segoe UI,Roboto;
+  padding:4px 8px;border-radius:6px;cursor:pointer;color:#fff;background:rgba(255,255,255,.18)}
+.chart-controls button:hover{background:rgba(255,255,255,.28)}
+/* Make sure spreadsheet editor buttons are clickable */
+#sheetEditorModal .modal-content{overflow:hidden}
+#sheetEditorModal .modal-body{position:relative;z-index:1}
+#sheetEditorModal .modal-footer,#sheetEditorModal .modal-header{position:relative;z-index:2}
+#hotContainer{position:relative;height:400px;overflow:auto}
+
   </style>
 </head>
 <body>
@@ -671,6 +685,10 @@
       dashboard.appendChild(card);
       chartConfig[id] = { type: type, labelField: labelField, dataField: dataField };
       renderChart(id, type, labelField, dataField);
+      // Attach control bar
+      const cardEl = document.getElementById(`chart-${id}`);
+      const bar = ensureControls(cardEl);
+      bar.onclick = (ev)=>{ const btn = ev.target.closest('button'); if(!btn) return; const action = btn.dataset.action; if(action==='labels'){ if(charts[id]) toggleChartLabels(charts[id], type); } if(action==='download'){ downloadCardPNG(cardEl, charts[id]); }};
     }
 
     // Render chart
@@ -732,7 +750,7 @@
       if (charts[id]) {
         charts[id].destroy();
       }
-      let options = { responsive: true };
+      let options = { responsive: true, plugins: { datalabels: { display: false } } };
       if (type === 'bar' || type === 'line') {
         options.scales = { y: { beginAtZero: true }, x: {} };
       }
@@ -767,7 +785,8 @@
                 groups: ['label'],
                 backgroundColor: 'rgba(54, 162, 235, 0.5)',
                 borderColor: '#ffffff',
-                borderWidth: 1
+                borderWidth: 1,
+                labels: { display: false }
               }]
             },
             options: options
@@ -810,6 +829,10 @@
         };
         new agGrid.Grid(tableDiv, gridOptions);
         charts[id] = null;
+        // controls for table card
+        const cardEl = document.getElementById(`chart-${id}`);
+        const bar = ensureControls(cardEl);
+        bar.onclick = (ev)=>{ const btn = ev.target.closest('button'); if(!btn) return; const action = btn.dataset.action; if(action==='labels'){ /* no labels for table */ } if(action==='download'){ downloadCardPNG(cardEl, null); } };
         return;
       }
       if (type === 'map') {
@@ -934,6 +957,9 @@
       card.appendChild(mapDiv);
       card.appendChild(actions);
       dashboard.appendChild(card);
+      // controls for map card
+      const ctrl = ensureControls(card);
+      ctrl.onclick = (ev)=>{ const btn = ev.target.closest('button'); if(!btn) return; const action = btn.dataset.action; if(action==='download'){ downloadCardPNG(card, null); } };
       const map = L.map(mapDiv.id).setView([20, 0], 2);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
@@ -1109,7 +1135,9 @@
       // If workbook is empty, initialize it with current data
       if (workbook.length === 0) {
         const sheetName = 'Sheet1';
-        workbook.push({ name: sheetName, data: JSON.parse(JSON.stringify(data)), headers: headers.slice() });
+        const defaultHeaders = (headers && headers.length) ? headers.slice() : (data && data.length ? Object.keys(data[0]) : ['name','sector','type','likelihood','impact','notes']);
+        const defaultData = (data && data.length) ? JSON.parse(JSON.stringify(data)) : [];
+        workbook.push({ name: sheetName, data: defaultData, headers: defaultHeaders });
         activeSheetIndex = 0;
       }
       renderSheetTabs();
@@ -1171,6 +1199,9 @@
       const sheet = workbook[index];
       const container = document.getElementById('hotContainer');
       container.innerHTML = '';
+      container.style.position='relative';
+      container.style.overflow='auto';
+      container.style.height='400px';
       // Build a 2D array for HOT: first row headers, then rows
       const hotData = [];
       hotData.push(sheet.headers.slice());
@@ -1183,6 +1214,7 @@
         rowHeaders: true,
         colHeaders: true,
         contextMenu: true,
+        height: 360,
         formulas: { engine: HyperFormula },
         licenseKey: 'non-commercial-and-evaluation'
       });
@@ -1298,6 +1330,67 @@
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
     }
+// ===== Universal controls for visuals =====
+function ensureControls(cardEl){
+  let bar = cardEl.querySelector('.chart-controls');
+  if(bar) return bar;
+  bar = document.createElement('div');
+  bar.className = 'chart-controls';
+  bar.innerHTML = '<button data-action="labels" title="Show or hide value labels">Labels</button>' +
+                  '<button data-action="download" title="Download PNG">Download</button>';
+  cardEl.appendChild(bar);
+  return bar;
+}
+
+function toggleChartLabels(chart, type){
+  if(type === 'treemap'){
+    const ds = chart.config.data.datasets[0] || {};
+    const prev = (ds.labels && ds.labels.display) ? ds.labels.display : false;
+    ds.labels = ds.labels || {};
+    ds.labels.display = !prev;
+    ds.labels.formatter = (ctx)=> ctx.raw && (ctx.raw.label + ': ' + ctx.raw.value);
+    chart.update();
+    return;
+  }
+  // Register plugin once
+  if(!Chart.registry.plugins.get('datalabels')){
+    Chart.register(ChartDataLabels);
+  }
+  const show = !(chart.options.plugins && chart.options.plugins.datalabels && chart.options.plugins.datalabels.display);
+  chart.options.plugins = chart.options.plugins || {};
+  chart.options.plugins.datalabels = chart.options.plugins.datalabels || {};
+  chart.options.plugins.datalabels.display = show;
+  // sensible defaults
+  chart.options.plugins.datalabels.align = (type === 'pie') ? 'end' : 'top';
+  chart.options.plugins.datalabels.anchor = (type === 'pie') ? 'end' : 'end';
+  chart.options.plugins.datalabels.formatter = (val, ctx)=> {
+    if(type === 'pie'){ return ctx.chart.data.labels[ctx.dataIndex] + ': ' + val; }
+    if(Array.isArray(val)) return val[1];
+    return val;
+  };
+  chart.update();
+}
+
+function downloadCardPNG(cardEl, chart){
+  // Prefer Chart.js renderer when available
+  const canvas = cardEl.querySelector('canvas');
+  let dataURL = null;
+  if(chart && typeof chart.toBase64Image === 'function'){
+    dataURL = chart.toBase64Image();
+  }
+  const triggerDownload = (url)=>{
+    const a = document.createElement('a');
+    a.href = url; a.download = (cardEl.querySelector('h5')?.textContent || 'visual') + '.png';
+    document.body.appendChild(a); a.click(); a.remove();
+  };
+  if(dataURL){
+    triggerDownload(dataURL);
+  } else {
+    // fallback to html2canvas for non-canvas visuals (tables, maps, KPI)
+    html2canvas(cardEl).then(canvasOut => triggerDownload(canvasOut.toDataURL('image/png')));
+  }
+}
+
   </script>
 </body>
 </html>
