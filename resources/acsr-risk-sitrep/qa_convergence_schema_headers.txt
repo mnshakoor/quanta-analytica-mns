@@ -1,0 +1,9 @@
+
+Risk Register: Name,Sector,Type,Likelihood,Impact,Score,Notes
+CARVER Targets: Name,Sector,Type,Location,Status,Owner,Last,Notes,C,A,R,V,E,Rz,dbt,watchers
+Treatments: Id,Name,Decision,Mitigation,Contingency
+Monitoring: Item,Indicator,Frequency,Responsible,Method
+Context PESTELS: Domain,Summary
+Context Actors: Name,Affiliation,Role,Behaviour
+MC Config (Risks): Id,Name,LikelihoodDistribution,ImpactDistribution,Controls,CarverWeights
+MC Config (KPI Aggregation): KPIName,RiskIDs,ImpactToKPI,Scale,Percentiles

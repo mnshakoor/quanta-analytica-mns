@@ -1,0 +1,70 @@
+{
+  "context": {
+    "pestels": {
+      "Political": "...",
+      "Economic": "...",
+      "Social": "...",
+      "Technological": "...",
+      "Environmental": "...",
+      "Legal": "...",
+      "Security": "..."
+    },
+    "actors": [
+      { "name": "...", "affiliation": "...", "role": "...", "behaviour": "..." }
+    ]
+  },
+  "risk_register": {
+    "assets": [
+      { "name": "...", "sector": "...", "type": "...", "likelihood": 0, "impact": 0, "score": 0, "notes": "..." }
+    ]
+  },
+  "carver_targets": [
+    { "name": "...", "sector": "...", "type": "...", "location": "...", "status": "...", "owner": "...", "last": "YYYY-MM-DD", "notes": "...", "scores": { "C": 0, "A": 0, "R": 0, "V": 0, "E": 0, "Rz": 0 }, "dbt": [], "watchers": [] }
+  ],
+  "treatments": [
+    { "id": "...", "name": "...", "decision": "Accept|Protect|Deter|Contingency", "mitigation": "...", "contingency": "..." }
+  ],
+  "mc_config": {
+    "time_horizon_days": 0,
+    "iterations": 0,
+    "risks": [
+      {
+        "id": "...",
+        "name": "...",
+        "likelihood_distribution": {
+          "type": "beta|triangular|normal",
+          "alpha": 0,
+          "beta": 0,
+          "min": 0,
+          "mode": 0,
+          "max": 0,
+          "mean": 0,
+          "sd": 0
+        },
+        "impact_distribution": {
+          "type": "beta|triangular|normal",
+          "alpha": 0,
+          "beta": 0,
+          "min": 0,
+          "mode": 0,
+          "max": 0,
+          "mean": 0,
+          "sd": 0
+        },
+        "controls": [
+          { "name": "...", "effectiveness": { "type": "normal", "mean": 0, "sd": 0 }, "cost": 0 }
+        ],
+        "carver_weights": { "C": 0, "A": 0, "R": 0, "V": 0, "E": 0, "Rz": 0 }
+      }
+    ],
+    "aggregation": {
+      "kpis": [
+        { "name": "...", "risks": [ "..." ], "impact_to_kpi": "linear", "scale": 0 }
+      ],
+      "percentiles": [50, 80, 90, 95]
+    }
+  },
+  "monitoring": [
+    { "item": "...", "indicator": "...", "frequency": "Daily|Weekly|Monthly|Real-time", "responsible": "...", "method": "..." }
+  ]
+}

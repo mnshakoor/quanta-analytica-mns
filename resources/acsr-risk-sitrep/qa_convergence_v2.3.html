@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QA Convergence - ACSR RMFv3 Dashboard</title>
+  <meta name="description" content="Quanta Analytica - ACSR to RMF v3 hybrid dashboard with Risk Register, CARVER radar, and Monte Carlo scenario analysis." />
+  <meta name="keywords" content="M Nuri Shakoor, Quanta Analytica MNS Consulting, ARAC International Inc., Lladner Business Systems LLC, IOSI Global, Paladin 7 Group CTG, FHI-360, DAI, risk management, positive peace, Monte Carlo simulation, CARVER analysis, security risk management">
+  <meta name="author" content="M Nuri Shakoor">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="QA Convergence - ACSR RMFv3 Engine by Quanta Analytica MNS Consulting">
+  <meta property="og:description" content="Comprehensive dashboard for risk registers, CARVER analysis and Monte Carlo scenario modelling by Quanta Analytica MNS Consulting, ARAC International Inc., Lladner Business Systems LLC and partners.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🛰️</text></svg>">
+  <!-- Tailwind CSS CDN -->
+  <!-- Configure Tailwind dark mode to use the 'dark' class -->
+  <script>
+    // enable class-based dark mode so that toggling the 'dark' class on <html> works
+    window.tailwind = window.tailwind || {};
+    window.tailwind.config = { darkMode: 'class' };
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    /* Custom scrollbars */
+    ::-webkit-scrollbar{height:10px;width:10px}::-webkit-scrollbar-thumb{background:#a3a3a3;border-radius:8px}::-webkit-scrollbar-track{background:#e5e7eb}
+    .card{ @apply rounded-2xl shadow-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900; }
+    .btn{ @apply px-3 py-2 rounded-xl text-sm font-medium border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition; }
+    .btn-primary{ @apply bg-slate-900 text-white border-slate-900 hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white; }
+    .kpi{ @apply text-2xl font-semibold; }
+    /* Avoid long words breaking layout */
+    td{word-break:break-word}
+  </style>
+  <!-- Dynamic palette styles will be injected here -->
+  <style id="paletteStyles"></style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen">
+  <header class="sticky top-0 z-30 backdrop-blur bg-white/80 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 grid place-items-center rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900">QA</div>
+        <div>
+          <h1 class="text-lg font-bold leading-tight">QA Convergence - ACSR RMFv3 Engine</h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Map the conflict. Measure the risk. Model the future.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <!-- Removed theme toggle button -->
+        <a href="#help" class="btn">Help</a>
+        <a id="downloadStateBtn" class="btn" href="#">Export state JSON</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+
+    <!-- Tab Navigation -->
+    <div class="flex flex-wrap gap-2 mb-4">
+      <button data-tab="dashboard" class="tab-btn btn-primary">Dashboard</button>
+      <button data-tab="risk-editor" class="tab-btn btn">Risk Editor</button>
+      <button data-tab="carver-editor" class="tab-btn btn">CARVER Editor</button>
+      <button data-tab="mc-editor" class="tab-btn btn">MC Editor</button>
+      <!-- Added editors for context, treatment and monitoring -->
+      <button data-tab="context-editor" class="tab-btn btn">Context Editor</button>
+      <button data-tab="treatment-editor" class="tab-btn btn">Treatment Editor</button>
+      <button data-tab="monitoring-editor" class="tab-btn btn">Monitoring Editor</button>
+      <!-- New Methodology tab -->
+      <button data-tab="methodology" class="tab-btn btn">Methodology</button>
+      <!-- Schema tab for export/import template -->
+      <button data-tab="schema" class="tab-btn btn">Schema</button>
+    </div>
+
+    <!-- Dashboard Tab Content -->
+    <div id="dashboardTab" class="tab-content">
+    <!-- Loaders -->
+    <section class="card p-4" id="loaders">
+      <div class="flex flex-wrap items-center gap-3">
+        <div class="shrink-0">
+          <label class="block text-sm font-semibold mb-1">Load Risk Register</label>
+          <input id="riskFile" type="file" accept="application/json" class="block text-sm" />
+        </div>
+        <div class="shrink-0">
+          <label class="block text-sm font-semibold mb-1">Load CARVER Targets</label>
+          <input id="carverFile" type="file" accept="application/json" class="block text-sm" />
+        </div>
+        <div class="shrink-0">
+          <label class="block text-sm font-semibold mb-1">Load Monte Carlo Config</label>
+          <input id="mcFile" type="file" accept="application/json" class="block text-sm" />
+        </div>
+        <div class="shrink-0">
+          <label class="block text-sm font-semibold mb-1">Import Snapshot (*.state.json)</label>
+          <input id="stateFile" type="file" accept="application/json" class="block text-sm" />
+        </div>
+        <div class="shrink-0">
+          <label class="block text-sm font-semibold mb-1">Iterations</label>
+          <input id="iterInput" type="number" value="5000" min="500" step="500" class="px-3 py-2 rounded-xl bg-transparent border border-slate-300 dark:border-slate-700 text-sm w-28" />
+        </div>
+        <!-- Palette selector -->
+        <div class="shrink-0">
+          <label class="block text-sm font-semibold mb-1">Color Palette</label>
+        <select id="paletteSelect" class="px-3 py-2 rounded-xl bg-transparent border border-slate-300 dark:border-slate-700 text-sm">
+            <option value="default">Default</option>
+            <option value="multi">Multi</option>
+            <option value="blue">Blue</option>
+            <option value="green">Green</option>
+            <option value="red">Red</option>
+            <option value="purple">Purple</option>
+            <option value="orange">Orange</option>
+            <option value="gray">Gray</option>
+            <option value="custom">Custom</option>
+          </select>
+          <!-- Custom color picker appears when 'Custom' palette selected -->
+          <input type="color" id="customColor" value="#10b981" class="w-8 h-8 p-0 border border-slate-300 dark:border-slate-700 rounded-lg" style="display:none" title="Select custom base color for monochrome palette">
+        </div>
+        <button id="runBtn" class="btn-primary">Run Monte Carlo</button>
+        <button id="resetBtn" class="btn">Reset</button>
+        <span id="statusMsg" class="text-sm text-slate-500"></span>
+      </div>
+      <p class="text-xs mt-3 text-slate-500">Tip: Load individual JSONs or import a consolidated snapshot created by Export state JSON. No data leaves your browser.</p>
+    </section>
+
+    <!-- KPI Cards -->
+    <section id="kpis" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="card p-4"><div class="text-sm text-slate-500">P50</div><div id="kpiP50" class="kpi">-</div></div>
+      <div class="card p-4"><div class="text-sm text-slate-500">P80</div><div id="kpiP80" class="kpi">-</div></div>
+      <div class="card p-4"><div class="text-sm text-slate-500">P90</div><div id="kpiP90" class="kpi">-</div></div>
+      <div class="card p-4"><div class="text-sm text-slate-500">P95</div><div id="kpiP95" class="kpi">-</div></div>
+    </section>
+
+    <!-- Grid: Risk Register and CARVER -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <!-- Risk Register -->
+      <div class="card p-4 lg:col-span-2">
+        <div class="flex items-center justify-between gap-2 mb-3">
+          <h2 class="font-semibold">Risk Register</h2>
+          <div class="flex items-center gap-2">
+            <input id="riskSearch" placeholder="Search" class="px-3 py-2 rounded-xl bg-transparent border border-slate-300 dark:border-slate-700 text-sm" />
+            <button id="downloadRiskCsv" class="btn">Download CSV</button>
+          </div>
+        </div>
+        <div class="overflow-auto">
+          <table id="riskTable" class="w-full text-sm">
+            <thead>
+              <tr class="text-left border-b border-slate-200 dark:border-slate-800">
+                <th class="py-2 pr-2">Name</th>
+                <th class="py-2 pr-2">Sector</th>
+                <th class="py-2 pr-2">Type</th>
+                <th class="py-2 pr-2">Likelihood</th>
+                <th class="py-2 pr-2">Impact</th>
+                <th class="py-2 pr-2">Score LxI</th>
+                <th class="py-2 pr-2">Notes</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CARVER Radar -->
+      <div class="card p-4">
+        <div class="flex items-center justify-between gap-2 mb-3">
+          <h2 class="font-semibold">CARVER Radar</h2>
+          <div class="flex items-center gap-2">
+            <select id="carverSelect" class="px-3 py-2 rounded-xl bg-transparent border border-slate-300 dark:border-slate-700 text-sm"></select>
+            <button id="downloadCarverPng" class="btn">Download PNG</button>
+          </div>
+        </div>
+        <canvas id="carverChart" height="280"></canvas>
+        <p class="text-xs mt-2 text-slate-500">Note: Recuperability high score means low resilience and harder recovery.</p>
+      </div>
+    </section>
+
+        <!-- MC Results Table and Chart -->
+        <section class="card p-4">
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <h2 class="font-semibold">Monte Carlo Results</h2>
+            <div class="flex items-center gap-2">
+              <button id="downloadMcCsv" class="btn">Download CSV</button>
+              <button id="downloadMcPng" class="btn">Download PNG</button>
+            </div>
+          </div>
+          <!-- Chart container -->
+          <canvas id="mcChart" height="280" class="mb-4"></canvas>
+          <div class="overflow-auto">
+            <table id="mcTable" class="w-full text-sm">
+              <thead>
+                <tr class="text-left border-b border-slate-200 dark:border-slate-800">
+                  <th class="py-2 pr-2">KPI</th>
+                  <th class="py-2 pr-2">P50</th>
+                  <th class="py-2 pr-2">P80</th>
+                  <th class="py-2 pr-2">P90</th>
+                  <th class="py-2 pr-2">P95</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+    <!-- Help -->
+    <section id="help" class="card p-4">
+      <h2 class="font-semibold mb-2">How to use</h2>
+      <ol class="list-decimal pl-6 space-y-1 text-sm">
+        <li>Click the file pickers at the top to load your <code>risk_register.json</code>, <code>carver_targets.json</code>, and <code>mc_config.json</code>. You can start with the demo data embedded here.</li>
+        <li>The Risk Register table will auto compute Score LxI for each asset. Use the search box to filter.</li>
+        <li>Choose a CARVER target from the selector to render the radar chart. Click Download PNG to save the chart.</li>
+        <li>Set the desired number of iterations and click Run Monte Carlo. KPI percentiles will update and the results table can be exported to CSV.</li>
+        <li>Use Export state JSON to save the current risk register, CARVER targets, and MC config into a single file for version control.</li>
+      </ol>
+      <p class="text-xs text-slate-500 mt-2">All calculations run locally in your browser. No network calls are made by this page.</p>
+    </section>
+
+    <footer class="py-6 text-center text-xs text-slate-500">
+      Built by Quanta Analytica - QA Convergence
+    </footer>
+    </div><!-- end dashboardTab -->
+
+    <!-- Risk Register Editor Tab -->
+    <div id="risk-editorTab" class="tab-content hidden card p-4 space-y-2">
+      <h2 class="font-semibold">Risk Register Editor</h2>
+      <p class="text-sm">Edit the JSON for your risk register. Score (Likelihood × Impact) will be recalculated on save.</p>
+      <textarea id="riskEditor" class="w-full h-80 p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-sm font-mono"></textarea>
+      <div class="flex flex-wrap gap-2">
+        <button id="saveRiskBtn" class="btn-primary">Save</button>
+        <button id="downloadRiskJson" class="btn">Download Template</button>
+      </div>
+    </div>
+
+    <!-- CARVER Editor Tab -->
+    <div id="carver-editorTab" class="tab-content hidden card p-4 space-y-2">
+      <h2 class="font-semibold">CARVER Targets Editor</h2>
+      <p class="text-sm">Edit the JSON array of CARVER targets. The radar chart updates on save.</p>
+      <textarea id="carverEditor" class="w-full h-80 p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-sm font-mono"></textarea>
+      <div class="flex flex-wrap gap-2">
+        <button id="saveCarverBtn" class="btn-primary">Save</button>
+        <button id="downloadCarverJson" class="btn">Download Template</button>
+      </div>
+    </div>
+
+    <!-- Monte Carlo Config Editor Tab -->
+    <div id="mc-editorTab" class="tab-content hidden card p-4 space-y-2">
+      <h2 class="font-semibold">Monte Carlo Config Editor</h2>
+      <p class="text-sm">Edit the Monte Carlo configuration JSON. Results update on save.</p>
+      <textarea id="mcEditor" class="w-full h-80 p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-sm font-mono"></textarea>
+      <div class="flex flex-wrap gap-2">
+        <button id="saveMcBtn" class="btn-primary">Save</button>
+        <button id="downloadMcJson" class="btn">Download Template</button>
+      </div>
+    </div>
+
+    <!-- Context Editor Tab -->
+    <div id="context-editorTab" class="tab-content hidden card p-4 space-y-2">
+      <h2 class="font-semibold">Context Editor</h2>
+      <p class="text-sm">Edit the contextual analysis JSON. Include a PESTELS summary and optional CAF actor information to inform risk identification.</p>
+      <textarea id="contextEditor" class="w-full h-72 p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-sm font-mono"></textarea>
+      <div class="flex flex-wrap gap-2">
+        <button id="saveContextBtn" class="btn-primary">Save</button>
+        <button id="downloadContextJson" class="btn">Download Template</button>
+      </div>
+    </div>
+
+    <!-- Treatment Editor Tab -->
+    <div id="treatment-editorTab" class="tab-content hidden card p-4 space-y-2">
+      <h2 class="font-semibold">Evaluation &amp; Treatment Editor</h2>
+      <p class="text-sm">Edit the mitigation and contingency plan for each risk. Specify the decision (Accept, Protect, Deter, Contingency) along with mitigation and contingency actions.</p>
+      <textarea id="treatmentEditor" class="w-full h-72 p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-sm font-mono"></textarea>
+      <div class="flex flex-wrap gap-2">
+        <button id="saveTreatmentBtn" class="btn-primary">Save</button>
+        <button id="downloadTreatmentJson" class="btn">Download Template</button>
+      </div>
+    </div>
+
+    <!-- Monitoring Editor Tab -->
+    <div id="monitoring-editorTab" class="tab-content hidden card p-4 space-y-2">
+      <h2 class="font-semibold">Monitoring Editor</h2>
+      <p class="text-sm">Edit the monitoring schedule. Each entry should include the item being monitored, the indicator, frequency, responsible party and reporting method.</p>
+      <textarea id="monitoringEditor" class="w-full h-72 p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-sm font-mono"></textarea>
+      <div class="flex flex-wrap gap-2">
+        <button id="saveMonitoringBtn" class="btn-primary">Save</button>
+        <button id="downloadMonitoringJson" class="btn">Download Template</button>
+      </div>
+    </div>
+
+    <!-- Methodology Tab -->
+    <div id="methodologyTab" class="tab-content hidden card p-4 space-y-4">
+      <h2 class="font-semibold">Methodology &amp; Definitions</h2>
+      <div class="space-y-3 text-sm">
+        <div>
+          <h3 class="font-semibold mb-1">Framework Overview</h3>
+          <p>The ACSR–RMFv3 Engine bridges descriptive conflict analysis into operational risk management and scenario modelling. It follows a structured workflow: ACSR inputs (conflict definition, maps and matrices) inform the <em>context build</em> (PESTELS and CAF actor mapping). This context drives <em>risk identification</em> and feeds a risk register. Each risk is scored on likelihood and impact and prioritised using the CARVER method. The <em>evaluation and treatment</em> stage ranks risks, applies ethics gates and defines mitigation and contingency actions. A <em>monitoring schedule</em> tracks early warning indicators and refreshes the context and register at regular intervals. Finally, a Monte Carlo layer quantifies uncertainty using probability and impact distributions, control effectiveness and CARVER weights to model possible futures.</p>
+        </div>
+        <div>
+          <h3 class="font-semibold mb-1">Context &amp; Risk Identification</h3>
+          <p>Before scoring risks, capture the strategic context. Build a PESTELS analysis summarising the Political, Economic, Social, Technological, Environmental, Legal and Security drivers of your situation. Map key actors and alliances (CAF) to understand power dynamics. This context helps you translate conflict trees and matrices into draft risks, noting their domain, source, vulnerabilities and any ethical considerations.</p>
+        </div>
+        <div>
+          <h3 class="font-semibold mb-1">Risk Register</h3>
+          <p>The risk register is a living document cataloguing potential threats. Each entry lists an asset or activity along with its sector and type, and assigns numerical likelihood and impact scores (1–5). The score is the product of likelihood and impact. Use concise notes to capture important context. Keeping this register up to date is critical for proactive risk management.</p>
+        </div>
+        <div>
+          <h3 class="font-semibold mb-1">CARVER Analysis</h3>
+          <p>CARVER is a structured method for assessing vulnerability. It scores assets across six factors: <strong>C</strong>riticality, <strong>A</strong>ccessibility, <strong>R</strong>ecuperability, <strong>V</strong>ulnerability, <strong>E</strong>ffect and <strong>Rz</strong> recognizability. Scores run from 1 (low) to 5 (high). A high Recuperability score indicates low resilience and harder recovery. Combined with likelihood and impact, CARVER helps prioritise scarce mitigation resources.</p>
+        </div>
+        <div>
+          <h3 class="font-semibold mb-1">Evaluation &amp; Treatment</h3>
+          <p>After scoring, rank risks by their Likelihood×Impact score and CARVER priority. Apply an ethics filter to ensure proposed actions align with humanitarian principles. For each risk decide whether to <em>Accept</em>, <em>Protect</em>, <em>Deter</em> or prepare a <em>Contingency</em>. Document specific mitigation measures and contingency plans so that decisions can be reviewed and updated as context changes.</p>
+        </div>
+        <div>
+          <h3 class="font-semibold mb-1">Monitoring &amp; Review</h3>
+          <p>Establish a monitoring schedule that defines what to track, how often, who is responsible and where it will be reported. Refresh the PESTELS and CAF context regularly (e.g. monthly), update the risk register quarterly and track incidents continuously. Early warning indicators tied to the drivers in your context help you detect shifts and adjust treatment strategies.</p>
+        </div>
+        <div>
+          <h3 class="font-semibold mb-1">Monte Carlo Simulation</h3>
+          <p>Monte Carlo simulation uses repeated random sampling to model uncertainty across scenarios. Given distributions for event likelihoods, impact magnitudes, control effectiveness and CARVER weights, the simulation runs thousands of iterations to estimate the range of possible outcomes. Percentile metrics (P50, P80, P90, P95) summarise the distribution for each KPI, helping you understand both expected outcomes and tail risks.</p>
+        </div>
+        <div>
+          <h3 class="font-semibold mb-1">Using this App</h3>
+          <ol class="list-decimal pl-6 space-y-1">
+            <li>Load your JSON files for the risk register, CARVER targets, Monte Carlo configuration and optionally the context, treatments and monitoring schedule using the pickers on the Dashboard tab. You can start with the embedded demo data.</li>
+            <li>The Dashboard shows KPI summaries, a searchable risk register table, a CARVER radar chart and Monte Carlo results. Use the Context, Treatment and Monitoring tabs to record your PESTELS/CAF analysis, mitigation plans and monitoring indicators. These will be included in your exported state.</li>
+            <li>Use the Editor tabs (Risk, CARVER, MC, Context, Treatment, Monitoring) to directly edit the JSON definitions. Click Save to apply changes. You can download blank templates to prepare offline.</li>
+            <li>Run the Monte Carlo simulation by setting the number of iterations and clicking <strong>Run Monte Carlo</strong>. KPI percentiles and the results table will update. Use the download buttons to export the CSV or PNG chart.</li>
+            <li>Export your current state via the <strong>Export state JSON</strong> button to create a consolidated snapshot containing all your definitions. This file can be re‑imported later.</li>
+          </ol>
+        </div>
+        <div>
+          <h3 class="font-semibold mb-1">Prompt Template for LLMs</h3>
+          <p>Use the following prompt in your favourite language model to generate compatible JSON files from a narrative description of your context. Replace bracketed sections with your own details.</p>
+          <div class="relative">
+            <textarea readonly id="llmPrompt" class="w-full h-64 p-3 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs font-mono select-all leading-relaxed" spellcheck="false"></textarea>
+            <button id="copyPromptBtn" class="btn absolute top-2 right-2">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Schema Tab -->
+    <div id="schemaTab" class="tab-content hidden card p-4 space-y-3">
+      <h2 class="font-semibold">Schema &amp; Templates</h2>
+      <p class="text-sm">This section provides a consolidated state template for QA Convergence. Use it to prepare your data for import. Choose a format to view the structure and copy or download it.</p>
+      <div class="flex flex-wrap items-center gap-2">
+        <label for="schemaFormat" class="text-sm font-semibold">Format:</label>
+        <select id="schemaFormat" class="px-3 py-2 rounded-xl bg-transparent border border-slate-300 dark:border-slate-700 text-sm">
+          <option value="json">JSON</option>
+          <option value="xml">XML</option>
+          <option value="csv">CSV Headers</option>
+        </select>
+        <button id="copySchemaBtn" class="btn">Copy</button>
+        <button id="downloadSchemaBtn" class="btn">Download</button>
+      </div>
+      <textarea id="schemaOutput" readonly class="w-full h-80 p-3 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs font-mono select-all leading-relaxed"></textarea>
+    </div>
+
+  </main>
+
+  <script>
+  // ------------------ State ------------------
+  const state = {
+    risks: null,       // { assets: [...] }
+    carver: null,      // [ { name, scores:{C,A,R,V,E,Rz}, ... } ]
+    mc: null,          // { iterations, risks:[...], aggregation:{...} }
+    context: null,     // { pestels:{}, actors:[] }
+    treatments: null,  // [ { id, name, decision, mitigation, contingency } ]
+    monitoring: null,  // [ { item, indicator, frequency, responsible, method } ]
+    charts: { carver: null, mc: null }
+    ,palette: 'default'
+    ,customColor: '#10b981'
+  };
+
+  // Demo data so the page is useful immediately
+  const demoRisks = { assets: [
+    { name: "Humanitarian Corridor - West Route", sector: "Access", type: "Route", likelihood: 4, impact: 5, notes: "Siege dynamics and checkpoint tension." },
+    { name: "Field Team Data Store", sector: "Information", type: "Data", likelihood: 3, impact: 4, notes: "Contains sensitive interviews. Encrypt and restrict." },
+    { name: "Local Mediation Forum", sector: "Community", type: "Engagement", likelihood: 2, impact: 3, notes: "Actor fragmentation risk. Track narrative shifts." }
+  ]};
+
+  // Demo context: PESTELS summary and actor mapping
+  const demoContext = {
+    pestels: {
+      Political: "Peace talks stalled; contested election results.",
+      Economic: "Trade restrictions causing inflation.",
+      Social: "Heightened tensions among communities.",
+      Technological: "Low tech adoption; reliance on radio.",
+      Environmental: "Flood season may impact roads.",
+      Legal: "New curfew laws enacted.",
+      Security: "Militia checkpoints increasing."
+    },
+    actors: [
+      { name: "Local Government", affiliation: "Group A", role: "Authority", behaviour: "Enforces curfews and controls checkpoints." },
+      { name: "Militia", affiliation: "Group B", role: "Opposition", behaviour: "Controls rural roads and extorts goods." }
+    ]
+  };
+
+  // Demo treatment plan: decision and mitigation/contingency for each risk
+  const demoTreatment = [
+    { id: "R1", name: "Humanitarian Corridor - West Route", decision: "Protect", mitigation: "Deploy convoy escorts and negotiate safe windows.", contingency: "Use alternate spur or suspend route if security deteriorates." },
+    { id: "R2", name: "Field Team Data Store", decision: "Protect", mitigation: "Encrypt data at rest, enforce RBAC and monitor access.", contingency: "Activate incident response, isolate compromised server and notify partners." },
+    { id: "R3", name: "Local Mediation Forum", decision: "Accept", mitigation: "Maintain regular check-ins and facilitate open dialogue.", contingency: "Suspend operations if violence escalates." }
+  ];
+
+  // Demo monitoring schedule: what to track, how often and by whom
+  const demoMonitoring = [
+    { item: "Political climate", indicator: "Number of ceasefire violations per week", frequency: "Weekly", responsible: "Analyst", method: "Situation reports" },
+    { item: "Route security", indicator: "Checkpoint incidents and roadblocks", frequency: "Daily", responsible: "Logistics", method: "Incident tracker and patrol reports" },
+    { item: "Data breaches", indicator: "Flagged system log events", frequency: "Real-time", responsible: "IM Unit", method: "Automated alerts to CISO" },
+    { item: "Community tensions", indicator: "Social media trends and rumours", frequency: "Weekly", responsible: "Protection Team", method: "Community feedback and monitors" }
+  ];
+
+  const demoCarver = [
+    { name: "Humanitarian Corridor - West Route", sector: "Access", type: "Route", location: "West Axis", status: "Active", owner: "Logistics Cluster", last: new Date().toISOString().slice(0,10), notes: "Alternate spur available.", scores:{C:5,A:3,R:4,V:4,E:5,Rz:4}, dbt:["Roadblocks","Indirect Fire","Extortion"], watchers:["ops@ngo.org"] },
+    { name: "Field Team Data Store", sector: "Information", type: "Data", location: "Regional Hub", status: "Online", owner: "IM Unit", last: new Date().toISOString().slice(0,10), notes: "PII present. RBAC required.", scores:{C:4,A:2,R:3,V:3,E:4,Rz:2}, dbt:["Insider","Theft"], watchers:["ciso@partner.org"] }
+  ];
+
+  const demoMC = {
+    time_horizon_days: 90,
+    iterations: 5000,
+    risks: [
+      { id: "R1", name: "Humanitarian Corridor - West Route", likelihood_distribution:{type:"beta",alpha:4,beta:3}, impact_distribution:{type:"triangular",min:3,mode:4,max:5}, controls:[{name:"Alternate spur", effectiveness:{type:"normal",mean:0.35,sd:0.1}, cost:2},{name:"Negotiated windows", effectiveness:{type:"normal",mean:0.25,sd:0.08}, cost:1}], carver_weights:{C:0.25,A:0.15,R:0.15,V:0.2,E:0.2,Rz:0.05} },
+      { id: "R2", name: "Field Team Data Store", likelihood_distribution:{type:"beta",alpha:3,beta:5}, impact_distribution:{type:"triangular",min:2,mode:3,max:4}, controls:[{name:"Encryption at rest", effectiveness:{type:"normal",mean:0.5,sd:0.1}, cost:1},{name:"RBAC hardening", effectiveness:{type:"normal",mean:0.4,sd:0.1}, cost:1}], carver_weights:{C:0.2,A:0.1,R:0.2,V:0.2,E:0.25,Rz:0.05} }
+    ],
+    aggregation: { kpis:[ { name:"Aid shortfall tons", risks:["R1"], impact_to_kpi:"linear", scale:50 }, { name:"Data breach score", risks:["R2"], impact_to_kpi:"linear", scale:10 } ], percentiles:[50,80,90,95] }
+  };
+
+  // Initialize with demo
+  state.risks = demoRisks;
+  state.carver = demoCarver;
+  state.mc = demoMC;
+  state.context = demoContext;
+  state.treatments = demoTreatment;
+  state.monitoring = demoMonitoring;
+
+  // ------------------ Utils ------------------
+  const $ = sel => document.querySelector(sel);
+  function readJsonFile(input, cb){
+    const file = input.files?.[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      let text = String(reader.result || '');
+      if(text.charCodeAt(0) === 0xFEFF) text = text.slice(1); // strip BOM
+      let data;
+      try{
+        data = JSON.parse(text);
+      } catch(e){
+        // Attempt to parse as XML
+        try{
+          const parser = new DOMParser();
+          const xmlDoc = parser.parseFromString(text, 'application/xml');
+          const jsonObj = xmlToJson(xmlDoc);
+          const keys = Object.keys(jsonObj);
+          data = keys.length === 1 ? jsonObj[keys[0]] : jsonObj;
+        } catch(err2){
+          alert('Invalid JSON or XML file: ' + e.message);
+          return;
+        }
+      }
+      cb(data);
+    };
+    reader.readAsText(file);
+  }
+  function downloadFile(name, content){
+    // allow specifying mime type; default to JSON for structured data
+    let mime = 'application/json';
+    if(arguments.length > 2 && typeof arguments[2] === 'string'){ mime = arguments[2]; }
+    const blob = new Blob([content], {type: mime});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = name; a.click();
+    setTimeout(()=>URL.revokeObjectURL(url), 1000);
+  }
+  function toCSV(rows){
+    if(!rows || !rows.length) return '';
+    const headers = Object.keys(rows[0]);
+    const esc = v => '"'+String(v).replaceAll('"','""')+'"';
+    const lines = [headers.join(',')].concat(rows.map(r=>headers.map(h=>esc(r[h] ?? '')).join(',')));
+    return lines.join('\n');
+  }
+  function percentile(arr, p){
+    if(!arr.length) return 0; const sorted = [...arr].sort((a,b)=>a-b);
+    const i = Math.min(sorted.length-1, Math.max(0, Math.round((p/100)*(sorted.length-1))));
+    return sorted[i];
+  }
+
+  // Normalizers (accept multiple shapes)
+  const normalizeRiskData = (d) => d?.assets ? d : (Array.isArray(d) ? { assets: d } : d);
+  const normalizeCarverData = (d) => Array.isArray(d) ? d : (d?.carver_targets ? d.carver_targets : (d?.targets ? d.targets : []));
+  const normalizeMcData = (d) => d?.mc_config ? d.mc_config : d;
+
+  // ------------------ Schema Template and XML/CSV Helpers ------------------
+  // Consolidated schema template describing the expected import/export format.
+  const schemaTemplate = {
+    context: {
+      pestels: {
+        Political: "...",
+        Economic: "...",
+        Social: "...",
+        Technological: "...",
+        Environmental: "...",
+        Legal: "...",
+        Security: "..."
+      },
+      actors: [ { name: "...", affiliation: "...", role: "...", behaviour: "..." } ]
+    },
+    risk_register: { assets: [ { name: "...", sector: "...", type: "...", likelihood: 0, impact: 0, score: 0, notes: "..." } ] },
+    carver_targets: [ { name: "...", sector: "...", type: "...", location: "...", status: "...", owner: "...", last: "YYYY-MM-DD", notes: "...", scores: { C:0, A:0, R:0, V:0, E:0, Rz:0 }, dbt: [], watchers: [] } ],
+    treatments: [ { id: "...", name: "...", decision: "Accept|Protect|Deter|Contingency", mitigation: "...", contingency: "..." } ],
+    mc_config: {
+      time_horizon_days: 0,
+      iterations: 0,
+      risks: [ { id: "...", name: "...", likelihood_distribution: { type: "beta|triangular|normal", alpha: 0, beta: 0, min: 0, mode: 0, max: 0, mean: 0, sd: 0 }, impact_distribution: { type: "beta|triangular|normal", alpha: 0, beta: 0, min: 0, mode: 0, max: 0, mean: 0, sd: 0 }, controls: [ { name: "...", effectiveness: { type: "normal", mean: 0, sd: 0 }, cost: 0 } ], carver_weights: { C:0, A:0, R:0, V:0, E:0, Rz:0 } } ],
+      aggregation: {
+        kpis: [ { name: "...", risks: ["..."], impact_to_kpi: "linear", scale: 0 } ],
+        percentiles: [50, 80, 90, 95]
+      }
+    },
+    monitoring: [ { item: "...", indicator: "...", frequency: "Daily|Weekly|Monthly|Real-time", responsible: "...", method: "..." } ]
+  };
+
+  // Convert a simple JSON object into an XML string.
+  function jsonToXml(obj, nodeName) {
+    let xml = '';
+    if (obj === null || obj === undefined) {
+      xml += `<${nodeName}/>`;
+    } else if (typeof obj !== 'object') {
+      xml += `<${nodeName}>${String(obj)}</${nodeName}>`;
+    } else if (Array.isArray(obj)) {
+      obj.forEach(item => { xml += jsonToXml(item, nodeName); });
+    } else {
+      xml += nodeName ? `<${nodeName}>` : '';
+      for (const prop in obj) {
+        xml += jsonToXml(obj[prop], prop);
+      }
+      xml += nodeName ? `</${nodeName}>` : '';
+    }
+    return xml;
+  }
+
+  function objectToXml(obj) {
+    // wrap top-level keys under <schema> root
+    let xml = '<schema>';
+    for (const key in obj) {
+      xml += jsonToXml(obj[key], key);
+    }
+    xml += '</schema>';
+    return xml;
+  }
+
+  // Convert an XML document into JSON. Removes empty text nodes.
+  function xmlToJson(node) {
+    // Text node
+    if (node.nodeType === 3) {
+      return node.nodeValue.trim();
+    }
+    const obj = {};
+    // process attributes
+    if (node.attributes && node.attributes.length > 0) {
+      obj['@attributes'] = {};
+      for (let j = 0; j < node.attributes.length; j++) {
+        const attr = node.attributes.item(j);
+        obj['@attributes'][attr.nodeName] = attr.nodeValue;
+      }
+    }
+    // process child nodes
+    if (node.hasChildNodes()) {
+      for (let i = 0; i < node.childNodes.length; i++) {
+        const child = node.childNodes[i];
+        const nodeName = child.nodeName;
+        const val = xmlToJson(child);
+        if (val === '' || val === undefined) continue;
+        if (obj[nodeName] === undefined) {
+          obj[nodeName] = val;
+        } else {
+          if (!Array.isArray(obj[nodeName])) {
+            obj[nodeName] = [obj[nodeName]];
+          }
+          obj[nodeName].push(val);
+        }
+      }
+    }
+    return obj;
+  }
+
+  // Return multiline CSV header definitions for each dataset
+  function getCsvHeaders(){
+    return [
+      'Risk Register: Name,Sector,Type,Likelihood,Impact,Score,Notes',
+      'CARVER Targets: Name,Sector,Type,Location,Status,Owner,Last,Notes,C,A,R,V,E,Rz,dbt,watchers',
+      'Treatments: Id,Name,Decision,Mitigation,Contingency',
+      'Monitoring: Item,Indicator,Frequency,Responsible,Method',
+      'Context PESTELS: Domain,Summary',
+      'Context Actors: Name,Affiliation,Role,Behaviour',
+      'MC Config (Risks): Id,Name,LikelihoodDistribution,ImpactDistribution,Controls,CarverWeights',
+      'MC Config (KPI Aggregation): KPIName,RiskIDs,ImpactToKPI,Scale,Percentiles'
+    ].join('\n');
+  }
+
+  // ------------------ Color Palettes ------------------
+  // Convert hex to RGB object
+  function hexToRgb(hex){
+    const h = hex.replace('#','');
+    const r = parseInt(h.substring(0,2),16);
+    const g = parseInt(h.substring(2,4),16);
+    const b = parseInt(h.substring(4,6),16);
+    return {r,g,b};
+  }
+  // Lighten a color towards white by factor alpha (0-1)
+  function lighten(rgb, alpha){
+    return {
+      r: Math.round((1-alpha)*rgb.r + alpha*255),
+      g: Math.round((1-alpha)*rgb.g + alpha*255),
+      b: Math.round((1-alpha)*rgb.b + alpha*255)
+    };
+  }
+  // Convert RGB to rgba string with given alpha
+  function toRgba(rgb, alpha){
+    return `rgba(${rgb.r},${rgb.g},${rgb.b},${alpha})`;
+  }
+  // Convert RGB to hex string
+  function rgbToHex(rgb){
+    const comp = c => c.toString(16).padStart(2,'0');
+    return `#${comp(rgb.r)}${comp(rgb.g)}${comp(rgb.b)}`;
+  }
+  // Compute perceived brightness (0-255)
+  function brightness(rgb){
+    return 0.299*rgb.r + 0.587*rgb.g + 0.114*rgb.b;
+  }
+  // Build a palette from a base hex color
+  function buildPalette(baseHex){
+    const base = hexToRgb(baseHex);
+    // Radar colors
+    const radarBgColor = lighten(base, 0.5);
+    const radarBg = toRgba(radarBgColor, 0.3);
+    const radarBorder = toRgba(lighten(base,0), 1);
+    const radarPoint = radarBorder;
+    // MC colors for percentiles
+    const lightenMap = {P50:0.5, P80:0.35, P90:0.2, P95:0.05};
+    const mc = {};
+    for(const key in lightenMap){
+      const c = lighten(base, lightenMap[key]);
+      mc[key] = { bg: toRgba(c,0.5), border: toRgba(c,1) };
+    }
+    // Table colors
+    const headerRgb = lighten(base, 0.85);
+    const evenRgb = lighten(base, 0.95);
+    const oddRgb = lighten(base, 1);
+    const headerHex = rgbToHex(headerRgb);
+    const evenHex = rgbToHex(evenRgb);
+    const oddHex = rgbToHex(oddRgb);
+    const textColor = brightness(headerRgb) < 140 ? '#ffffff' : '#111827';
+    return {
+      radar: { bg: radarBg, border: radarBorder, point: radarPoint },
+      mc: mc,
+      table: { header: headerHex, even: evenHex, odd: oddHex, text: textColor }
+    };
+  }
+  // Define base colors for named palettes
+  const baseColors = {
+    blue: '#3b82f6',
+    green: '#10b981',
+    red: '#ef4444',
+    purple: '#8b5cf6',
+    orange: '#f97316',
+    gray: '#6b7280'
+  };
+  const palettes = {};
+  // Multi palette uses custom distinct colors
+  palettes.multi = {
+    radar: { bg: 'rgba(59,130,246,0.3)', border:'rgba(37,99,235,1)', point:'rgba(37,99,235,1)' },
+    mc: {
+      P50: { bg:'rgba(59,130,246,0.5)', border:'rgba(37,99,235,1)' },
+      P80: { bg:'rgba(139,92,246,0.5)', border:'rgba(107,70,193,1)' },
+      P90: { bg:'rgba(34,197,94,0.5)', border:'rgba(22,163,74,1)' },
+      P95: { bg:'rgba(249,115,22,0.5)', border:'rgba(217,119,6,1)' }
+    },
+    table: { header:'#f3f4f6', even:'#fafafa', odd:'#ffffff', text:'#111827' }
+  };
+  // Default palette is based on green
+  palettes.default = buildPalette(baseColors.green);
+  palettes.blue = buildPalette(baseColors.blue);
+  palettes.green = buildPalette(baseColors.green);
+  palettes.red = buildPalette(baseColors.red);
+  palettes.purple = buildPalette(baseColors.purple);
+  palettes.orange = buildPalette(baseColors.orange);
+  palettes.gray = buildPalette(baseColors.gray);
+
+  // Apply palette styles to table and redraw charts
+  function applyPalette(){
+    const p = palettes[state.palette] || palettes.default;
+    // Update risk table style
+    const header = p.table.header;
+    const even = p.table.even;
+    const odd = p.table.odd;
+    const text = p.table.text;
+    const style = `\n#riskTable thead tr { background-color: ${header}; color: ${text}; }\n#riskTable tbody tr:nth-child(even) { background-color: ${even}; }\n#riskTable tbody tr:nth-child(odd) { background-color: ${odd}; }\n`;
+    const styleEl = document.getElementById('paletteStyles');
+    if(styleEl) styleEl.textContent = style;
+    // Redraw charts with new palette
+    renderCarverChart();
+    runMonteCarlo();
+  }
+
+  // Update schema output area based on selected format
+  function updateSchemaOutput(){
+    const fmt = document.getElementById('schemaFormat')?.value || 'json';
+    const out = document.getElementById('schemaOutput');
+    if(!out) return;
+    if(fmt === 'json'){
+      out.value = JSON.stringify(schemaTemplate, null, 2);
+    } else if(fmt === 'xml'){
+      out.value = objectToXml(schemaTemplate);
+    } else if(fmt === 'csv'){
+      out.value = getCsvHeaders();
+    }
+  }
+
+  // ------------------ Editor Helpers ------------------
+  // Populate the editor textareas with the current state.
+  function updateEditors(){
+    const riskEditorEl = document.getElementById('riskEditor');
+    if(riskEditorEl){
+      try{ riskEditorEl.value = JSON.stringify(state.risks || { assets: [] }, null, 2); } catch(e){ /* ignore */ }
+    }
+    const carverEditorEl = document.getElementById('carverEditor');
+    if(carverEditorEl){
+      try{ carverEditorEl.value = JSON.stringify(state.carver || [], null, 2); } catch(e){ /* ignore */ }
+    }
+    const mcEditorEl = document.getElementById('mcEditor');
+    if(mcEditorEl){
+      try{ mcEditorEl.value = JSON.stringify(state.mc || {}, null, 2); } catch(e){ /* ignore */ }
+    }
+
+    // Context editor
+    const contextEditorEl = document.getElementById('contextEditor');
+    if(contextEditorEl){
+      try{ contextEditorEl.value = JSON.stringify(state.context || { pestels: {}, actors: [] }, null, 2); } catch(e){ /* ignore */ }
+    }
+    // Treatment editor
+    const treatmentEditorEl = document.getElementById('treatmentEditor');
+    if(treatmentEditorEl){
+      try{ treatmentEditorEl.value = JSON.stringify(state.treatments || [], null, 2); } catch(e){ /* ignore */ }
+    }
+    // Monitoring editor
+    const monitoringEditorEl = document.getElementById('monitoringEditor');
+    if(monitoringEditorEl){
+      try{ monitoringEditorEl.value = JSON.stringify(state.monitoring || [], null, 2); } catch(e){ /* ignore */ }
+    }
+  }
+
+  // ------------------ Render Risk Table ------------------
+  function renderRisks(){
+    const tbody = $('#riskTable tbody');
+    tbody.innerHTML = '';
+    const q = $('#riskSearch').value?.toLowerCase() || '';
+    const rows = (state.risks?.assets || [])
+      .filter(a => Object.values(a).some(v => String(v).toLowerCase().includes(q)))
+      .map(a => ({...a, score: Number(a.likelihood||0)*Number(a.impact||0)}));
+
+    for(const r of rows){
+      const tr = document.createElement('tr');
+      tr.className = 'border-b border-slate-100 dark:border-slate-800';
+      tr.innerHTML = `
+        <td class="py-2 pr-2">${r.name}</td>
+        <td class="py-2 pr-2">${r.sector}</td>
+        <td class="py-2 pr-2">${r.type}</td>
+        <td class="py-2 pr-2">${r.likelihood}</td>
+        <td class="py-2 pr-2">${r.impact}</td>
+        <td class="py-2 pr-2 font-semibold">${(r.score||0).toFixed(2)}</td>
+        <td class="py-2 pr-2">${r.notes||''}</td>`;
+      tbody.appendChild(tr);
+    }
+
+    // CSV export
+    $('#downloadRiskCsv').onclick = () => {
+      const csvRows = rows.map(r => ({
+        Name:r.name, Sector:r.sector, Type:r.type, Likelihood:r.likelihood, Impact:r.impact, Score:(r.score||0).toFixed(2), Notes:r.notes||''
+      }));
+      downloadFile('risk_register.csv', toCSV(csvRows), 'text/csv');
+    }
+  }
+
+  // ------------------ CARVER Radar ------------------
+  function renderCarverSelect(){
+    const sel = $('#carverSelect');
+    sel.innerHTML = '';
+    const targets = state.carver || [];
+    if(!targets.length){
+      const opt = document.createElement('option');
+      opt.value = ''; opt.textContent = 'No CARVER targets loaded'; sel.appendChild(opt);
+      if(state.charts.carver){ state.charts.carver.destroy(); }
+      return;
+    }
+    targets.forEach((t,i)=>{
+      const opt = document.createElement('option'); opt.value = String(i); opt.textContent = t.name; sel.appendChild(opt);
+    });
+    sel.selectedIndex = 0;
+    sel.onchange = ()=>renderCarverChart();
+    renderCarverChart();
+  }
+  function renderCarverChart(){
+    const sel = $('#carverSelect');
+    const idx = Number(sel.value || 0);
+    const targets = state.carver || [];
+    if(!targets.length){ if(state.charts.carver){ state.charts.carver.destroy(); } return; }
+    const t = targets[Math.max(0, Math.min(idx, targets.length-1))];
+    const labels = ['C','A','R','V','E','Rz'];
+    const data = labels.map(k => Number(t?.scores?.[k]||0));
+    const ctx = document.getElementById('carverChart');
+    if(state.charts.carver){ state.charts.carver.destroy(); }
+    const pal = palettes[state.palette] || palettes.default;
+    state.charts.carver = new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels,
+        datasets: [{
+          label: t?.name || 'CARVER',
+          data,
+          backgroundColor: pal.radar.bg,
+          borderColor: pal.radar.border,
+          pointBackgroundColor: pal.radar.point,
+          pointBorderColor: pal.radar.point,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: { r: { min: 0, max: 5, ticks: { stepSize: 1 } } },
+        plugins: { legend: { display: false } }
+      }
+    });
+    $('#downloadCarverPng').onclick = ()=>{
+      const url = state.charts.carver.toBase64Image();
+      const a = document.createElement('a'); a.href = url; a.download = 'carver_radar.png'; a.click();
+    }
+  }
+
+  // ------------------ Monte Carlo Engine ------------------
+  function rand(){ return crypto.getRandomValues(new Uint32Array(1))[0] / 2**32; }
+  function sampleNormal(mean, sd){ // Box Muller
+    let u = 0, v = 0; while(u===0) u = rand(); while(v===0) v = rand();
+    const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    return mean + sd * z;
+  }
+  function sampleTriangular(min, mode, max){
+    const u = rand(); const c = (mode-min)/(max-min);
+    return u < c ? min + Math.sqrt(u*(max-min)*(mode-min)) : max - Math.sqrt((1-u)*(max-min)*(max-mode));
+  }
+  function sampleBeta(alpha, beta){
+    function sampleGamma(k){
+      if(k < 1){
+        const c = 1/k; const d = 1/(1-k);
+        while(true){ const u1 = rand(), u2 = rand(); const x = Math.pow(u1, c), y = Math.pow(u2, d);
+          if(x + y <= 1){ return -Math.log(rand()) * x/(x+y); }
+        }
+      } else {
+        const d = k - 1/3, c = 1/Math.sqrt(9*d);
+        while(true){ let x, v; do{ x = sampleNormal(0,1); v = 1 + c*x; } while(v <= 0);
+          v = v*v*v; const u = rand(); if(u < 1 - 0.0331*(x*x)*(x*x)) return d*v; if(Math.log(u) < 0.5*x*x + d*(1 - v + Math.log(v))) return d*v; }
+      }
+    }
+    const x = sampleGamma(alpha), y = sampleGamma(beta);
+    return x/(x+y);
+  }
+  function sampleDist(d){
+    if(!d || !d.type) return 0;
+    if(d.type === 'normal') return Math.max(0, sampleNormal(d.mean||0, d.sd||1));
+    if(d.type === 'triangular') return sampleTriangular(d.min||0, d.mode||0, d.max||0);
+    if(d.type === 'beta') return sampleBeta(d.alpha||1, d.beta||1);
+    return 0;
+  }
+  function findCarverByName(name){ return (state.carver||[]).find(t => t.name === name); }
+
+  function runMonteCarlo(){
+    const cfg = JSON.parse(JSON.stringify(state.mc || {}));
+    const iterations = Number($('#iterInput').value || cfg.iterations || 5000);
+    const kpiDefs = cfg.aggregation?.kpis || [];
+    const percentiles = cfg.aggregation?.percentiles || [50,80,90,95];
+    const riskDefs = cfg.risks || [];
+
+    const kpiValues = kpiDefs.map(()=>[]);
+
+    const t0 = performance.now();
+    for(let i=0;i<iterations;i++){
+      const kpiAcc = new Array(kpiDefs.length).fill(0);
+      for(const r of riskDefs){
+        let p = sampleDist(r.likelihood_distribution);
+        let impact = sampleDist(r.impact_distribution);
+        const controls = r.controls || [];
+        let remaining = 1.0;
+        for(const c of controls){ const eff = Math.max(0, Math.min(1, sampleDist(c.effectiveness))); remaining *= (1 - eff); }
+        impact = impact * remaining;
+        const t = findCarverByName(r.name);
+        if(t && r.carver_weights){
+          const w = r.carver_weights; const s = ( (w.C*(t.scores.C||0) + w.A*(t.scores.A||0) + w.R*(t.scores.R||0) + w.V*(t.scores.V||0) + w.E*(t.scores.E||0) + w.Rz*(t.scores.Rz||0)) / ((w.C||0)+(w.A||0)+(w.R||0)+(w.V||0)+(w.E||0)+(w.Rz||0) || 1) ) / 5;
+          p = Math.min(1, Math.max(0, p * (0.8 + 0.4*s)));
+        }
+        const occurred = (Math.random ? Math.random() : rand()) < p ? 1 : 0;
+        if(occurred){
+          kpiDefs.forEach((kdef, idx)=>{
+            if(kdef.risks && kdef.risks.includes(r.id)){
+              const scale = Number(kdef.scale || 1);
+              kpiAcc[idx] += impact * scale;
+            }
+          });
+        }
+      }
+      for(let k=0;k<kpiDefs.length;k++){ kpiValues[k].push(kpiAcc[k]); }
+    }
+    const t1 = performance.now();
+
+    const tableRows = [];
+    const kpisAgg = {};
+    kpiDefs.forEach((kdef, idx)=>{
+      const row = { KPI: kdef.name };
+      percentiles.forEach(p => row['P'+p] = percentile(kpiValues[idx], p).toFixed(2));
+      tableRows.push(row);
+      if(idx === 0){ kpisAgg.P50 = row.P50; kpisAgg.P80 = row.P80; kpisAgg.P90 = row.P90; kpisAgg.P95 = row.P95; }
+    });
+
+    $('#kpiP50').textContent = kpisAgg.P50 || '-';
+    $('#kpiP80').textContent = kpisAgg.P80 || '-';
+    $('#kpiP90').textContent = kpisAgg.P90 || '-';
+    $('#kpiP95').textContent = kpisAgg.P95 || '-';
+
+    const tbody = $('#mcTable tbody'); tbody.innerHTML = '';
+    for(const r of tableRows){
+      const tr = document.createElement('tr'); tr.className = 'border-b border-slate-100 dark:border-slate-800';
+      tr.innerHTML = `<td class="py-2 pr-2">${r.KPI}</td><td class="py-2 pr-2">${r.P50}</td><td class="py-2 pr-2">${r.P80}</td><td class="py-2 pr-2">${r.P90}</td><td class="py-2 pr-2">${r.P95}</td>`;
+      tbody.appendChild(tr);
+    }
+
+    $('#downloadMcCsv').onclick = () => downloadFile('mc_results.csv', toCSV(tableRows), 'text/csv');
+    // Build MC bar chart showing percentile results across KPIs
+    try{
+      const labelsMC = kpiDefs.map(k => k.name);
+      // Prepare data arrays for each percentile
+      const percentData = {};
+      percentiles.forEach(pct => {
+        percentData['P'+pct] = kpiValues.map((vals, idx) => {
+          // compute percentile from raw values for numeric precision
+          const val = percentile(kpiValues[idx], pct);
+          return Number(val.toFixed(2));
+        });
+      });
+      // Use palette colours for each percentile.  Pull from current palette or default fallback
+      const palMc = ((palettes[state.palette] || palettes.default).mc) || {};
+      const datasetsMC = percentiles.map(pct => {
+        const key = 'P'+pct;
+        // default fallback grey hues if undefined
+        const defaultColours = { bg:'rgba(107,114,128,0.5)', border:'rgba(107,114,128,1)' };
+        const colors = palMc[key] || defaultColours;
+        return {
+          label: key,
+          data: percentData[key],
+          backgroundColor: colors.bg,
+          borderColor: colors.border,
+          borderWidth: 1
+        };
+      });
+      const ctxMC = document.getElementById('mcChart');
+      if(state.charts.mc){ state.charts.mc.destroy(); }
+      state.charts.mc = new Chart(ctxMC, {
+        type: 'bar',
+        data: { labels: labelsMC, datasets: datasetsMC },
+        options: {
+          responsive: true,
+          scales: {
+            x: { stacked: false, title: { display: true, text: 'KPIs' } },
+            y: { beginAtZero: true, title: { display: true, text: 'Value' } }
+          },
+          plugins: { legend: { position: 'top' } }
+        }
+      });
+      // Download handler for MC chart
+      const dlBtn = document.getElementById('downloadMcPng');
+      if(dlBtn){
+        dlBtn.onclick = () => {
+          const url = state.charts.mc.toBase64Image();
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'mc_results.png';
+          a.click();
+        };
+      }
+    }catch(err){
+      console.error('MC chart error', err);
+    }
+    $('#statusMsg').textContent = `Simulated ${iterations.toLocaleString()} iterations in ${(t1-t0).toFixed(0)} ms`;
+  }
+
+  // ------------------ Theme and Events ------------------
+  function setTheme(dark){ document.documentElement.classList.toggle('dark', !!dark); localStorage.setItem('qa-theme', dark ? 'dark' : 'light'); }
+  function initTheme(){ const pref = localStorage.getItem('qa-theme'); if(pref){ setTheme(pref==='dark'); } else { setTheme(window.matchMedia('(prefers-color-scheme: dark)').matches); } }
+
+  document.addEventListener('DOMContentLoaded', ()=>{
+    // Theme toggle removed; do not initialise or bind theme button
+
+    // File inputs
+    $('#riskFile').addEventListener('change', e => readJsonFile(e.target, data => {
+      state.risks = normalizeRiskData(data);
+      renderRisks();
+      updateEditors();
+      $('#statusMsg').textContent='Loaded risk register';
+    }));
+    $('#carverFile').addEventListener('change', e => readJsonFile(e.target, data => {
+      state.carver = normalizeCarverData(data);
+      renderCarverSelect();
+      updateEditors();
+      $('#statusMsg').textContent='Loaded CARVER targets';
+    }));
+    $('#mcFile').addEventListener('change', e => readJsonFile(e.target, data => {
+      state.mc = normalizeMcData(data);
+      updateEditors();
+      $('#statusMsg').textContent='Loaded MC config';
+    }));
+    $('#stateFile').addEventListener('change', e => {
+      const input = e.target;
+      const file = input.files?.[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        let text = String(reader.result || '');
+        if(text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+        let data = null;
+        try {
+          data = JSON.parse(text);
+        } catch(err){
+          // Try XML parse
+          try {
+            const parser = new DOMParser();
+            const xml = parser.parseFromString(text, 'application/xml');
+            const jsonObj = xmlToJson(xml);
+            // Grab first root object if wrapper exists
+            const keys = Object.keys(jsonObj);
+            if(keys.length === 1){ data = jsonObj[keys[0]]; }
+            else { data = jsonObj; }
+          } catch(err2){
+            alert('Invalid JSON or XML file: ' + err.message);
+            return;
+          }
+        }
+        // Accept either the exact snapshot shape or a superset
+        const rr = data && (data.risk_register || data.assets) ? normalizeRiskData(data.risk_register || data) : null;
+        const cv = data && (data.carver_targets || data.targets) ? normalizeCarverData(data.carver_targets || data.targets) : null;
+        const mc = data && data.mc_config ? normalizeMcData(data.mc_config) : null;
+        if(rr) state.risks = rr;
+        if(cv) state.carver = cv;
+        if(mc) state.mc = mc;
+        // Context, treatments and monitoring
+        if(data && data.context) state.context = data.context;
+        else if(data && data.context_analysis) state.context = data.context_analysis;
+        if(data && data.treatments) state.treatments = data.treatments;
+        if(data && data.monitoring) state.monitoring = data.monitoring;
+        else if(data && data.monitoring_schedule) state.monitoring = data.monitoring_schedule;
+        renderRisks();
+        renderCarverSelect();
+        runMonteCarlo();
+        updateEditors();
+        $('#statusMsg').textContent='Imported consolidated state file';
+      };
+      reader.readAsText(file);
+    });
+
+    // Search
+    $('#riskSearch').addEventListener('input', renderRisks);
+
+    // Run MC
+    $('#runBtn').onclick = runMonteCarlo;
+    $('#resetBtn').onclick = () => {
+      // Reset all state values to demo
+      state.risks = demoRisks;
+      state.carver = demoCarver;
+      state.mc = demoMC;
+      state.context = demoContext;
+      state.treatments = demoTreatment;
+      state.monitoring = demoMonitoring;
+      renderRisks();
+      renderCarverSelect();
+      runMonteCarlo();
+      updateEditors();
+      $('#statusMsg').textContent='Reset to demo';
+    };
+
+    // Export state
+    $('#downloadStateBtn').onclick = () => {
+      const payload = {
+        risk_register: state.risks,
+        carver_targets: state.carver,
+        mc_config: state.mc,
+        context: state.context,
+        treatments: state.treatments,
+        monitoring: state.monitoring
+      };
+      downloadFile('qa-convergence-state.json', JSON.stringify(payload, null, 2), 'application/json');
+    };
+
+    // Tab switching
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.tab;
+        // highlight active tab
+        tabButtons.forEach(b => b.classList.remove('btn-primary'));
+        tabButtons.forEach(b => b.classList.add('btn'));
+        btn.classList.remove('btn');
+        btn.classList.add('btn-primary');
+        // toggle visibility
+        tabContents.forEach(c => c.classList.add('hidden'));
+        const contentEl = document.getElementById(target + 'Tab');
+        if(contentEl){ contentEl.classList.remove('hidden'); }
+      });
+    });
+
+    // Editor save & download handlers
+    const saveRiskBtn = document.getElementById('saveRiskBtn');
+    if(saveRiskBtn){
+      saveRiskBtn.onclick = () => {
+        const txt = document.getElementById('riskEditor').value;
+        try{
+          const data = JSON.parse(txt);
+          state.risks = normalizeRiskData(data);
+          renderRisks();
+          runMonteCarlo();
+          updateEditors();
+          $('#statusMsg').textContent = 'Risk register updated';
+        }catch(e){ alert('Invalid JSON: ' + e.message); }
+      };
+    }
+    const dlRiskBtn = document.getElementById('downloadRiskJson');
+    if(dlRiskBtn){
+      dlRiskBtn.onclick = () => {
+        const content = JSON.stringify(state.risks || { assets: [] }, null, 2);
+        downloadFile('risk_register_template.json', content, 'application/json');
+      };
+    }
+    const saveCarverBtn = document.getElementById('saveCarverBtn');
+    if(saveCarverBtn){
+      saveCarverBtn.onclick = () => {
+        const txt = document.getElementById('carverEditor').value;
+        try{
+          const data = JSON.parse(txt);
+          state.carver = normalizeCarverData(data);
+          renderCarverSelect();
+          runMonteCarlo();
+          updateEditors();
+          $('#statusMsg').textContent = 'CARVER targets updated';
+        }catch(e){ alert('Invalid JSON: ' + e.message); }
+      };
+    }
+    const dlCarverBtn = document.getElementById('downloadCarverJson');
+    if(dlCarverBtn){
+      dlCarverBtn.onclick = () => {
+        const content = JSON.stringify(state.carver || [], null, 2);
+        downloadFile('carver_targets_template.json', content, 'application/json');
+      };
+    }
+    const saveMcBtn = document.getElementById('saveMcBtn');
+    if(saveMcBtn){
+      saveMcBtn.onclick = () => {
+        const txt = document.getElementById('mcEditor').value;
+        try{
+          const data = JSON.parse(txt);
+          state.mc = normalizeMcData(data);
+          runMonteCarlo();
+          updateEditors();
+          $('#statusMsg').textContent = 'Monte Carlo config updated';
+        }catch(e){ alert('Invalid JSON: ' + e.message); }
+      };
+    }
+    const dlMcBtn = document.getElementById('downloadMcJson');
+    if(dlMcBtn){
+      dlMcBtn.onclick = () => {
+        const content = JSON.stringify(state.mc || {}, null, 2);
+        downloadFile('mc_config_template.json', content, 'application/json');
+      };
+    }
+
+    // Context save & download
+    const saveContextBtn = document.getElementById('saveContextBtn');
+    if(saveContextBtn){
+      saveContextBtn.onclick = () => {
+        const txt = document.getElementById('contextEditor').value;
+        try{
+          const data = JSON.parse(txt);
+          state.context = data;
+          updateEditors();
+          $('#statusMsg').textContent = 'Context analysis updated';
+        }catch(e){ alert('Invalid JSON: ' + e.message); }
+      };
+    }
+    const dlContextBtn = document.getElementById('downloadContextJson');
+    if(dlContextBtn){
+      dlContextBtn.onclick = () => {
+        const content = JSON.stringify(state.context || { pestels:{}, actors:[] }, null, 2);
+        downloadFile('context_template.json', content, 'application/json');
+      };
+    }
+    // Treatment save & download
+    const saveTreatmentBtn = document.getElementById('saveTreatmentBtn');
+    if(saveTreatmentBtn){
+      saveTreatmentBtn.onclick = () => {
+        const txt = document.getElementById('treatmentEditor').value;
+        try{
+          const data = JSON.parse(txt);
+          state.treatments = data;
+          updateEditors();
+          $('#statusMsg').textContent = 'Treatment plan updated';
+        }catch(e){ alert('Invalid JSON: ' + e.message); }
+      };
+    }
+    const dlTreatmentBtn = document.getElementById('downloadTreatmentJson');
+    if(dlTreatmentBtn){
+      dlTreatmentBtn.onclick = () => {
+        const content = JSON.stringify(state.treatments || [], null, 2);
+        downloadFile('treatments_template.json', content, 'application/json');
+      };
+    }
+    // Monitoring save & download
+    const saveMonitoringBtn = document.getElementById('saveMonitoringBtn');
+    if(saveMonitoringBtn){
+      saveMonitoringBtn.onclick = () => {
+        const txt = document.getElementById('monitoringEditor').value;
+        try{
+          const data = JSON.parse(txt);
+          state.monitoring = data;
+          updateEditors();
+          $('#statusMsg').textContent = 'Monitoring schedule updated';
+        }catch(e){ alert('Invalid JSON: ' + e.message); }
+      };
+    }
+    const dlMonitoringBtn = document.getElementById('downloadMonitoringJson');
+    if(dlMonitoringBtn){
+      dlMonitoringBtn.onclick = () => {
+        const content = JSON.stringify(state.monitoring || [], null, 2);
+        downloadFile('monitoring_template.json', content, 'application/json');
+      };
+    }
+
+    // Palette and custom colour handling
+    const paletteSelectEl = document.getElementById('paletteSelect');
+    const customColorEl = document.getElementById('customColor');
+    if(paletteSelectEl && customColorEl){
+      paletteSelectEl.addEventListener('change', e => {
+        const val = e.target.value || 'default';
+        state.palette = val;
+        if(val === 'custom'){
+          // show colour picker and build palette from current value
+          customColorEl.style.display = 'inline-block';
+          // Use existing custom colour or default if undefined
+          state.customColor = state.customColor || customColorEl.value;
+          palettes.custom = buildPalette(state.customColor);
+        } else {
+          customColorEl.style.display = 'none';
+        }
+        applyPalette();
+      });
+      customColorEl.addEventListener('input', e => {
+        const colour = e.target.value;
+        state.customColor = colour;
+        palettes.custom = buildPalette(colour);
+        state.palette = 'custom';
+        // ensure select shows custom option
+        if(paletteSelectEl.value !== 'custom'){ paletteSelectEl.value = 'custom'; }
+        applyPalette();
+      });
+    }
+
+    // Schema format change
+    const schemaFormatEl = document.getElementById('schemaFormat');
+    if(schemaFormatEl){ schemaFormatEl.addEventListener('change', updateSchemaOutput); }
+    // Copy and download schema
+    const copySchemaBtn = document.getElementById('copySchemaBtn');
+    if(copySchemaBtn){
+      copySchemaBtn.onclick = () => {
+        const text = document.getElementById('schemaOutput').value || '';
+        navigator.clipboard.writeText(text).then(() => {
+          copySchemaBtn.textContent = 'Copied!';
+          setTimeout(() => { copySchemaBtn.textContent = 'Copy'; }, 2000);
+        });
+      };
+    }
+    const downloadSchemaBtn = document.getElementById('downloadSchemaBtn');
+    if(downloadSchemaBtn){
+      downloadSchemaBtn.onclick = () => {
+        const fmt = schemaFormatEl?.value || 'json';
+        let content = '';
+        let filename = 'qa-convergence-schema.' + (fmt === 'csv' ? 'txt' : fmt);
+        let mime = 'application/json';
+        if(fmt === 'json'){
+          content = JSON.stringify(schemaTemplate, null, 2);
+          mime = 'application/json';
+        } else if(fmt === 'xml'){
+          content = objectToXml(schemaTemplate);
+          mime = 'application/xml';
+        } else {
+          content = getCsvHeaders();
+          mime = 'text/plain';
+        }
+        downloadFile(filename, content, mime);
+      };
+    }
+    // Populate schema output on initial load
+    updateSchemaOutput();
+    // Initial renders
+    renderRisks();
+    renderCarverSelect();
+    runMonteCarlo();
+    updateEditors();
+    // Apply initial palette styles (also draws charts)
+    applyPalette();
+    // Populate the LLM prompt template and copy handler
+    const promptEl = document.getElementById('llmPrompt');
+    if(promptEl){
+      const tmpl = [
+        'You are an experienced risk analyst using the ACSR–RMFv3 Engine. Given the following narrative context about a project or operation:',
+        '',
+        '[Insert your narrative context here]',
+        '',
+        '1. Provide a contextual analysis summarising the Political, Economic, Social, Technological, Environmental, Legal and Security (PESTELS) drivers. Create a JSON object with a "pestels" field containing keys for each domain and a brief sentence for each. Identify the key actors, alliances and groups (CAF) with their affiliation, role and behaviour. Include them in an "actors" array with objects: name, affiliation, role and behaviour.',
+        '',
+        '2. Identify the key assets or activities mentioned in the context. For each asset record the sector, type, a likelihood score from 1–5 (probability of occurrence) and an impact score from 1–5 (severity of consequences). Include a short note explaining the risk. Compute the Score field as the product of likelihood and impact. Format the result as a JSON object with a top-level key "assets" containing an array of asset objects. Each asset object should have the properties: name, sector, type, likelihood, impact, score and notes.',
+        '',
+        '3. For each asset perform a CARVER assessment. Assign scores from 1–5 for Criticality (C), Accessibility (A), Recuperability (R), Vulnerability (V), Effect (E) and Recognizability (Rz). Higher scores indicate greater criticality, ease of access, difficulty to recover, vulnerability, wider effect and recognizability. Format the CARVER results as an array of objects with properties: name, sector, type, location (if known), status, owner (if known), last (ISO date of assessment), notes and a "scores" object containing the C, A, R, V, E and Rz values.',
+        '',
+        '4. Determine an evaluation and treatment decision for each risk. For each asset choose one of: Accept, Protect, Deter or Contingency. Provide a mitigation plan and a contingency plan as free‑text. Format as an array of objects with keys: id (e.g. "R1"), name, decision, mitigation and contingency.',
+        '',
+        '5. Build a Monte Carlo configuration for each risk. For each asset specify a likelihood_distribution (e.g. {"type":"beta","alpha":X,"beta":Y}) and an impact_distribution (e.g. {"type":"triangular","min":X,"mode":Y,"max":Z}). Optionally include controls with name, effectiveness distribution (type, mean, sd) and cost. Provide carver_weights to adjust likelihood based on CARVER scores. Also define a list of KPIs in the aggregation section with their names, associated risk IDs, impact_to_kpi rule (typically "linear") and scale. Include a percentiles array, such as [50,80,90,95].',
+        '',
+        '6. Specify a monitoring schedule listing what will be tracked, indicators used, update frequency, who is responsible and the reporting method. Format this as an array of objects with keys: item, indicator, frequency, responsible and method.',
+        '',
+        'Return your response as a single JSON object with the keys: context, risk_register, carver_targets, treatments, mc_config and monitoring. Each key should map to the corresponding JSON structure described above. The output must be valid JSON and not wrapped in markdown. Do not include any explanatory text or analysis outside of the JSON.'
+      ].join('\n');
+      promptEl.value = tmpl;
+      const copyBtn = document.getElementById('copyPromptBtn');
+      if(copyBtn){
+        copyBtn.onclick = () => {
+          navigator.clipboard.writeText(tmpl).then(() => {
+            // Provide simple feedback
+            copyBtn.textContent = 'Copied!';
+            setTimeout(()=>{ copyBtn.textContent = 'Copy'; }, 2000);
+          });
+        };
+      }
+    }
+  });
+</script>
+</body>
+</html>
