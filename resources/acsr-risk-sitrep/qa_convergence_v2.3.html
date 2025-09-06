@@ -13,11 +13,14 @@
   <meta property="og:type" content="website">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🛰️</text></svg>">
   <!-- Tailwind CSS CDN -->
-  <!-- Configure Tailwind dark mode to use the 'dark' class -->
+  <!-- Configure Tailwind dark mode to use the 'dark' class. When using the CDN
+       version of Tailwind the configuration object must be assigned directly
+       to `tailwind.config` before the library is loaded. Refer to the
+       official Tailwind documentation for dark mode setup. -->
   <script>
-    // enable class-based dark mode so that toggling the 'dark' class on <html> works
-    window.tailwind = window.tailwind || {};
-    window.tailwind.config = { darkMode: 'class' };
+    // Set the Tailwind configuration. Assigning to `tailwind.config` (not
+    // window.tailwind) ensures the CDN picks up the dark mode strategy.
+    tailwind.config = { darkMode: 'class' };
   </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js CDN -->
@@ -34,6 +37,99 @@
   </style>
   <!-- Dynamic palette styles will be injected here -->
   <style id="paletteStyles"></style>
+
+  <!--
+    Custom theme variables and overrides. Since the Tailwind CDN does not
+    reliably generate dark-mode variants when using the `dark` class, we
+    implement our own colour scheme using CSS variables. The `dark-theme`
+    class is toggled on the <html> element to switch between light and dark
+    palettes. Variables define page backgrounds, text colours, card
+    backgrounds and borders, header styling and button hues. These
+    overrides use !important to ensure they take precedence over Tailwind’s
+    default styles.
+  -->
+  <style>
+    :root {
+      /* light mode colours */
+      --bg-color: #f8fafc; /* slate-50 */
+      --text-color: #0f172a; /* slate-900 */
+      --card-bg: #ffffff; /* white */
+      --card-border: #e5e7eb; /* slate-200 */
+      --header-bg: rgba(255, 255, 255, 0.8);
+      --header-border: #e5e7eb;
+    }
+    html.dark-theme {
+      /* dark mode colours */
+      --bg-color: #020617; /* slate-950 */
+      --text-color: #f8fafc; /* slate-50 */
+      --card-bg: #0f172a; /* slate-900 */
+      --card-border: #1e293b; /* slate-800 */
+      --header-bg: rgba(2, 6, 23, 0.7);
+      --header-border: #1e293b;
+    }
+    body {
+      background-color: var(--bg-color) !important;
+      color: var(--text-color) !important;
+    }
+    /* override card backgrounds and borders for both light and dark */
+    .card {
+      background-color: var(--card-bg) !important;
+      border-color: var(--card-border) !important;
+    }
+    /* header background and border colours */
+    header {
+      background-color: var(--header-bg) !important;
+      border-bottom-color: var(--header-border) !important;
+    }
+    /* text inputs should inherit colours for readability */
+    input[type="text"], input[type="number"], select, textarea {
+      background-color: var(--card-bg) !important;
+      color: var(--text-color) !important;
+      border-color: var(--card-border) !important;
+    }
+    /* buttons inherit text colour; their backgrounds are managed by Tailwind but remain readable */
+    .btn, .btn-primary {
+      color: var(--text-color) !important;
+    }
+
+    /*
+      Tailwind's colour utility classes (e.g. text-slate-500) are designed to
+      work with its built-in dark mode when the `dark` class is applied.
+      Because this app uses a custom `dark-theme` switch instead of the
+      `dark` class, those utilities do not adjust automatically and thus
+      produce very dark text on a dark background. The following rules
+      override common slate text colours when the dark theme is active,
+      resetting them to the general --text-colour. This dramatically
+      improves readability of small labels and tips across the interface.
+    */
+    html.dark-theme .text-slate-300,
+    html.dark-theme .text-slate-400,
+    html.dark-theme .text-slate-500,
+    html.dark-theme .text-slate-600,
+    html.dark-theme .text-slate-700,
+    html.dark-theme .text-slate-800 {
+      color: var(--text-color) !important;
+    }
+
+    /* Catch-all override: any class containing 'text-slate-' should default
+       to the custom dark theme colour when dark mode is active. This helps
+       avoid missed cases where specific numeric variants are omitted. */
+    html.dark-theme [class*="text-slate-"] {
+      color: var(--text-color) !important;
+    }
+
+    /*
+      As a fallback, also ensure that generic text elements adopt the
+      appropriate text colour in dark mode. This catches paragraphs,
+      spans and labels that use Tailwind text colour classes that may
+      otherwise remain dark on dark backgrounds.
+    */
+    html.dark-theme p,
+    html.dark-theme span,
+    html.dark-theme label {
+      color: var(--text-color) !important;
+    }
+  </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen">
   <header class="sticky top-0 z-30 backdrop-blur bg-white/80 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800">
@@ -46,7 +142,8 @@
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <!-- Removed theme toggle button -->
+        <!-- Theme toggle button restored as an anchor for consistent styling -->
+        <a id="themeToggle" href="#" class="btn">Toggle theme</a>
         <a href="#help" class="btn">Help</a>
         <a id="downloadStateBtn" class="btn" href="#">Export state JSON</a>
       </div>
@@ -117,7 +214,12 @@
         <button id="resetBtn" class="btn">Reset</button>
         <span id="statusMsg" class="text-sm text-slate-500"></span>
       </div>
-      <p class="text-xs mt-3 text-slate-500">Tip: Load individual JSONs or import a consolidated snapshot created by Export state JSON. No data leaves your browser.</p>
+      <!--
+        Use default text colour for the tip so it adapts to the active theme. We drop the
+        text-slate-500 utility which sets a hard-coded grey that is unreadable in dark
+        mode. The body inherits --text-colour via CSS variables.
+      -->
+      <p class="text-xs mt-3">Tip: Load individual JSONs or import a consolidated snapshot created by Export state JSON. No data leaves your browser.</p>
     </section>
 
     <!-- KPI Cards -->
@@ -686,13 +788,48 @@
 
   // Apply palette styles to table and redraw charts
   function applyPalette(){
-    const p = palettes[state.palette] || palettes.default;
-    // Update risk table style
-    const header = p.table.header;
-    const even = p.table.even;
-    const odd = p.table.odd;
-    const text = p.table.text;
-    const style = `\n#riskTable thead tr { background-color: ${header}; color: ${text}; }\n#riskTable tbody tr:nth-child(even) { background-color: ${even}; }\n#riskTable tbody tr:nth-child(odd) { background-color: ${odd}; }\n`;
+    // Determine colours for risk table based on current theme.
+    const isDark = document.documentElement.classList.contains('dark-theme');
+    let headerHex, evenHex, oddHex, textColour;
+    if(isDark){
+      // For dark mode, derive table colours by heavily lightening the base colour to improve contrast.
+      // We pick the base colour from the current palette (or default to green if multi/undefined) and
+      // mix it with white using larger factors. This results in a brighter background behind white text.
+      let baseHex;
+      if(state.palette === 'custom'){
+        baseHex = state.customColor || baseColors.green;
+      } else if(baseColors[state.palette]){
+        baseHex = baseColors[state.palette];
+      } else {
+        // For multi or undefined palettes, default to green
+        baseHex = baseColors.green;
+      }
+      const baseRgb = hexToRgb(baseHex);
+      // Increase lightening factors for header/rows compared to earlier implementation
+      // so that the text remains readable on dark backgrounds.
+      const headerRgb = lighten(baseRgb, 0.5);
+      const evenRgb   = lighten(baseRgb, 0.35);
+      const oddRgb    = lighten(baseRgb, 0.25);
+      headerHex = rgbToHex(headerRgb);
+      evenHex   = rgbToHex(evenRgb);
+      oddHex    = rgbToHex(oddRgb);
+      textColour = '#ffffff';
+    } else {
+      // Light mode uses palette-defined colours
+      const p = palettes[state.palette] || palettes.default;
+      headerHex = p.table.header;
+      evenHex   = p.table.even;
+      oddHex    = p.table.odd;
+      textColour= p.table.text;
+    }
+    // Build the dynamic CSS for the risk table. In dark mode we also set
+    // the text colour on all body cells to white for contrast. Without
+    // overriding the text colour the inherited grey from Tailwind would
+    // leave the table illegible on dark backgrounds. In light mode we
+    // retain the palette-defined text colour only on the header.
+    const style = `\n#riskTable thead tr { background-color: ${headerHex}; color: ${textColour}; }\n` +
+      (isDark ? `#riskTable tbody tr td { color: #ffffff; }\n` : '') +
+      `#riskTable tbody tr:nth-child(even) { background-color: ${evenHex}; }\n#riskTable tbody tr:nth-child(odd) { background-color: ${oddHex}; }\n`;
     const styleEl = document.getElementById('paletteStyles');
     if(styleEl) styleEl.textContent = style;
     // Redraw charts with new palette
@@ -989,11 +1126,51 @@
   }
 
   // ------------------ Theme and Events ------------------
-  function setTheme(dark){ document.documentElement.classList.toggle('dark', !!dark); localStorage.setItem('qa-theme', dark ? 'dark' : 'light'); }
-  function initTheme(){ const pref = localStorage.getItem('qa-theme'); if(pref){ setTheme(pref==='dark'); } else { setTheme(window.matchMedia('(prefers-color-scheme: dark)').matches); } }
+  // Toggle our custom dark theme by adding or removing the `dark-theme` class on
+  // the <html> element. We still persist the preference in localStorage for
+  // subsequent visits. The stored value is 'dark' or 'light'.
+  function setTheme(dark){
+    document.documentElement.classList.toggle('dark-theme', !!dark);
+    localStorage.setItem('qa-theme', dark ? 'dark' : 'light');
+    // Adjust textual colours for elements using Tailwind slate classes when theme changes
+    updateTextColors();
+  }
+  function initTheme(){
+    const pref = localStorage.getItem('qa-theme');
+    if(pref){
+      setTheme(pref === 'dark');
+    } else {
+      // Fallback to system preference using prefers-color-scheme. Use matches
+      // directly rather than relying on Tailwind’s dark variant, since we
+      // implement our own theme.
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setTheme(prefersDark);
+    }
+  }
+
+  // Walk through all elements with a Tailwind text-slate-* class and
+  // explicitly set their colour to match the dark or light theme. Without
+  // this, elements labelled with text-slate-500 etc. retain a dark grey
+  // colour which is hard to read on dark backgrounds. Clearing the
+  // inline style when light mode is active allows default Tailwind colours
+  // to apply normally.
+  function updateTextColors(){
+    const dark = document.documentElement.classList.contains('dark-theme');
+    const elements = document.querySelectorAll('[class*="text-slate-"]');
+    elements.forEach(el => {
+      if(dark){
+        // Use CSS variable for text colour
+        el.style.color = 'var(--text-color)';
+      } else {
+        // Remove override to restore default light colours
+        el.style.removeProperty('color');
+      }
+    });
+  }
 
   document.addEventListener('DOMContentLoaded', ()=>{
-    // Theme toggle removed; do not initialise or bind theme button
+    // Initialise theme based on stored preference or system; reintroduce theme toggle
+    initTheme();
 
     // File inputs
     $('#riskFile').addEventListener('change', e => readJsonFile(e.target, data => {
@@ -1302,6 +1479,28 @@
     }
     // Populate schema output on initial load
     updateSchemaOutput();
+
+    // Theme toggle button handling
+    const themeToggle = document.getElementById('themeToggle');
+    if(themeToggle){
+      // update button text based on current theme
+      const updateBtnText = () => {
+        const dark = document.documentElement.classList.contains('dark-theme');
+        themeToggle.textContent = dark ? 'Light Mode' : 'Dark Mode';
+      };
+      updateBtnText();
+      themeToggle.onclick = (e) => {
+        e.preventDefault();
+        // Flip the dark-theme class directly on the html element
+        document.documentElement.classList.toggle('dark-theme');
+        const darkNow = document.documentElement.classList.contains('dark-theme');
+        // Persist the preference
+        localStorage.setItem('qa-theme', darkNow ? 'dark' : 'light');
+        updateBtnText();
+        // Reapply palette after theme change to adjust table colours
+        applyPalette();
+      };
+    }
     // Initial renders
     renderRisks();
     renderCarverSelect();
