@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<!-- SEO + Social Meta for Benin Elections Risk Report -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="author" content="Dr. Alex Monroe — MNS Consulting" />
+<meta name="description" content="Interactive Benin 2026 Elections Geopolitical Risk & Monte Carlo Assessment: process integrity, protest risk, northern spillover, donor conditionality, and probability estimates." />
+<meta name="keywords" content="Benin elections 2026, Benin risk assessment, Monte Carlo, CENA, Wadagni, Talon, Sahel spillover, Fragile States Index Benin, V-Dem Benin, Transparency International CPI Benin" />
+<meta name="robots" content="index, follow" />
+<title>Benin 2026 Elections — Interactive Risk Report | MNS Consulting</title>
+<!-- Open Graph -->
+<meta property="og:title" content="Benin 2026 Elections — Interactive Risk Report" />
+<meta property="og:description" content="Interactive risk dashboard with probabilities from a 50,000-iteration Monte Carlo: disqualifications, protests, northern incidents, donor delays, FX." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="#" />
+<meta property="og:image" content="#" />
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Benin 2026 Elections — Interactive Risk Report" />
+<meta name="twitter:description" content="Process integrity, stability risks, northern spillover, donor conditionality — with interactive charts." />
+<meta name="twitter:image" content="#" />
+<!--
+Schema.org
+-->
+<script type="application/ld+json">
+ {
+   "@context":"https://schema.org",
+   "@type":"Article",
+   "headline":"Benin 2026 Elections — Interactive Risk Report",
+   "author":{"@type":"Person","name":"Dr. Alex Monroe"},
+   "datePublished":"2025-09-09",
+   "dateModified":"2025-09-09",
+   "publisher":{"@type":"Organization","name":"MNS Consulting"},
+   "description":"Interactive Benin 2026 Elections Geopolitical Risk & Monte Carlo Assessment with charts and scenario triggers."
+ }
+</script>
+<!-- Tailwind & Chart.js & Leaflet -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+   body{ font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+   .chart-container{ position:relative; width:100%; height:320px; }
+   @media (min-width: 768px){ .chart-container{ height:420px; } }
+   .active-nav{ color:#1e3a8a; border-bottom-color:#1e3a8a; }
+   .inactive-nav{ color:#475569; border-bottom-color:transparent; }
+   .kpi{ display:flex; flex-direction:column; align-items:center; padding:16px; border-radius:12px; }
+   .kpi .val{ font-size:2rem; font-weight:800; }
+   .kpi .lbl{ font-size:.95rem; font-weight:600; }
+   #map{ height:420px; border-radius:12px; overflow:hidden; }
+   .small{ font-size:0.85rem; color:#475569; }
+   a.link{ color:#1d4ed8; text-decoration:underline; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+<!-- Header / Nav -->
+<header class="bg-white shadow-md sticky top-0 z-50">
+<nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<div class="flex-shrink-0">
+<h1 class="text-xl md:text-2xl font-extrabold text-slate-900">Benin 2026 Elections — Risk Report</h1>
+</div>
+<div class="hidden md:block">
+<div class="ml-10 flex items-baseline space-x-4">
+<a href="#dashboard" class="nav-link px-3 py-2 rounded-md text-sm font-semibold border-b-2 transition-colors">Dashboard</a>
+<a href="#process" class="nav-link px-3 py-2 rounded-md text-sm font-semibold border-b-2 transition-colors">Process & Governance</a>
+<a href="#stability" class="nav-link px-3 py-2 rounded-md text-sm font-semibold border-b-2 transition-colors">Stability & Protests</a>
+<a href="#security" class="nav-link px-3 py-2 rounded-md text-sm font-semibold border-b-2 transition-colors">Security & Spillover</a>
+<a href="#montecarlo" class="nav-link px-3 py-2 rounded-md text-sm font-semibold border-b-2 transition-colors">Monte Carlo</a>
+<a href="#references" class="nav-link px-3 py-2 rounded-md text-sm font-semibold border-b-2 transition-colors">References</a>
+</div>
+</div>
+<div class="md:hidden">
+<button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-200">
+<span class="sr-only">Open main menu</span>
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h16M4 12h16M4 17h16"/>
+</svg>
+</button>
+</div>
+</div>
+</nav>
+<div id="mobile-menu" class="md:hidden hidden border-t bg-white">
+<div class="px-4 py-3 space-y-1">
+<a href="#dashboard" class="nav-link block px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+<a href="#process" class="nav-link block px-3 py-2 rounded-md text-base font-medium">Process & Governance</a>
+<a href="#stability" class="nav-link block px-3 py-2 rounded-md text-base font-medium">Stability & Protests</a>
+<a href="#security" class="nav-link block px-3 py-2 rounded-md text-base font-medium">Security & Spillover</a>
+<a href="#montecarlo" class="nav-link block px-3 py-2 rounded-md text-base font-medium">Monte Carlo</a>
+<a href="#references" class="nav-link block px-3 py-2 rounded-md text-base font-medium">References</a>
+</div>
+</div>
+</header>
+<main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- DASHBOARD -->
+<section id="dashboard" class="scroll-mt-20">
+<div class="text-center bg-white p-6 rounded-lg shadow-sm mb-8">
+<h2 class="text-3xl font-extrabold text-blue-900 mb-2">Election Risk Outlook — At a Glance</h2>
+<p class="text-lg text-slate-600 max-w-4xl mx-auto">
+         Integrated view of process integrity, protest dynamics, northern spillover, and donor conditionality for Benin’s April 2026 election.
+         Probabilities reflect a 50,000-iteration Monte Carlo calibrated to governance, fragility, macro baselines, and <strong>our</strong> internal assessments.
+</p>
+</div>
+<!-- KPI Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+<div class="kpi bg-red-50 border border-red-200 text-red-800">
+<div class="val">0.523</div>
+<div class="lbl">≥2 Disqualifications</div>
+<div class="small">Qualification window</div>
+</div>
+<div class="kpi bg-amber-50 border border-amber-200 text-amber-800">
+<div class="val">0.271</div>
+<div class="lbl">≥5 Protests (4 wks)</div>
+<div class="small">Early campaign window</div>
+</div>
+<div class="kpi bg-yellow-50 border border-yellow-200 text-yellow-800">
+<div class="val">0.427</div>
+<div class="lbl">≥3 Incidents (North)</div>
+<div class="small">Alibori/Borgou, 3 months</div>
+</div>
+<div class="kpi bg-sky-50 border border-sky-200 text-sky-800">
+<div class="val">0.251</div>
+<div class="lbl">Donor Delay &gt;30d</div>
+<div class="small">Disbursements/conditionality</div>
+</div>
+</div>
+<!-- Grid: Risk Matrix + Outlook -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm">
+<h3 class="text-xl font-bold mb-4 text-center">Risk Matrix — Likelihood × Impact</h3>
+<div class="chart-container">
+<canvas id="riskMatrixChart"></canvas>
+</div>
+<p class="small mt-3">
+           Points are placed on 1–5 axes (likelihood & impact) with 0.5-step gridlines and labels at whole numbers.
+           Focus areas: <span class="font-semibold">institutional tilt</span>, <span class="font-semibold">disqualifications</span>,
+<span class="font-semibold">denial days</span>, and <span class="font-semibold">northern insecurity</span>.
+</p>
+</div>
+<div class="bg-white p-6 rounded-lg shadow-sm">
+<h3 class="text-xl font-bold mb-4 text-center">Outlook — Next 3–6 Months</h3>
+<ul class="list-disc list-inside text-slate-700 space-y-2 text-sm">
+<li><span class="font-semibold text-red-700">Process risk elevated:</span> institutional tilt likely; permit frictions persist.</li>
+<li><span class="font-semibold text-amber-700">Protest clusters moderate:</span> larger clusters conditional on denials + local price shocks.</li>
+<li><span class="font-semibold text-yellow-700">North spillover:</span> localized threat along Sahel frontier; monitor Alibori/Borgou.</li>
+<li><span class="font-semibold text-sky-700">Donor conditions:</span> governance-linked delays possible; add compliance clauses.</li>
+</ul>
+</div>
+</div>
+</section>
+<hr class="my-12 border-slate-200" />
+<!-- PROCESS & GOVERNANCE -->
+<section id="process" class="scroll-mt-20">
+<h2 class="text-3xl font-extrabold text-center mb-6">Process & Governance</h2>
+<div class="grid md:grid-cols-2 gap-6">
+<div class="bg-white p-6 rounded-lg shadow-sm">
+<h3 class="text-xl font-bold mb-2">Institutional Tilt & Disqualifications</h3>
+<p class="text-slate-700">
+           Sponsorship thresholds, tax-clearance steps, and appeals workflows create a tilted field. The model estimates a
+<span class="font-semibold">~52% probability</span> of <span class="font-semibold">≥2 opposition disqualifications</span>
+           and <span class="font-semibold">~16%</span> chance of platform downtime ≥2 days during submission week.
+</p>
+</div>
+<div class="bg-white p-6 rounded-lg shadow-sm">
+<h3 class="text-xl font-bold mb-2">Coalition Dynamics</h3>
+<p class="text-slate-700">
+           Wadagni’s reliance on the incumbent machinery raises medium-term risks of intra-elite friction after the vote.
+           Keep a live map of veto players and potential defections.
+</p>
+</div>
+</div>
+</section>
+<hr class="my-12 border-slate-200" />
+<!-- STABILITY & PROTESTS -->
+<section id="stability" class="scroll-mt-20">
+<h2 class="text-3xl font-extrabold text-center mb-8">Stability & Protests</h2>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<div class="bg-white p-6 rounded-lg shadow-sm">
+<h3 class="text-xl font-bold mb-4 text-center">Exceedance Curve — Protests (4 weeks)</h3>
+<div class="chart-container">
+<canvas id="exceedanceChart"></canvas>
+</div>
+<p class="small mt-3 text-center">
+           ~55% for ≥4; ~27% for ≥5; ~23% for ≥7 protests — larger clusters are less likely but still actionable.
+</p>
+</div>
+<div class="bg-white p-6 rounded-lg shadow-sm">
+<h3 class="text-xl font-bold mb-4 text-center">Drivers — Tornado Sensitivity</h3>
+<div class="chart-container">
+<canvas id="tornadoChart"></canvas>
+</div>
+<p class="small mt-3 text-center">
+           Biggest drivers: protest counts → injuries (0.85), denial probability → protests (0.52).
+</p>
+</div>
+</div>
+<div class="mt-8 bg-white p-6 rounded-lg shadow-sm">
+<h3 class="text-lg font-bold mb-2">Decision Triggers</h3>
+<ul class="list-disc list-inside text-slate-700 space-y-1 text-sm">
+<li><span class="font-semibold">Process:</span> P(≥2 disqualifications) &gt; 0.60 → escalate observers & transparency asks.</li>
+<li><span class="font-semibold">Stability:</span> P(≥5 protests/4 wks) &gt; 0.40 or denial days ≥5 → activate assembly-management & protective comms.</li>
+</ul>
+</div>
+</section>
+<hr class="my-12 border-slate-200" />
+<!-- SECURITY & SPILLOVER -->
+<section id="security" class="scroll-mt-20">
+<h2 class="text-3xl font-extrabold text-center mb-6">Security & Spillover (North)</h2>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm">
+<h3 class="text-xl font-bold mb-4 text-center">Frontier Focus: Alibori & Borgou</h3>
+<div id="map"></div>
+<p class="small mt-3">
+           Probability of ≥3 incidents in 3 months: <span class="font-semibold">~0.427</span>.
+           Maintain corridor security posture and ECOWAS coordination.
+</p>
+</div>
+<div class="bg-white p-6 rounded-lg shadow-sm">
+<h3 class="text-xl font-bold mb-4 text-center">Market/Donor Signals</h3>
+<ul class="list-disc list-inside text-slate-700 space-y-2 text-sm">
+<li>Donor delay &gt;30 days: <span class="font-semibold">~0.251</span></li>
+<li>|Weekly FX| &gt;3% (peak weeks): <span class="font-semibold">~0.040</span></li>
+<li>Add governance clauses; stagger disbursement milestones.</li>
+</ul>
+</div>
+</div>
+</section>
+<hr class="my-12 border-slate-200" />
+<!-- MONTE CARLO -->
+<section id="montecarlo" class="scroll-mt-20">
+<h2 class="text-3xl font-extrabold text-center mb-6">Monte Carlo Outputs (50,000 runs)</h2>
+<div class="overflow-x-auto bg-white rounded-lg shadow-sm">
+<table class="min-w-full text-sm">
+<thead class="bg-slate-100 text-slate-700">
+<tr>
+<th class="px-4 py-3 text-left font-semibold">Risk outcome (horizon)</th>
+<th class="px-4 py-3 text-left font-semibold">Probability</th>
+</tr>
+</thead>
+<tbody class="divide-y">
+<tr><td class="px-4 py-3">≥2 opposition disqualifications (qualification window)</td><td class="px-4 py-3 font-semibold">0.523</td></tr>
+<tr><td class="px-4 py-3">Platform downtime ≥2 days (submission week)</td><td class="px-4 py-3">0.158</td></tr>
+<tr><td class="px-4 py-3">Appeal backlog &gt;30 days</td><td class="px-4 py-3">0.229</td></tr>
+<tr><td class="px-4 py-3">≥5 protests (4 weeks)</td><td class="px-4 py-3">0.271</td></tr>
+<tr><td class="px-4 py-3">Rally denial days ≥5 (4 weeks)</td><td class="px-4 py-3 font-semibold">0.648</td></tr>
+<tr><td class="px-4 py-3">Total injuries ≥50 (4 weeks)</td><td class="px-4 py-3">0.034</td></tr>
+<tr><td class="px-4 py-3">CPI (Inflation) shock ≥2%/mo (3 months)</td><td class="px-4 py-3">0.003</td></tr>
+<tr><td class="px-4 py-3">Unemployment shock ≥1pp (Q1–Q2 2026)</td><td class="px-4 py-3">0.022</td></tr>
+<tr><td class="px-4 py-3">≥3 security incidents (Alibori/Borgou, 3 months)</td><td class="px-4 py-3 font-semibold">0.427</td></tr>
+<tr><td class="px-4 py-3">Donor disbursement delay &gt;30 days</td><td class="px-4 py-3 font-semibold">0.251</td></tr>
+<tr><td class="px-4 py-3">|Weekly FX move| &gt;3% (peak weeks)</td><td class="px-4 py-3">0.040</td></tr>
+</tbody>
+</table>
+</div>
+<div class="mt-6 grid md:grid-cols-2 gap-6">
+<div class="bg-white p-6 rounded-lg shadow-sm">
+<h3 class="text-lg font-bold mb-2">How to Use</h3>
+<ul class="list-disc list-inside text-slate-700 space-y-1 text-sm">
+<li>Link probabilities to <strong>decision triggers</strong> (observers, comms, corridor posture, financing clauses).</li>
+<li>Refresh weekly with <strong>live indicators</strong> (CENA telemetry, permits, market food prices, subnational incidents).</li>
+</ul>
+</div>
+<div class="bg-white p-6 rounded-lg shadow-sm">
+<h3 class="text-lg font-bold mb-2">Caveats</h3>
+<ul class="list-disc list-inside text-slate-700 space-y-1 text-sm">
+<li>Model quantifies <strong>process/stability/spillover/market</strong> risks — not “who wins.”</li>
+<li>Heavier tails are ready for local food-price shocks and informality-driven labor stress if new data arrives.</li>
+</ul>
+</div>
+</div>
+</section>
+<hr class="my-12 border-slate-200" />
+<!-- REFERENCES -->
+<section id="references" class="scroll-mt-20">
+<h2 class="text-3xl font-extrabold text-center mb-6">References</h2>
+<div class="bg-white p-6 rounded-lg shadow-sm">
+<ul class="list-disc list-inside text-slate-700 space-y-2 text-sm">
+<li><a class="link" href="https://www.thesignalroom.com/benin-taking-over-from-talon-2004510598-1032840175/" target="_blank" rel="noopener">The Signal Room — “Benin: Taking over from Talon” (2024)</a></li>
+<li><a class="link" href="https://bti-project.org" target="_blank" rel="noopener">BTI 2024 — Benin Country Report</a></li>
+<li><a class="link" href="https://www.v-dem.net/" target="_blank" rel="noopener">V-Dem — Benin historical indices (2012–2021)</a></li>
+<li><a class="link" href="https://fragilestatesindex.org/country-data/" target="_blank" rel="noopener">Fragile States Index — Benin full data & dashboard (2009–2018)</a></li>
+<li><a class="link" href="https://www.visionofhumanity.org/maps/#/" target="_blank" rel="noopener">Global Terrorism & Peace Indexes — Benin profile</a></li>
+<li><a class="link" href="https://www.theglobaleconomy.com/" target="_blank" rel="noopener">TheGlobalEconomy — Benin macro indicators (to Aug/Jul 2025)</a></li>
+<li><a class="link" href="https://www.transparency.org/en/cpi/2024" target="_blank" rel="noopener">Transparency International — CPI (Corruption) 2024</a></li>
+<li>MNS Consulting — Benin Assessment Reports (Sept 2026)</li>
+</ul>
+</div>
+</section>
+</main>
+<script>
+   // Mobile menu
+   const mobileBtn = document.getElementById('mobile-menu-button');
+   const mobileMenu = document.getElementById('mobile-menu');
+   mobileBtn?.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+   // Sticky nav active link
+   const navLinks = document.querySelectorAll('.nav-link');
+   const sections = document.querySelectorAll('main section');
+   const observer = new IntersectionObserver((entries)=>{
+     entries.forEach(entry=>{
+       if(entry.isIntersecting){
+         navLinks.forEach(l=>{
+           l.classList.remove('active-nav'); l.classList.add('inactive-nav');
+           if(l.getAttribute('href').substring(1)===entry.target.id){
+             l.classList.add('active-nav'); l.classList.remove('inactive-nav');
+           }
+         });
+       }
+     });
+   },{threshold:0.4});
+   sections.forEach(s=>observer.observe(s));
+   navLinks.forEach(l=>l.classList.add(l.getAttribute('href')==='#dashboard'?'active-nav':'inactive-nav'));
+   // ----- Charts -----
+   // 1) Risk Matrix (scatter on 0–5.5 axes; 0.5 grid; integer labels only)
+   const riskCtx = document.getElementById('riskMatrixChart').getContext('2d');
+   const riskData = [
+     {label:'Institutional tilt', x:5, y:5, c:'#ef4444'},
+     {label:'Opposition disqualification', x:5, y:4, c:'#f97316'},
+     {label:'Rally denial days', x:4, y:3, c:'#fb923c'},
+     {label:'Protests ≥5', x:3, y:3, c:'#fbbf24'},
+     {label:'Northern insecurity', x:3, y:3, c:'#fbbf24'},
+     {label:'Coalition friction', x:3, y:3, c:'#fbbf24'},
+     {label:'Donor delay', x:3, y:2, c:'#fde047'},
+     {label:'FX volatility', x:2, y:2, c:'#a3e635'}
+   ];
+   new Chart(riskCtx,{
+     type:'scatter',
+     data:{
+       datasets: riskData.map(d=>({
+         label:d.label,
+         data:[{x:d.x,y:d.y}],
+         pointBackgroundColor:d.c,
+         pointBorderColor:'#0f172a',
+         pointRadius:7,
+         pointHoverRadius:9
+       }))
+     },
+     options:{
+       responsive:true,
+       maintainAspectRatio:false,
+       plugins:{
+         legend:{display:false},
+         tooltip:{callbacks:{label:(ctx)=>`${ctx.dataset.label}: L=${ctx.raw.x}, I=${ctx.raw.y}`}}
+       },
+       scales:{
+         x:{
+           min:0, max:5.5,
+           grid:{drawTicks:true},
+           ticks:{
+             stepSize:0.5,
+             callback:(v)=> Number.isInteger(v)? v : ''
+           },
+           title:{display:true,text:'Likelihood (1–5)'}
+         },
+         y:{
+           min:0, max:5.5,
+           grid:{drawTicks:true},
+           ticks:{
+             stepSize:0.5,
+             callback:(v)=> Number.isInteger(v)? v : ''
+           },
+           title:{display:true,text:'Impact (1–5)'}
+         }
+       }
+     }
+   });
+   // 2) Exceedance Curve (protests ≥ X in 4 weeks)
+   const excCtx = document.getElementById('exceedanceChart').getContext('2d');
+   const thresholds = [0,1,2,3,4,5,6,7,8,9,10];
+   const probs =      [1.00,0.90,0.70,0.62,0.55,0.27,0.25,0.23,0.18,0.12,0.08];
+   new Chart(excCtx,{
+     type:'line',
+     data:{
+       labels: thresholds.map(x=>`≥${x}`),
+       datasets:[{
+         label:'Probability',
+         data: probs,
+         borderWidth:2,
+         fill:false,
+         tension:0.2
+       }]
+     },
+     options:{
+       responsive:true,
+       maintainAspectRatio:false,
+       plugins:{legend:{display:false}, tooltip:{callbacks:{label:(c)=>`${c.parsed.y.toFixed(2)}`}}},
+       scales:{
+         y:{min:0,max:1,ticks:{callback:(v)=>v.toFixed(2)}, title:{display:true,text:'Probability'}},
+         x:{title:{display:true,text:'Threshold (events in 4 weeks)'}}
+       }
+     }
+   });
+   // 3) Tornado Sensitivity (horizontal bars)
+   const torCtx = document.getElementById('tornadoChart').getContext('2d');
+   const drivers = [
+     {k:'Protest count → injuries', v:0.85},
+     {k:'Denial probability → protests', v:0.52},
+     {k:'Protests → FX jump', v:0.15},
+     {k:'CPI (Inflation) shock → protests', v:0.10},
+     {k:'Incidents → FX jump', v:0.05}
+   ];
+   new Chart(torCtx,{
+     type:'bar',
+     data:{
+       labels: drivers.map(d=>d.k),
+       datasets:[{label:'Correlation strength', data:drivers.map(d=>d.v)}]
+     },
+     options:{
+       indexAxis:'y',
+       responsive:true,
+       maintainAspectRatio:false,
+       plugins:{legend:{display:false}},
+       scales:{
+         x:{min:0,max:1,ticks:{callback:(v)=>v.toFixed(2)}}
+       }
+     }
+   });
+   // ----- Leaflet Map (Benin focus) -----
+   const map = L.map('map').setView([10.5, 2.4], 7); // Benin center-ish
+   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+     attribution:'&copy; OpenStreetMap contributors'
+   }).addTo(map);
+   // Key northern locations: Kandi (Alibori), Parakou (Borgou)
+   const points = [
+     {coords:[11.13, 2.94], title:'Kandi (Alibori)', text:'Frontier pressure node; monitor cross-border incidents & convoy security.'},
+     {coords:[9.34, 2.63], title:'Parakou (Borgou)', text:'Logistic hub; track incident frequency and state presence.'}
+   ];
+   points.forEach(p=>{
+     L.marker(p.coords).addTo(map).bindPopup(`<b>${p.title}</b><br>${p.text}`);
+   });
+</script>
+</body>
+</html>
