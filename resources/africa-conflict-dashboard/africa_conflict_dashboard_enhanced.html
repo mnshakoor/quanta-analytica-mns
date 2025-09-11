@@ -1,168 +1,94 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Africa Conflict Zone Dashboard</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <title>Africa Conflict Dashboard</title>
+    <meta charset="utf-8" />
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-        header { background-color: #2c3e50; color: white; padding: 10px; text-align: center; }
-        .dashboard { display: flex; flex-wrap: wrap; padding: 10px; }
-        .card { flex: 1 1 200px; margin: 10px; padding: 10px; background-color: #ecf0f1; border-radius: 5px; text-align: center; }
-        #map { height: 400px; width: 100%; margin: 10px 0; }
-        canvas { margin: 10px auto; display: block; max-width: 600px; }
+        body { font-family: Arial, sans-serif; margin: 0; }
+        #tabs { display: flex; background: #333; color: white; }
+        .tab { padding: 10px 20px; cursor: pointer; }
+        .tab:hover { background: #555; }
+        .tab.active { background: #111; }
+        .tab-content { display: none; padding: 20px; }
+        .tab-content.active { display: block; }
+        #map { height: 500px; }
+        #regionFilter { margin: 10px 0; }
     </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
-    <header>
-        <h1>Africa Conflict Zone Dashboard</h1>
-    </header>
-    <div class="dashboard">
-        <div class="card" id="riskScoreCard">Instability Risk Score: Loading...</div>
-        <div class="card" id="alertZoneCard">Custom Alert Zones: Loading...</div>
+    <div id="tabs">
+        <div class="tab active" data-tab="dashboard">Dashboard</div>
+        <div class="tab" data-tab="methodology">Methodology</div>
     </div>
-    <div id="map"></div>
-    <canvas id="incidentChart"></canvas>
-    <canvas id="missionChart"></canvas>
+    <div id="dashboard" class="tab-content active">
+        <h2>Africa Conflict Zones</h2>
+        <label for="regionFilter">Filter by Region:</label>
+        <select id="regionFilter">
+            <option value="All">All</option>
+            <option value="West Africa">West Africa</option>
+            <option value="East Africa">East Africa</option>
+            <option value="Central Africa">Central Africa</option>
+            <option value="Southern Africa">Southern Africa</option>
+            <option value="North Africa">North Africa</option>
+        </select>
+        <div id="map"></div>
+    </div>
+    <div id="methodology" class="tab-content">
+        <h2>Methodology</h2>
+        <p>This dashboard aggregates conflict zone data from verified sources including UN reports, regional security briefings, and open-source intelligence. 
+        Conflict zones are identified based on active hostilities, presence of armed groups, and civilian impact. 
+        Alert zones are determined by recent escalations, cross-border risks, and extremist activity. 
+        Instability risk scores are calculated using a composite index of political violence, displacement, and peacekeeping presence.</p>
+    </div>
 
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-        // Load JSON data
-        async function loadData() {
-            const conflictZones = await fetch('conflict_zones.json').then(res => res.json());
-            const weeklyIncidents = await fetch('weekly_incident_tracker.json').then(res => res.json());
-            const peacekeepingMissions = await fetch('peacekeeping_missions.json').then(res => res.json());
-            const instabilityScores = await fetch('instability_risk_scores.json').then(res => res.json());
-            const alertZones = await fetch('custom_alert_zones.json').then(res => res.json());
+        const tabs = document.querySelectorAll('.tab');
+        const contents = document.querySelectorAll('.tab-content');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
 
-            // Scorecards
-            const avgRiskScore = instabilityScores.reduce((sum, item) => sum + item.Score, 0) / instabilityScores.length;
-            document.getElementById('riskScoreCard').innerText = `Instability Risk Score: ${avgRiskScore.toFixed(2)}`;
+        const map = L.map('map').setView([0, 20], 3);
+        L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+            attribution: 'Map data © OpenStreetMap contributors'
+        }).addTo(map);
 
-            document.getElementById('alertZoneCard').innerText = `Custom Alert Zones: ${alertZones.length}`;
+        const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles © Esri'
+        }).addTo(map);
 
-            // Leaflet Map
-            const map = L.map('map').setView([0, 20], 3);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
+        let markers = [];
 
-            conflictZones.forEach(zone => {
-                if (zone.Latitude && zone.Longitude) {
-                    L.marker([zone.Latitude, zone.Longitude])
-                        .addTo(map)
-                        .bindPopup(`<strong>${zone.Country}</strong><br>${zone.ConflictType}`);
+        fetch('conflict_zones.json')
+            .then(response => response.json())
+            .then(data => {
+                markers = data.map(zone => {
+                    const marker = L.marker([zone.latitude, zone.longitude])
+                        .bindPopup(`<strong>${zone.country}</strong><br>${zone.conflict_type}`);
+                    marker.region = zone.region;
+                    marker.addTo(map);
+                    return marker;
+                });
+            });
+
+        document.getElementById('regionFilter').addEventListener('change', function() {
+            const selectedRegion = this.value;
+            markers.forEach(marker => {
+                if (selectedRegion === 'All' || marker.region === selectedRegion) {
+                    map.addLayer(marker);
+                } else {
+                    map.removeLayer(marker);
                 }
             });
-
-            // Weekly Incident Chart
-            const incidentData = {};
-            weeklyIncidents.forEach(item => {
-                const key = item.Country;
-                incidentData[key] = (incidentData[key] || 0) + 1;
-            });
-
-            const incidentChart = new Chart(document.getElementById('incidentChart'), {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(incidentData),
-                    datasets: [{
-                        label: 'Weekly Incidents',
-                        data: Object.values(incidentData),
-                        backgroundColor: 'rgba(231, 76, 60, 0.6)'
-                    }]
-                }
-            });
-
-            // Peacekeeping Mission Chart
-            const missionData = {};
-            peacekeepingMissions.forEach(m => {
-                missionData[m.MissionType] = (missionData[m.MissionType] || 0) + 1;
-            });
-
-            const missionChart = new Chart(document.getElementById('missionChart'), {
-                type: 'pie',
-                data: {
-                    labels: Object.keys(missionData),
-                    datasets: [{
-                        label: 'Peacekeeping Missions',
-                        data: Object.values(missionData),
-                        backgroundColor: ['#3498db', '#2ecc71', '#f1c40f', '#e67e22']
-                    }]
-                }
-            });
-        }
-
-        loadData();
+        });
     </script>
-
-<script>
-const regionMap = {
-    "West Africa": ["Nigeria", "Ghana", "Benin", "Burkina Faso", "Mali", "Niger", "Senegal", "Togo"],
-    "East Africa": ["Kenya", "Ethiopia", "Somalia", "Uganda", "Tanzania", "Rwanda", "Burundi"],
-    "Central Africa": ["DR Congo", "CAR", "Cameroon", "Chad", "Gabon", "Equatorial Guinea"],
-    "Southern Africa": ["South Africa", "Zimbabwe", "Zambia", "Mozambique", "Angola", "Namibia", "Botswana"],
-    "North Africa": ["Egypt", "Libya", "Tunisia", "Algeria", "Morocco", "Sudan"]
-};
-
-function filterByRegion(region) {
-    const countries = regionMap[region];
-    // Filter map markers and charts based on selected region
-    updateMapMarkers(countries);
-    updateCharts(countries);
-}
-
-function updateMapMarkers(countries) {
-    // Example logic to filter map markers
-    markers.forEach(marker => {
-        if (countries.includes(marker.country)) {
-            marker.addTo(map);
-        } else {
-            map.removeLayer(marker);
-        }
-    });
-}
-
-function updateCharts(countries) {
-    // Example logic to filter chart data
-    // You can implement filtering logic for bar and pie charts here
-}
-</script>
-
-<div>
-    <label for="regionSelect">Filter by Region:</label>
-    <select id="regionSelect" onchange="filterByRegion(this.value)">
-        <option value="">-- Select Region --</option>
-        <option value="West Africa">West Africa</option>
-        <option value="East Africa">East Africa</option>
-        <option value="Central Africa">Central Africa</option>
-        <option value="Southern Africa">Southern Africa</option>
-        <option value="North Africa">North Africa</option>
-    </select>
-</div>
-
-<script>
-function showAlerts(conflictData) {
-    const alertContainer = document.getElementById("alertContainer");
-    alertContainer.innerHTML = "";
-    conflictData.forEach(zone => {
-        if (zone.instability_score >= 70 || zone.active_conflict === true) {
-            const alert = document.createElement("div");
-            alert.className = "alert";
-            alert.innerHTML = `<strong>ALERT:</strong> ${zone.country} - ${zone.conflict_type} (${zone.instability_score})`;
-            alertContainer.appendChild(alert);
-        }
-    });
-}
-</script>
-
-<div id="alertContainer" style="margin-top:20px;"></div>
-
 </body>
 </html>
