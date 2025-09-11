@@ -1,0 +1,32 @@
+[
+  {
+    "Date":"2025-09-01",
+    "Country":"Sudan",
+    "Incident":"RSF siege in El Fasher",
+    "Casualties":50
+  },
+  {
+    "Date":"2025-09-03",
+    "Country":"Benin",
+    "Incident":"Militant raid near Mekrou River",
+    "Casualties":35
+  },
+  {
+    "Date":"2025-09-05",
+    "Country":"Cameroon",
+    "Incident":"Boko Haram abductions",
+    "Casualties":20
+  },
+  {
+    "Date":"2025-09-07",
+    "Country":"DR Congo",
+    "Incident":"M23 attacks in Kivu",
+    "Casualties":60
+  },
+  {
+    "Date":"2025-09-09",
+    "Country":"Ghana",
+    "Incident":"Ethnic clashes in Savannah Region",
+    "Casualties":31
+  }
+]

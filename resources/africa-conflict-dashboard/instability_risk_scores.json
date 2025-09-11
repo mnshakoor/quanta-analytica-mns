@@ -1,0 +1,52 @@
+[
+  {
+    "Country":"Sudan",
+    "Score":79,
+    "Category":"Red Watch"
+  },
+  {
+    "Country":"Burkina Faso",
+    "Score":71,
+    "Category":"Red Watch"
+  },
+  {
+    "Country":"CAR",
+    "Score":71,
+    "Category":"Red Watch"
+  },
+  {
+    "Country":"Chad",
+    "Score":64,
+    "Category":"Critical"
+  },
+  {
+    "Country":"Niger",
+    "Score":62,
+    "Category":"Critical"
+  },
+  {
+    "Country":"South Sudan",
+    "Score":62,
+    "Category":"Critical"
+  },
+  {
+    "Country":"DR Congo",
+    "Score":61,
+    "Category":"Critical"
+  },
+  {
+    "Country":"Eritrea",
+    "Score":61,
+    "Category":"Critical"
+  },
+  {
+    "Country":"Mali",
+    "Score":61,
+    "Category":"Critical"
+  },
+  {
+    "Country":"Rwanda",
+    "Score":59,
+    "Category":"Warning"
+  }
+]

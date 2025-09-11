@@ -1,0 +1,37 @@
+[
+    {
+        "Mission": "MONUSCO",
+        "Country": "DR Congo",
+        "Status": "Active"
+    },
+    {
+        "Mission": "UNMISS",
+        "Country": "South Sudan",
+        "Status": "Active"
+    },
+    {
+        "Mission": "MINUSCA",
+        "Country": "CAR",
+        "Status": "Active"
+    },
+    {
+        "Mission": "MINURSO",
+        "Country": "Western Sahara",
+        "Status": "Active"
+    },
+    {
+        "Mission": "UNISFA",
+        "Country": "Abyei",
+        "Status": "Active"
+    },
+    {
+        "Mission": "ATMIS",
+        "Country": "Somalia",
+        "Status": "AU-led"
+    },
+    {
+        "Mission": "MNJTF",
+        "Country": "Lake Chad Basin",
+        "Status": "AU-led"
+    }
+]

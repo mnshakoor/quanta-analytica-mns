@@ -1,0 +1,58 @@
+[
+    {
+        "Country": "Sudan",
+        "Latitude": 13.5,
+        "Longitude": 30.0,
+        "ConflictType": "Civil War",
+        "KeyActors": "RSF vs SAF",
+        "CivilianImpact": "230+ deaths in August"
+    },
+    {
+        "Country": "DR Congo",
+        "Latitude": -1.0,
+        "Longitude": 15.0,
+        "ConflictType": "Insurgency",
+        "KeyActors": "M23, FDLR",
+        "CivilianImpact": "470+ civilians killed since July"
+    },
+    {
+        "Country": "Mali",
+        "Latitude": 17.0,
+        "Longitude": -4.0,
+        "ConflictType": "Jihadist Insurgency",
+        "KeyActors": "JNIM",
+        "CivilianImpact": "Farabougou base overrun"
+    },
+    {
+        "Country": "Cameroon",
+        "Latitude": 6.0,
+        "Longitude": 12.0,
+        "ConflictType": "Dual Conflict",
+        "KeyActors": "Boko Haram, Ambazonian separatists",
+        "CivilianImpact": "50+ abducted"
+    },
+    {
+        "Country": "South Sudan",
+        "Latitude": 7.0,
+        "Longitude": 30.0,
+        "ConflictType": "Political Violence",
+        "KeyActors": "SPLM-IO, NAS",
+        "CivilianImpact": "Elite rivalry in Central Equatoria"
+    },
+    {
+        "Country": "Benin",
+        "Latitude": 9.5,
+        "Longitude": 2.5,
+        "ConflictType": "Extremist Activity",
+        "KeyActors": "JNIM, ISSP",
+        "CivilianImpact": "35 soldiers killed near Mekrou River"
+    },
+    {
+        "Country": "Ghana",
+        "Latitude": 8.0,
+        "Longitude": -1.0,
+        "ConflictType": "Ethnic Clashes",
+        "KeyActors": "Birifor vs Gonja",
+        "CivilianImpact": "31 deaths, 50,000 displaced"
+    }
+]

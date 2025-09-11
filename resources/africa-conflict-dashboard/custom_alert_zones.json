@@ -1,0 +1,18 @@
+[
+    {
+        "Zone": "Ghana\u2013Burkina Faso Border",
+        "Alert": "Ethnic clashes and displacement"
+    },
+    {
+        "Zone": "Benin",
+        "Alert": "Jihadist infiltration from Sahel"
+    },
+    {
+        "Zone": "Cameroon",
+        "Alert": "Anglophone separatism and Boko Haram"
+    },
+    {
+        "Zone": "Sahel",
+        "Alert": "Militant activity and regional instability"
+    }
+]
