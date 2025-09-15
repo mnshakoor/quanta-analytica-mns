@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>U.S. Government Equity in Mining & Semiconductors - ISO 31000 Risk Assessment with CARVER & Scenarios</title>
+
+<!-- Chart.js CDN per spec -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="" crossorigin="anonymous"></script>
+
+<style>
+  :root{
+    --bg:#f8fafc;
+    --card:#ffffff;
+    --text:#0f172a;
+    --muted:#6b7280;
+    --primary:#124559;
+    --accent:#2a9d8f;
+    --amber:#e9c46a;
+    --coral:#e76f51;
+    --gray:#6b7280;
+    --border:#e5e7eb;
+    --shadow:0 2px 10px rgba(0,0,0,.06);
+    --ring: 0 0 0 3px rgba(42,157,143,.25);
+    --heat-low:#59a14f;     /* colorblind safe green */
+    --heat-mid:#e9c46a;     /* amber */
+    --heat-high:#f4a261;    /* orange */
+    --heat-crit:#e76f51;    /* coral */
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0b1220;
+      --card:#0f1a2e;
+      --text:#e5e7eb;
+      --muted:#9ca3af;
+      --border:#1f2a44;
+      --shadow:0 2px 10px rgba(0,0,0,.35);
+    }
+  }
+  [data-theme="light"]{
+    --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#6b7280; --border:#e5e7eb; --shadow:0 2px 10px rgba(0,0,0,.06);
+  }
+  [data-theme="dark"]{
+    --bg:#0b1220; --card:#0f1a2e; --text:#e5e7eb; --muted:#9ca3af; --border:#1f2a44; --shadow:0 2px 10px rgba(0,0,0,.35);
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.65;
+    font-size:16px;
+  }
+
+  /* Layout */
+  header.topbar{
+    position:sticky; top:0; z-index:1000;
+    backdrop-filter: blur(8px);
+    background: color-mix(in oklab, var(--card) 85%, transparent);
+    border-bottom:1px solid var(--border);
+    display:flex; align-items:center; gap:.75rem;
+    padding:.6rem 1rem;
+  }
+  header .brand{font-weight:700; color:var(--primary)}
+  header .controls{margin-left:auto; display:flex; gap:.5rem; align-items:center; flex-wrap:wrap}
+  header input[type="search"]{
+    padding:.5rem .75rem; border:1px solid var(--border); border-radius:.5rem; background:var(--card); color:var(--text);
+  }
+  header .btn, .btn{
+    display:inline-flex; align-items:center; gap:.35rem; padding:.45rem .7rem; border:1px solid var(--border);
+    background:var(--card); color:var(--text); border-radius:.5rem; cursor:pointer; box-shadow:var(--shadow);
+  }
+  header .btn:focus, .btn:focus{outline:none; box-shadow:var(--ring)}
+
+  .layout{
+    display:grid; grid-template-columns: 280px 1fr; gap:1rem; max-width: 1600px; margin:0 auto;
+  }
+  nav.sidebar{
+    position:sticky; top:3.25rem; align-self:start; height: calc(100vh - 3.25rem); overflow:auto;
+    border-right:1px solid var(--border); padding:1rem .75rem; background: color-mix(in oklab, var(--card) 60%, transparent);
+  }
+  nav.sidebar h2{font-size:.95rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin:.25rem .25rem}
+  nav.sidebar a{
+    display:block; padding:.4rem .6rem; margin:.15rem 0; border-radius:.4rem; color:var(--text); text-decoration:none;
+  }
+  nav.sidebar a[aria-current="true"]{background: color-mix(in oklab, var(--accent) 20%, transparent); color:var(--text); font-weight:600}
+  main{padding:1rem;}
+  section{scroll-margin-top: 4.5rem; margin: 0 0 1.25rem 0;}
+  .card{
+    background:var(--card); border:1px solid var(--border); border-radius:.8rem; box-shadow:var(--shadow); padding:1rem; margin:.9rem 0;
+  }
+  .card h3{margin-top:.2rem}
+  .grid-2{display:grid; grid-template-columns:1fr; gap:1rem}
+  .grid-3{display:grid; grid-template-columns:1fr; gap:1rem}
+  @media(min-width:980px){ .grid-2{grid-template-columns:1fr 1fr} .grid-3{grid-template-columns:repeat(3,1fr)} }
+
+  /* Tables */
+  table{width:100%; border-collapse:collapse}
+  thead th{
+    text-align:left; font-size:.9rem; color:var(--muted); border-bottom:1px solid var(--border); padding:.5rem; cursor:pointer;
+  }
+  tbody td{padding:.55rem; border-bottom:1px dashed var(--border)}
+  tbody tr:hover{background: color-mix(in oklab, var(--accent) 10%, transparent)}
+  .pill{display:inline-flex; padding:.1rem .45rem; border-radius:999px; font-size:.75rem; border:1px solid var(--border)}
+  .pill.crit{background: color-mix(in oklab, var(--coral) 25%, transparent)}
+  .pill.high{background: color-mix(in oklab, var(--amber) 25%, transparent)}
+  .pill.mod{background: color-mix(in oklab, var(--accent) 20%, transparent)}
+  .pill.low{background: color-mix(in oklab, var(--heat-low) 25%, transparent)}
+  .rag{display:inline-block; width:.8rem; height:.8rem; border-radius:50%; vertical-align:middle}
+  .rag.green{background:#22c55e}
+  .rag.amber{background:#f59e0b}
+  .rag.red{background:#ef4444}
+
+  /* Heatmap */
+  .heatmap-wrap{position:relative; padding-bottom:32px; padding-left:6px;}
+  .heatmap{
+    display:grid; grid-template-columns: 80px repeat(5, 1fr); gap:6px; align-items:stretch;
+  }
+  .heatmap .ylabel{writing-mode:vertical-rl; transform:rotate(180deg); text-align:center; font-size:.8rem; color:var(--muted)}
+  .axis-label{position:absolute; font-size:1rem; color:var(--text); font-weight:600; letter-spacing:.02em;}
+  .axis-label.x{bottom:2px; left:80px; right:0; text-align:center}
+  .axis-label.y{top:50%; left:24px; transform:translate(-50%,-50%) rotate(-90deg); transform-origin:center;}
+  .cell{
+    position:relative; border-radius:.35rem; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; padding:.4rem; cursor:pointer; min-height:64px; background:#eef2f7;
+  }
+  .cell:focus{outline:none; box-shadow:var(--ring)}
+  .cell .count{font-weight:700}
+  .cell .coord{position:absolute; bottom:4px; right:6px; font-size:.65rem; color:var(--muted)}
+  .legend{display:flex; gap:.5rem; align-items:center; font-size:.85rem; color:var(--muted); flex-wrap:wrap}
+  .legend .swatch{width:14px; height:14px; border-radius:3px; border:1px solid var(--border)}
+
+  /* Controls row */
+  .controls-row{display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; margin:.5rem 0}
+  select, .input{
+    padding:.45rem .6rem; border:1px solid var(--border); border-radius:.5rem; background:var(--card); color:var(--text);
+  }
+
+  /* Modals */
+  dialog.modal{
+    border:none; border-radius:.8rem; padding:0; width:min(720px, 92vw); background:var(--card); color:var(--text); box-shadow:var(--shadow);
+  }
+  .modal header{padding:1rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between}
+  .modal .content{padding:1rem}
+  .close-x{border:none; background:transparent; font-size:1.1rem; cursor:pointer; color:var(--muted)}
+
+  /* Sticky footer */
+  footer{
+    border-top:1px solid var(--border); padding:.8rem 1rem; display:flex; gap:.75rem; align-items:center; justify-content:space-between; color:var(--muted);
+    position:sticky; bottom:0; background: color-mix(in oklab, var(--card) 85%, transparent); backdrop-filter: blur(6px);
+  }
+
+  /* Print */
+  @media print{
+    header.topbar, nav.sidebar, footer, .no-print{display:none !important}
+    body{background:#fff; color:#000}
+    .card{box-shadow:none; border:1px solid #bbb}
+    a[href]:after{content:" <" attr(href) ">"; font-size:.8em}
+    section{break-inside:avoid}
+  }
+  /* KPI cards */
+  .kpi-grid{display:grid; grid-template-columns:1fr; gap:12px}
+  @media(min-width:900px){ .kpi-grid{grid-template-columns:repeat(3,1fr)} }
+  .kpi{border:1px solid var(--border); border-radius:.8rem; padding:14px; background:var(--card); box-shadow:var(--shadow)}
+  .kpi h4{margin:.2rem 0 .4rem 0; font-size:1rem}
+  .kpi .pa{font-size:1.8rem; font-weight:800; color:var(--primary)}
+  .kpi .meta{font-size:.9rem; color:var(--muted)}
+  .kpi .bar{height:8px; background:color-mix(in oklab, var(--accent) 20%, transparent); border-radius:999px; overflow:hidden; margin-top:10px}
+  .kpi .bar > span{display:block; height:100%; width:0}
+  .kpi[data-band="high"] .bar > span{background:var(--coral)}
+  .kpi[data-band="med"]  .bar > span{background:var(--heat-high)}
+  .kpi[data-band="low"]  .bar > span{background:var(--accent)}
+</style>
+</head>
+<body>
+<header class="topbar" role="banner">
+  <div class="brand" id="report-title">U.S. Government Equity in Mining & Semiconductors - ISO 31000 Risk Assessment with CARVER & Scenarios</div>
+  <div class="controls" role="group" aria-label="Global controls">
+    <input id="global-search" type="search" placeholder="Search report..." aria-label="Global search" />
+    <select id="filter-category" aria-label="Filter by category">
+      <option value="">All Categories</option>
+    </select>
+    <select id="filter-priority" aria-label="Filter by priority tier">
+      <option value="">All Tiers</option>
+      <option>Critical</option>
+      <option>High</option>
+      <option>Moderate</option>
+      <option>Low</option>
+      <option>Critical Opportunity</option>
+    </select>
+    <select id="sort-risk" aria-label="Sort risks">
+      <option value="">Sort</option>
+      <option value="likelihood">Likelihood</option>
+      <option value="impact">Impact</option>
+      <option value="lxi">LxI</option>
+    </select>
+    <button class="btn" id="theme-toggle" aria-pressed="false" aria-label="Toggle light or dark theme">🌓 Theme</button>
+    <button class="btn no-print" onclick="window.print()" aria-label="Print or Save PDF">🖨️ Print</button>
+    <button class="btn no-print" id="open-info" aria-haspopup="dialog" aria-controls="info-modal">ℹ️ Methods</button>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar" aria-label="Table of contents">
+    <h2>Contents</h2>
+    <a href="#exec" class="toc">Executive Summary</a>
+    <a href="#context" class="toc">Context</a>
+    <a href="#methodology" class="toc">Methodology</a>
+    <a href="#risk" class="toc">Risk Register</a>
+    <a href="#carver" class="toc">CARVER</a>
+    <a href="#scenarios" class="toc">Scenarios</a>
+    <a href="#treatments" class="toc">Treatments</a>
+    <a href="#annexes" class="toc">Annexes A-D</a>
+    <a href="#about" class="toc">About & Citations</a>
+  </nav>
+
+  <main id="content" tabindex="-1">
+    <div id="warnings" class="card" style="display:none"></div>
+
+    <section id="exec" class="card" aria-labelledby="h-exec">
+      <h2 id="h-exec">Executive Summary</h2>
+      <div id="exec-text"></div>
+    </section>
+
+    <section id="context" class="card" aria-labelledby="h-context">
+      <h2 id="h-context">Context & Background</h2>
+      <div id="context-text"></div>
+    </section>
+
+    <section id="methodology" class="card" aria-labelledby="h-method">
+      <h2 id="h-method">Methodology</h2>
+      <div class="controls-row">
+        <button class="btn" data-open="info-modal" aria-haspopup="dialog">ISO 31000</button>
+        <button class="btn" data-open="info-modal" data-tab="carver">CARVER</button>
+        <button class="btn" data-open="info-modal" data-tab="ach">ACH</button>
+      </div>
+      <div id="method-text"></div>
+    </section>
+
+    <section id="risk" aria-labelledby="h-risk">
+      <h2 id="h-risk">Risk Register</h2>
+
+      <div class="card">
+        <h3>5x5 Risk Heatmap</h3>
+        <div class="legend" aria-hidden="true">
+          <span class="swatch" style="background:var(--heat-low)"></span> Low
+          <span class="swatch" style="background:var(--amber)"></span> Moderate
+          <span class="swatch" style="background:var(--heat-high)"></span> High
+          <span class="swatch" style="background:var(--coral)"></span> Critical
+        </div>
+        <div class="heatmap-wrap">
+          <div id="heatmap" class="heatmap" role="grid" aria-label="Likelihood by Impact heatmap"></div>
+          <div class="axis-label x">Likelihood</div>
+          <div class="axis-label y">Impact</div>
+        </div>
+        <div id="active-filter" class="controls-row" style="display:none"></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Top Risks by LxI</h3>
+          <canvas id="bar-toprisks" height="220" aria-label="Bar chart top risks"></canvas>
+          <div class="controls-row">
+            <button class="btn" onclick="downloadChartPNG('bar-toprisks')">⬇️ Download PNG</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Risk Register Table</h3>
+          <div class="controls-row">
+            <input id="risk-search" class="input" type="search" placeholder="Search risks..." aria-label="Search risks">
+            <button class="btn" onclick="downloadCSV('risk-table')">⬇️ Export CSV</button>
+          </div>
+          <div class="table-wrap">
+            <table id="risk-table" aria-describedby="risk-help">
+              <thead>
+                <tr>
+                  <th data-sort="id">ID</th>
+                  <th data-sort="category">Category</th>
+                  <th data-sort="title">Title</th>
+                  <th data-sort="likelihood">Likelihood</th>
+                  <th data-sort="impact">Impact</th>
+                  <th data-sort="lxi">LxI</th>
+                  <th data-sort="priority">Priority</th>
+                  <th>Triggers</th>
+                  <th>Indicators</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <p id="risk-help" class="muted" style="color:var(--muted); font-size:.9rem">Click headers to sort. Heatmap and filters apply to this table.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="carver" aria-labelledby="h-carver">
+      <h2 id="h-carver">CARVER</h2>
+      <div class="grid-3" id="carver-grid"></div>
+      
+<div class="card" id="carver-pa">
+  <h3>P(a) - Normalized CARVER score</h3>
+  <div id="carver-pa-cards" class="kpi-grid" role="list" aria-label="P(a) cards"></div>
+</div>
+</div>
+      <div class="card">
+        <h3>Justifications</h3>
+        <table id="carver-just" aria-label="CARVER justification table">
+          <thead>
+            <tr>
+              <th>Node</th><th>Criticality</th><th>Accessibility</th><th>Recuperability</th><th>Vulnerability</th><th>Effect</th><th>Recognizability</th><th>Total</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="controls-row">
+          <button class="btn" onclick="downloadCSV('carver-just')">⬇️ Export CSV</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="scenarios" aria-labelledby="h-scen">
+      <h2 id="h-scen"style="text-align:center">Scenarios</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Impact vs Likelihood</h3>
+          <canvas id="scenario-scatter" height="240" aria-label="Scenario impact likelihood bubble chart"></canvas>
+          <div class="controls-row">
+            <button class="btn" onclick="downloadChartPNG('scenario-scatter')">⬇️ Download PNG</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Indicators Table</h3>
+          <table id="indicator-table">
+            <thead>
+              <tr><th>ID</th><th>Name</th><th>Status</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <div class="controls-row">
+            <button class="btn" onclick="downloadCSV('indicator-table')">⬇️ Export CSV</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Scenario Details</h3>
+        <table id="scenario-table">
+          <thead>
+            <tr><th>ID</th><th>Name</th><th>Likelihood</th><th>Impact</th><th>LxI</th><th>Indicators</th><th>Implications</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="controls-row">
+          <button class="btn" onclick="downloadCSV('scenario-table')">⬇️ Export CSV</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="treatments" aria-labelledby="h-treat">
+      <h2 id="h-treat"style="text-align:center">Treatments</h2>
+      <div class="card">
+        <table id="treat-table">
+          <thead>
+            <tr><th>Category</th><th>Option</th><th>Targets</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="controls-row">
+          <button class="btn" onclick="downloadCSV('treat-table')">⬇️ Export CSV</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Conclusion & Strategic Reflection</h3>
+        <div id="conclusion-text"></div>
+      </div>
+    </section>
+
+    <section id="annexes" aria-labelledby="h-annex">
+      <h2 id="h-annex"style="text-align:center">Annexes A-D</h2>
+      <details class="card" open>
+        <summary><strong>Annex A - Expanded Risk Register Notes</strong></summary>
+        <div id="annex-a"></div>
+      </details>
+      <details class="card">
+        <summary><strong>Annex B - CARVER Notes</strong></summary>
+        <div id="annex-b"></div>
+      </details>
+      <details class="card">
+        <summary><strong>Annex C - ACH Summary</strong></summary>
+        <div id="annex-c"></div>
+      </details>
+      <details class="card">
+        <summary><strong>Annex D - Early Warning Dashboard Notes</strong></summary>
+        <div id="annex-d"></div>
+      </details>
+    </section>
+
+    <section id="about" aria-labelledby="h-about">
+      <h2 id="h-about"style="text-align:center">About & Citations</h2>
+      <div class="card">
+        <p><strong>Prepared by:</strong> <span id="prep"></span></p>
+        <p><strong>Version:</strong> <span id="ver"></span> <strong>Date:</strong> <span id="date"></span></p>
+        <h3>Citations</h3>
+        <ul id="citations"></ul>
+        <button class="btn" id="copy-cite">📋 Copy MLA</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer role="contentinfo">
+  <div>U.S. Government Equity in Mining & Semiconductors - ISO 31000 Risk Assessment with CARVER & Scenarios</div>
+  <div id="foot-meta"></div>
+</footer>
+
+<!-- Methods modal -->
+<dialog id="info-modal" class="modal" aria-labelledby="info-title">
+  <header>
+    <h3 id="info-title">Methods Reference</h3>
+    <button class="close-x" aria-label="Close" onclick="document.getElementById('info-modal').close()">✖</button>
+  </header>
+  <div class="content">
+    <div id="tab-iso">
+      <h4>ISO 31000</h4>
+      <p>Standard cycle: establish context, identify, analyze, evaluate, treat, monitor, and communicate risk. We use a 5 by 5 likelihood by impact matrix with LxI scoring to tier priority.</p>
+    </div>
+    <div id="tab-carver" hidden>
+      <h4>CARVER</h4>
+      <p>Six factors scored 1 to 5: Criticality, Accessibility, Recuperability, Vulnerability, Effect, Recognizability. Higher totals indicate higher priority nodes for protection and continuity planning.</p>
+    </div>
+    <div id="tab-ach" hidden>
+      <h4>ACH - Analysis of Competing Hypotheses</h4>
+      <p>Challenge key assumptions by contrasting supporting and contradictory evidence. Prefer hypotheses that require the fewest weak assumptions after evidence review.</p>
+    </div>
+  </div>
+</dialog>
+
+<!-- Embedded data (no em dashes in keys/text beyond data as provided) -->
+<script type="application/json" id="report-data">
+{
+  "meta": {
+    "title": "U.S. Government Equity in Mining & Semiconductors - ISO 31000 Risk Assessment",
+    "version": "v1.0",
+    "preparedBy": "ARAC International - Global Security Analysis",
+    "date": "2025-09-13"
+  },
+  "text": {
+    "executiveSummary": "Bottom Line Up Front (BLUF): The U.S. government’s direct equity acquisitions in metals, mining, and semiconductor companies mark a structural shift from traditional market liberalism to a managed strategic capitalism model. Near term benefits include accelerated permitting, improved supply security, and potential fiscal returns. Systemic risks rise in parallel: higher probability of trade retaliation, increased market distortions for non backed firms, and credibility erosion in trade diplomacy. The policy may converge with state capitalist playbooks historically criticized by Washington if guardrails on transparency, oversight, and reinvestment are not enforced.\n\nKey findings:\n1) Strategic rationale - equity introduces government skin in the game that de risks critical projects like MP Materials and Intel fabs.\n 2) Systemic risk - national champions can crowd out competition, dampening innovation diversity.\n 3) Geopolitical risk - likely retaliation and policy imitation by competitors and adversaries.\n 4) Credibility risk - U.S. free market messaging weakens against allegations of hypocrisy.\n 5) Opportunities - resilience gains and taxpayer upside if returns are recycled into R and D.\n\nSummary assessment: short term resilience is real, medium term risks are severe. The United States must balance equity with transparency, allied coordination, and reinvestment if it wants security benefits without long term lock in.",
+    "context": "Historical framing: U.S. policy has favored open markets and criticized SOEs for distortion. Current practice moves beyond grants and tax credits into equity stakes and golden shares. Measures include 15 percent MP Materials, 10 percent Intel, a golden share in Nippon Steel’s U.S. Steel acquisition, revenue sharing on certain China chip sales, and 50 percent tariffs on steel, aluminum, and copper tied to investment commitments. Strategic drivers include supply chain fragility in REEs, gallium, tungsten, copper smelting, geoeconomic rivalry in semiconductors and AI, and political incentives to reshore capacity. Comparative lens: China’s SOE model and EU industrial policy provide both justification and reputational risk, with potential EU replication of sovereign stakes.\n\nImplications: resilience improves but polarization of the global economic order increases with higher fragmentation risk.",
+    "methodology": "Framework stack: ISO 31000 risk management, CARVER overlay for critical nodes, and ACH to test assumptions. Scoring: 1 to 5 likelihood and impact; LxI tiers Critical 20 to 25, High 15 to 19, Moderate 10 to 14, Low 5 to 9. CARVER factors: C, A, R, V, E, R2. ACH focuses on three assumptions: equity necessity to counter China, allied alignment, and fiscal returns that justify market intervention. Evidence suggests equity accelerates projects but alternatives exist; allied alignment is partial; fiscal returns are uncertain.\n\nControl classes for treatments: governance, prevention, detection and monitoring, protection and mitigation, response, recovery and continuity.",
+    "conclusion": "The equity turn is a double edged sword. It de-risks fragile supply chains and signals seriousness, yet it blurs ideological distinctions that anchor U.S. trade diplomacy. Without transparency, independent oversight, and mandated reinvestment in innovation, equity stakes risk long term convergence with state capitalist models and reputational decline. With guardrails and allied coordination, Washington could pioneer a hybrid resilience model that preserves market credibility while securing critical nodes."
+  },
+  "risks": [
+    {"id":"R1","category":"Geopolitical","title":"Trade retaliation & global fragmentation","likelihood":4,"impact":5,"lxi":20,"priority":"Critical","triggers":"PRC export controls; EU sovereign-stake moves; WTO filings","indicators":"E1,E2,E3,E4,E5"},
+    {"id":"R2","category":"Economic","title":"Market distortions harming private firms","likelihood":4,"impact":4,"lxi":16,"priority":"High","triggers":"Bankruptcies; VC flight; procurement bias","indicators":"E9,E10"},
+    {"id":"R3","category":"Diplomatic","title":"Credibility erosion in trade diplomacy","likelihood":3,"impact":5,"lxi":15,"priority":"High","triggers":"WTO disputes; media framing as SOE model","indicators":"E4,E11"},
+    {"id":"R4","category":"Strategic","title":"Innovation slowdown due to state lock-in","likelihood":2,"impact":4,"lxi":8,"priority":"Moderate","triggers":"Patent declines; delayed releases","indicators":"E10"},
+    {"id":"R5","category":"Domestic","title":"Domestic backlash & legal challenges","likelihood":2,"impact":3,"lxi":6,"priority":"Low","triggers":"Antitrust suits; hearings","indicators":"E9"},
+    {"id":"R6","category":"Resilience (Positive)","title":"Short-term supply security boost","likelihood":5,"impact":4,"lxi":20,"priority":"Critical Opportunity","triggers":"Accelerated permitting; output milestones","indicators":"E6,E7,E12,E13"}
+  ],
+  "carver": [
+    {"node":"Rare Earths - MP Materials (Mountain Pass)","C":5,"A":3,"R":4,"V":4,"E":5,"R2":5,"total":26,
+     "justification":{"Criticality":"Only U.S. REE mine; defense & clean energy dependencies.","Accessibility":"Remote open-pit; moderate protections.","Recuperability":"Years to replace; high capex & permitting.","Vulnerability":"Processing/refining constraints; policy exposure.","Effect":"Multi-sector disruption if degraded.","Recognizability":"High-profile strategic asset."}},
+    {"node":"Copper Smelters - Planned U.S. Facilities","C":4,"A":3,"R":3,"V":4,"E":4,"R2":4,"total":22,
+     "justification":{"Criticality":"Copper is foundational for EV/renewables/defense.","Accessibility":"Construction sites & legal processes exposed.","Recuperability":"3-5 years delays to replace capacity.","Vulnerability":"Permitting & social license bottlenecks.","Effect":"Infrastructure & energy transition slowdowns.","Recognizability":"Publicized projects; easy to target politically."}},
+    {"node":"Semiconductor Fabs - Intel (AZ/OH)","C":5,"A":2,"R":3,"V":3,"E":5,"R2":5,"total":23,
+     "justification":{"Criticality":"Core to defense/AI/communications.","Accessibility":"High physical security; cyber exposure higher.","Recuperability":"3-7 years to replace; tooling dependencies.","Vulnerability":"Supply chain & cyber TTPs over physical risks.","Effect":"Multi-sector paralysis if disrupted.","Recognizability":"High-profile national assets."}}
+  ],
+  "scenarios": [
+    {"id":"S1","name":"Baseline Stability","likelihood":3,"impact":3,"lxi":9,"description":"Stabilization of REE and chip capacity; limited diplomatic friction.","indicators":["E1","E4","E5","E6","E7","E12"],"implications":"Resilience improves; reputational costs manageable."},
+    {"id":"S2","name":"Escalation & Retaliation","likelihood":4,"impact":5,"lxi":20,"description":"PRC export restrictions; EU sovereign-stake response; WTO escalation.","indicators":["E1","E2","E3","E4","E5"],"implications":"Fragmentation accelerates; price spikes."},
+    {"id":"S3","name":"Domestic Backlash","likelihood":2,"impact":3,"lxi":6,"description":"Litigation & congressional scrutiny of favoritism.","indicators":["E9","E11","E10"],"implications":"Policy credibility erodes domestically."}
+  ],
+  "treatments": [
+    {"category":"Governance","option":"Transparent equity criteria & oversight","targets":["R2","R3","R5"]},
+    {"category":"Prevention","option":"Allied sourcing MOUs (AU/CA/JP/CL)","targets":["R1","R6"]},
+    {"category":"Prevention","option":"Fast-track permitting (critical minerals)","targets":["R6"]},
+    {"category":"Protection","option":"Strategic stockpiles (REEs, Ga, W)","targets":["R1"]},
+    {"category":"Monitoring","option":"Early warning dashboard (E1- E15)","targets":["R1","R2","R3"]},
+    {"category":"Response","option":"WTO & G7 coordination playbook","targets":["R1","R3"]},
+    {"category":"Continuity","option":"Dual sourcing & friend-shoring","targets":["R2","R4","R6"]},
+    {"category":"Innovation","option":"Mandate R&D reinvestment from equity returns","targets":["R4"]}
+  ],
+  "indicators": [
+    {"id":"E1","name":"PRC export control notices","rag":"green"},
+    {"id":"E2","name":"Port throughput for REEs/copper","rag":"green"},
+    {"id":"E3","name":"Spot price volatility (NdPr/Dy/Tb/Ga/W/Cu)","rag":"amber"},
+    {"id":"E4","name":"WTO dispute docketing","rag":"green"},
+    {"id":"E5","name":"EU sovereign-stake debates","rag":"green"},
+    {"id":"E6","name":"U.S. permitting timelines (mines/smelters)","rag":"amber"},
+    {"id":"E7","name":"Intel fab milestones","rag":"green"},
+    {"id":"E8","name":"Cyber telemetry on OT/IT","rag":"green"},
+    {"id":"E9","name":"Lobbying/litigation signals","rag":"green"},
+    {"id":"E10","name":"VC/fund flows to non-backed sectors","rag":"amber"},
+    {"id":"E11","name":"Media sentiment on 'state capitalism'","rag":"green"},
+    {"id":"E12","name":"Allied offtake/MOUs","rag":"green"},
+    {"id":"E13","name":"Stockpile levels & drawdowns","rag":"green"},
+    {"id":"E14","name":"Community/permitting opposition","rag":"green"},
+    {"id":"E15","name":"Freight capacity & chokepoints","rag":"green"}
+  ],
+  "annexes": {
+    "A": "Risks scored on 5 by 5 matrix with triggers and early warnings mapped to treatment classes. Critical tier: trade retaliation and positive resilience gains; High tier: market distortions and credibility erosion; Moderate: innovation lock in; Low: domestic backlash. Treatment priorities emphasize allied coordination, stockpiles, transparency, and R and D reinvestment.",
+    "B": "CARVER highlights MP Materials rare earths as most critical at 26 of 30; Intel fabs and planned copper smelters follow at 23 and 22. Priorities: protect and diversify rare earths, accelerate permitting for copper, strengthen cyber and supply chain resilience for semiconductors.",
+    "C": "ACH tests three assumptions: equity necessity, allied alignment, fiscal returns. Findings: equity accelerates but not strictly necessary; allied alignment is partial and can fracture; fiscal returns uncertain with risk of zombie stakes.",
+    "D": "Early warning dashboard aligns indicators E1 to E15 with thresholds and actions. Examples: E1 MOFCOM export updates trigger G7 coordination and stockpile drawdowns; E6 permitting slippage triggers emergency fast track; E8 cyber telemetry triggers incident response and OT isolation."
+  },
+  "citations": [
+    {"label":"S&P Global Source","mla":"Looker, Rachel. “US steps up to investor role: Trump inserts gov't in metals, mining sector.” S&P Global Commodity Insights, 1 Sept. 2025. PDF.","url":"https://www.spglobal.com/market-intelligence/en/news-insights/articles/2025/9/us-steps-up-to-investor-role-trump-inserts-govt-in-metals-mining-sector-92341879"}
+  ]
+}
+</script>
+
+<script>
+/* ===== Utilities and State ===== */
+const $ = (sel, ctx=document)=>ctx.querySelector(sel);
+const $$ = (sel, ctx=document)=>Array.from(ctx.querySelectorAll(sel));
+const state = {
+  data:null,
+  filters:{ category:'', priority:'', heat:null, text:'' },
+  sort:'', theme: localStorage.getItem('qa.theme') || ''
+};
+
+function sanitizeDashes(str){
+  return (str||'').replaceAll('—','-').replaceAll('–','-');
+}
+
+function warn(msg){
+  const w = $('#warnings'); w.style.display='block';
+  w.innerHTML += `<p>⚠️ ${msg}</p>`;
+}
+
+/* ===== CSV & PNG ===== */
+function tableToCSV(tbl){
+  const rows=[...tbl.querySelectorAll('tr')].map(tr=>[...tr.children].map(td=>`"${(td.innerText||'').replace(/"/g,'""')}"`).join(','));
+  return rows.join('\\n');
+}
+function downloadCSV(tableId){
+  const tbl = document.getElementById(tableId);
+  const csv = tableToCSV(tbl);
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = tableId + '.csv';
+  a.click();
+}
+function downloadChartPNG(canvasId){
+  const canvas = document.getElementById(canvasId);
+  const url = canvas.toDataURL('image/png');
+  const a = document.createElement('a');
+  a.href = url; a.download = canvasId + '.png'; a.click();
+}
+
+/* ===== Sorting ===== */
+function makeSortable(tableId){
+  const tbl = document.getElementById(tableId);
+  const heads = tbl.tHead ? [...tbl.tHead.querySelectorAll('th')] : [];
+  heads.forEach((th, idx)=>{
+    th.tabIndex = 0;
+    th.addEventListener('click', ()=> sortBy(idx));
+    th.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); sortBy(idx);} });
+  });
+  function sortBy(idx){
+    const tbody = tbl.tBodies[0];
+    const rows = [...tbody.rows];
+    const asc = !thAsc(thsState[idx]); thsState = thsState.map(()=>false); thsState[idx]=asc;
+    rows.sort((a,b)=>{
+      const A = a.cells[idx].innerText.trim(); const B = b.cells[idx].innerText.trim();
+      const nA = parseFloat(A); const nB = parseFloat(B);
+      if(!isNaN(nA) && !isNaN(nB)) return asc ? nA - nB : nB - nA;
+      return asc ? A.localeCompare(B) : B.localeCompare(A);
+    });
+    rows.forEach(r=>tbody.appendChild(r));
+  }
+  let thsState = heads.map(()=>false);
+}
+function thAsc(b){ return !!b; }
+
+/* ===== Heatmap ===== */
+function binRisks(risks){
+  const grid = Array.from({length:5}, ()=>Array.from({length:5}, ()=>[]));
+  risks.forEach(r=>{
+    const i = Math.max(1, Math.min(5, r.impact)) - 1;
+    const l = Math.max(1, Math.min(5, r.likelihood)) - 1;
+    grid[i][l].push(r);
+  });
+  return grid;
+}
+// severity color by LxI
+function severityColor(l, i, count){
+  if(count===0) return '#eef2f7';
+  const lxi = (l+1)*(i+1); // 1..25
+  const ratio = lxi / 25;
+  if(ratio <= .25) return getComputedStyle(document.documentElement).getPropertyValue('--heat-low').trim();
+  if(ratio <= .5) return getComputedStyle(document.documentElement).getPropertyValue('--amber').trim();
+  if(ratio <= .75) return getComputedStyle(document.documentElement).getPropertyValue('--heat-high').trim();
+  return getComputedStyle(document.documentElement).getPropertyValue('--coral').trim();
+}
+function renderHeatmap(risks){
+  const grid = binRisks(risks);
+  const el = $('#heatmap');
+  el.innerHTML = '';
+
+  // Header row
+  el.insertAdjacentHTML('beforeend', `<div></div>` + Array.from({length:5}, (_,i)=>`<div style="text-align:center; font-size:.85rem; color:var(--muted)">L${i+1}</div>`).join(''));
+
+  for(let i=4;i>=0;i--){
+    const yLab = i+1;
+    const y = document.createElement('div');
+    y.className='ylabel';
+    y.textContent = 'I'+(yLab);
+    el.appendChild(y);
+    for(let l=0;l<5;l++){
+      const arr = grid[i][l];
+      const cell = document.createElement('button');
+      cell.className='cell';
+      cell.style.background = severityColor(l, i, arr.length);
+      cell.setAttribute('role','gridcell');
+      cell.setAttribute('aria-label', `Impact ${i+1}, Likelihood ${l+1}, items ${arr.length}, severity ${(l+1)*(i+1)}`);
+      cell.innerHTML = `<span class="count">${arr.length}</span><span class="coord">I${i+1}/L${l+1}</span>`;
+      cell.addEventListener('click', ()=>{
+        state.filters.heat = {impact:i+1, likelihood:l+1};
+        showFilterPill();
+        applyFilters();
+        document.getElementById('risk').scrollIntoView({behavior:'smooth', block:'start'});
+      });
+      el.appendChild(cell);
+    }
+  }
+}
+function showFilterPill(){
+  const f = state.filters.heat;
+  const bar = $('#active-filter');
+  if(f){
+    bar.style.display='flex';
+    bar.innerHTML = `<span class="pill high">Filter I${f.impact} - L${f.likelihood}</span>
+    <button class="btn" onclick="state.filters.heat=null; this.parentElement.style.display='none'; applyFilters()">Clear</button>`;
+  }else{
+    bar.style.display='none'; bar.innerHTML='';
+  }
+}
+
+/* ===== Risk Table ===== */
+function badge(pri){
+  const p = (pri||'').toLowerCase();
+  if(p.includes('critical') && !p.includes('opportunity')) return 'pill crit';
+  if(p.includes('high')) return 'pill high';
+  if(p.includes('moderate')) return 'pill mod';
+  if(p.includes('opportunity')) return 'pill crit';
+  return 'pill low';
+}
+function renderRiskTable(rows){
+  const tbody = $('#risk-table tbody'); tbody.innerHTML='';
+  rows.forEach(r=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${r.id}</td>
+      <td>${r.category}</td>
+      <td>${r.title}</td>
+      <td>${r.likelihood}</td>
+      <td>${r.impact}</td>
+      <td>${r.lxi|| (r.likelihood*r.impact)}</td>
+      <td><span class="${badge(r.priority)}">${r.priority}</span></td>
+      <td>${r.triggers||''}</td>
+      <td>${r.indicators||''}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+/* ===== Charts ===== */
+let charts = {};
+const palette = ['#2a9d8f','#e76f51','#e9c46a','#124559','#6b7280','#8ab17d'];
+
+function renderTopBar(risks){
+  const sorted = [...risks].sort((a,b)=>(b.lxi||b.likelihood*b.impact)-(a.lxi||a.likelihood*a.impact)).slice(0,6);
+  const ctx = document.getElementById('bar-toprisks').getContext('2d');
+  charts.top = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels: sorted.map(r=>r.id),
+      datasets:[{label:'LxI', data: sorted.map(r=>r.lxi||r.likelihood*r.impact), backgroundColor: palette[0]}]
+    },
+    options:{
+      responsive:true,
+      plugins:{ legend:{display:false}, tooltip:{enabled:true} },
+      scales:{ x:{ grid:{display:false}}, y:{ beginAtZero:true, max:25 } }
+    }
+  });
+}
+
+function radarOptions(){
+  return {
+    responsive:true,
+    plugins:{legend:{display:false}},
+    scales:{
+      r:{
+        min:0, max:5, ticks:{stepSize:1, showLabelBackdrop:false, callback:(v)=>Number.isInteger(v)?v:''},
+        angleLines:{color:'rgba(107,114,128,.2)'}, grid:{color:'rgba(107,114,128,.2)'},
+        pointLabels:{color:'var(--text)'}
+      }
+    }
+  };
+}
+
+function renderRadar(node, canvasId, color){
+  const labels=['C','A','R','V','E','R2'];
+  const data=[node.C,node.A,node.R,node.V,node.E,node.R2];
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  return new Chart(ctx, {
+    type:'radar',
+    data:{ labels, datasets:[{label: node.node, data, backgroundColor: Chart.helpers.color(color).alpha(0.2).rgbString(), borderColor: color, pointBackgroundColor: color}] },
+    options: radarOptions()
+  });
+}
+function renderComparativeRadar(nodes){
+  const labels=['C','A','R','V','E','R2'];
+  const ctx = document.getElementById('carver-comparative').getContext('2d');
+  charts.comp = new Chart(ctx, {
+    type:'radar',
+    data:{
+      labels,
+      datasets: nodes.map((n,i)=>({
+        label:n.node,
+        data:[n.C,n.A,n.R,n.V,n.E,n.R2],
+        backgroundColor: Chart.helpers.color(palette[i%palette.length]).alpha(0.15).rgbString(),
+        borderColor: palette[i%palette.length],
+        pointBackgroundColor: palette[i%palette.length]
+      }))
+    },
+    options:{
+      ...radarOptions(),
+      plugins:{legend:{position:'bottom'}}
+    }
+  });
+}
+function renderScenarioScatter(scenarios){
+  // Bubble radius scaled by area to LxI magnitude to avoid distortion; clamp for readability
+  const maxScore = 25, minR=8, maxR=28;
+  const scaleR = (lxi)=>{
+    const area = minR*minR*Math.PI + (maxR*maxR*Math.PI - minR*minR*Math.PI) * (lxi/maxScore);
+    return Math.sqrt(area/Math.PI);
+  };
+  const ctx = document.getElementById('scenario-scatter').getContext('2d');
+  charts.scen = new Chart(ctx, {
+    type:'bubble',
+    data:{
+      datasets: scenarios.map((s,idx)=>({
+        label: s.name,
+        backgroundColor: Chart.helpers.color(palette[idx%palette.length]).alpha(0.35).rgbString(),
+        borderColor: palette[idx%palette.length],
+        data:[{x:s.likelihood, y:s.impact, r: scaleR(s.lxi||s.likelihood*s.impact)}]
+      }))
+    },
+    options:{
+      layout:{padding:{top:16,right:16,bottom:8,left:8}},
+      scales:{
+        x:{ min:0, max:5, ticks:{stepSize:1, min:0, max:6, ticks:{stepSize:1}}, title:{display:true, text:'Likelihood'} },
+        y:{ min:0, max:6, ticks:{stepSize:1}, title:{display:true, text:'Impact'} } // add headroom to avoid clipping
+      },
+      plugins:{
+        legend:{position:'bottom'},
+        tooltip:{
+          callbacks:{
+            label: ctx => {
+              const d = ctx.raw;
+              const ds = ctx.dataset;
+              return `${ds.label}: L ${d.x}, I ${d.y}, LxI ${(d.x*d.y).toFixed(0)}`;
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderPACards(nodes){
+  const wrap = document.getElementById('carver-pa-cards');
+  if(!wrap) return;
+  wrap.innerHTML='';
+  nodes.forEach(n=>{
+    const total = Number(n.total)||0;
+    const pa = Math.max(0, Math.min(1, total/30));
+    const band = pa >= 0.8 ? 'high' : pa >= 0.6 ? 'med' : 'low';
+    const pct = Math.round(pa*100);
+    const card = document.createElement('div');
+    card.className='kpi'; card.setAttribute('role','listitem'); card.dataset.band = band;
+    card.innerHTML = `<h4>${sanitizeDashes(n.node)}</h4>
+      <div class="pa" aria-label="P(a) value">${pa.toFixed(2)}</div>
+      <div class="meta">Score: ${total}/30</div>
+      <div class="bar" aria-hidden="true"><span style="width:${pct}%"></span></div>`;
+    wrap.appendChild(card);
+  });
+}
+
+/* ===== Filters ===== */
+function applyFilters(){
+  const {category, priority, heat, text} = state.filters;
+  let rows = [...state.data.risks];
+  if(category) rows = rows.filter(r=>r.category===category);
+  if(priority) rows = rows.filter(r=>r.priority===priority);
+  if(heat) rows = rows.filter(r=>r.impact===heat.impact && r.likelihood===heat.likelihood);
+  if(text){
+    const q = text.toLowerCase();
+    rows = rows.filter(r=>`${r.id} ${r.category} ${r.title} ${r.triggers} ${r.indicators}`.toLowerCase().includes(q));
+  }
+  const sortKey = state.sort;
+  if(sortKey) rows.sort((a,b)=>(b[sortKey]||0)-(a[sortKey]||0));
+  renderRiskTable(rows);
+}
+
+/* ===== Theme ===== */
+function toggleTheme(){
+  const root = document.documentElement;
+  if(state.theme==='dark'){ state.theme='light'; root.setAttribute('data-theme','light'); }
+  else if(state.theme==='light'){ state.theme=''; root.removeAttribute('data-theme'); }
+  else { state.theme='dark'; root.setAttribute('data-theme','dark'); }
+  localStorage.setItem('qa.theme', state.theme);
+}
+
+/* ===== Init ===== */
+function init(){
+  // Load data
+  try{
+    const raw = JSON.parse(document.getElementById('report-data').textContent);
+    state.data = raw;
+  }catch(e){
+    warn('Data JSON failed to parse: ' + e.message);
+    return;
+  }
+  // Title & metadata with dash sanitization for display
+  const title = sanitizeDashes(state.data.meta.title);
+  document.getElementById('report-title').textContent = `${title} - Interactive`;
+  $('#prep').textContent = sanitizeDashes(state.data.meta.preparedBy);
+  $('#ver').textContent = state.data.meta.version;
+  $('#date').textContent = state.data.meta.date;
+  $('#foot-meta').textContent = `Version ${state.data.meta.version} • ${state.data.meta.date}`;
+
+  // Content blocks
+  const txt = state.data.text||{};
+  const need = [];
+  if(!txt.executiveSummary) need.push('Executive Summary');
+  if(!txt.context) need.push('Context');
+  if(!txt.methodology) need.push('Methodology');
+  if(!txt.conclusion) need.push('Conclusion');
+  if(need.length) warn('Missing text sections: ' + need.join(', '));
+
+  $('#exec-text').innerText = txt.executiveSummary||'';
+  $('#context-text').innerText = txt.context||'';
+  $('#method-text').innerText = txt.methodology||'';
+  $('#conclusion-text').innerText = txt.conclusion||'';
+
+  // Annexes
+  const ax = state.data.annexes||{};
+  $('#annex-a').innerText = ax.A||'';
+  $('#annex-b').innerText = ax.B||'';
+  $('#annex-c').innerText = ax.C||'';
+  $('#annex-d').innerText = ax.D||'';
+
+  // Citations list
+  const citeUl = $('#citations');
+  (state.data.citations||[]).forEach(c=>{
+    const li = document.createElement('li');
+    li.innerHTML = `<em>${c.label}</em>: ${c.mla}${c.url?` <a href="${c.url}">link</a>`:''}`;
+    citeUl.appendChild(li);
+  });
+  $('#copy-cite').addEventListener('click', ()=>{
+    const all = (state.data.citations||[]).map(c=>`${c.mla}${c.url?` ${c.url}`:''}`).join('\\n');
+    navigator.clipboard.writeText(all);
+    alert('Citations copied to clipboard.');
+  });
+
+  // Filters
+  const cats = [...new Set(state.data.risks.map(r=>r.category))];
+  const catSel = $('#filter-category');
+  cats.forEach(c=>{
+    const o = document.createElement('option'); o.value=c; o.textContent=c; catSel.appendChild(o);
+  });
+  catSel.addEventListener('change', ()=>{ state.filters.category = catSel.value; applyFilters(); });
+  const priSel = $('#filter-priority');
+  priSel.addEventListener('change', ()=>{ state.filters.priority = priSel.value; applyFilters(); });
+  $('#sort-risk').addEventListener('change', e=>{ state.sort = e.target.value; applyFilters(); });
+
+  // Global and table search
+  $('#global-search').addEventListener('input', e=>{ state.filters.text = e.target.value; applyFilters(); });
+  $('#risk-search').addEventListener('input', e=>{ state.filters.text = e.target.value; applyFilters(); });
+
+  // Theme
+  if(state.theme){ document.documentElement.setAttribute('data-theme', state.theme); }
+  $('#theme-toggle').addEventListener('click', function(){ toggleTheme(); this.setAttribute('aria-pressed', state.theme==='dark'); });
+
+  // Heatmap and tables
+  renderHeatmap(state.data.risks);
+  renderTopBar(state.data.risks);
+  renderRiskTable(state.data.risks);
+  makeSortable('risk-table');
+
+  // CARVER cards
+  const cg = $('#carver-grid');
+  state.data.carver.forEach((n, idx)=>{
+    const id = 'carver-' + idx;
+    const card = document.createElement('div');
+    card.className='card';
+    card.innerHTML = `<h3>${sanitizeDashes(n.node)}</h3><canvas id="${id}" height="220" aria-label="CARVER radar"></canvas>
+      <p class="muted" style="color:var(--muted); font-size:.9rem">Total score: ${n.total}</p>`;
+    cg.appendChild(card);
+    renderRadar(n, id, palette[idx%palette.length]);
+  });
+  renderPACards(state.data.carver);
+
+  // CARVER justification table
+  const cj = $('#carver-just tbody');
+  state.data.carver.forEach(n=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${sanitizeDashes(n.node)}</td>
+      <td>${n.C}</td><td>${n.A}</td><td>${n.R}</td><td>${n.V}</td><td>${n.E}</td><td>${n.R2}</td><td>${n.total}</td>`;
+    cj.appendChild(tr);
+  });
+  makeSortable('carver-just');
+
+  // Scenarios scatter
+  renderScenarioScatter(state.data.scenarios);
+  // Indicator table
+  const it = $('#indicator-table tbody');
+  state.data.indicators.forEach(i=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${i.id}</td><td>${i.name}</td><td><span class="rag ${i.rag}"></span></td>`;
+    it.appendChild(tr);
+  });
+  makeSortable('indicator-table');
+
+  // Scenario table
+  const st = $('#scenario-table tbody');
+  state.data.scenarios.forEach(s=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${s.id}</td><td>${s.name}</td><td>${s.likelihood}</td><td>${s.impact}</td><td>${s.lxi||s.likelihood*s.impact}</td><td>${(s.indicators||[]).join(',')}</td><td>${s.implications||''}</td>`;
+    st.appendChild(tr);
+  });
+  makeSortable('scenario-table');
+
+// Treatments
+const tt = document.getElementById('treat-table').querySelector('tbody');
+(state.data.treatments || []).forEach(t => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>${t.category}</td>
+    <td>${t.option}</td>
+    <td>${(t.targets || []).join(', ')}</td>
+  `;
+  tt.appendChild(tr);
+});
+makeSortable('treat-table');
+
+  // Methods modal tabs
+  $('#open-info').addEventListener('click', ()=> $('#info-modal').showModal());
+  $$('[data-open="info-modal"]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const m = $('#info-modal'); m.showModal();
+      const tab = btn.getAttribute('data-tab')||'iso';
+      ['iso','carver','ach'].forEach(k=> $('#tab-'+k).hidden = (k!==tab));
+    });
+  });
+
+  // TOC highlight on scroll
+  const tocLinks = $$('.sidebar .toc');
+  const sections = tocLinks.map(a=> $(a.getAttribute('href')));
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const id = '#' + entry.target.id;
+        tocLinks.forEach(a=> a.setAttribute('aria-current', a.getAttribute('href')===id ? 'true':'false'));
+      }
+    });
+  }, {rootMargin:'-40% 0px -55% 0px', threshold:.01});
+  sections.forEach(s=>s && obs.observe(s));
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
