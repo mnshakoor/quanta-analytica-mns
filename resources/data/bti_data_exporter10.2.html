@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BTI Data Exporter - ARAC International</title>
+
+  <link rel="icon" type="image/png" href="https://quanta-analytica.mnshakoor.com/logo-mns120.png">
+  <meta name="title" content="BTI Data Exporter - ARAC International">
+  <meta name="description" content="Stream the BTI Parquet dataset, filter by region, country, and year, select indicators, and export curated CSV. Powered by DuckDB-WASM.">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    :root{ --bg:#fff; --fg:#222; --panel:#f6f6f6; --line:#e5e5e5; --accent:#0a84ff; --danger:#d9534f; }
+    .dark-mode{ --bg:#1e1e1e; --fg:#f2f2f2; --panel:#2b2b2b; --line:#444; --accent:#3399ff; --danger:#e06666; }
+    html,body{height:100%;}
+    body{margin:0; font-family: Inter, system-ui, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--fg); display:flex; flex-direction:column; overflow:hidden;}
+    #navbar{display:flex; align-items:center; gap:.5rem; padding:.6rem 1rem; background:var(--panel); border-bottom:1px solid var(--line);}
+    #navbar h1{font-size:1.05rem; margin:0; flex:1;}
+    .nav-button, button{ padding:.4rem .7rem; background:var(--panel); border:1px solid var(--line); border-radius:6px; cursor:pointer; color:var(--fg);}
+    .primary{ background:var(--accent); color:#fff; border-color:var(--accent); }
+    #content{flex:1; display:flex; overflow:hidden;}
+    #control{width:270px; background:var(--panel); border-right:1px solid var(--line); overflow:auto; padding:1rem;}
+    #main{flex:1; display:flex; flex-direction:column; overflow:hidden; min-width:0;}
+    #map{height:280px; border-bottom:1px solid var(--line); z-index:0;}
+    #grid{flex:1; overflow:auto; padding:1rem;}
+    h3{margin:.8rem 0 .4rem 0; font-size:1rem;}
+    select{width:100%; padding:.35rem .4rem; border:1px solid var(--line); border-radius:6px; background:var(--bg); color:var(--fg);}
+    .row{display:flex; gap:.5rem;} .row > *{flex:1;}
+    table{width:100%; border-collapse:collapse; font-size:.9rem;}
+    th,td{border:1px solid var(--line); padding:.45rem .5rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+    th{position:sticky; top:0; background:var(--panel); z-index:1;}
+    .spinner{ display:none; position:absolute; inset:0; background:rgba(0,0,0,.12); align-items:center; justify-content:center; z-index:9; }
+    .spinner::after{ content:""; width:56px; height:56px; border:8px solid var(--panel); border-top:8px solid var(--accent); border-radius:50%; animation:spin 1s linear infinite; }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .note{font-size:.85rem; opacity:.85;}
+    .foot{font-size:.8rem; opacity:.8; margin-top:.8rem;}
+    .stack{display:flex; flex-direction:column; gap:.4rem;}
+  </style>
+</head>
+<body>
+  <div id="overlay" class="spinner" aria-hidden="true"></div>
+
+  <div id="navbar">
+    <h1>BTI Data Exporter - ARAC International</h1>
+    <button id="btnTheme" class="nav-button">Toggle Theme</button>
+    <button id="btnAbout" class="nav-button">About</button>
+  </div>
+
+  <div id="content">
+    <aside id="control">
+      <div class="stack">
+        <div>
+          <h3>Indicators</h3>
+          <select id="selIndicators" multiple size="10" title="Select one or more indicators"></select>
+          <div class="note">List is auto-built from BTI columns. Use Ctrl or Cmd to multi-select.</div>
+        </div>
+        <div>
+          <h3>Region</h3>
+          <select id="selRegions" multiple size="6"></select>
+        </div>
+        <div>
+          <h3>Country</h3>
+          <select id="selCountries" multiple size="10"></select>
+        </div>
+        <div>
+          <h3>Year Range</h3>
+          <div class="row">
+            <select id="selY1"></select>
+            <select id="selY2"></select>
+          </div>
+        </div>
+        <div>
+          <h3>Actions</h3>
+          <div class="row">
+            <button id="btnReset">Reset</button>
+            <button id="btnExport" class="primary">Export CSV</button>
+          </div>
+        </div>
+        <div class="foot">Data streams from Parquet via HTTP range requests.</div>
+      </div>
+    </aside>
+
+    <main id="main">
+      <div id="map"></div>
+      <div id="grid">
+        <p style="text-align:center;margin-top:2rem;">Choose filters and indicators to render the table below.</p>
+        <div id="tableWrap"></div>
+      </div>
+    </main>
+  </div>
+
+  <dialog id="aboutDlg" style="max-width:900px;width:90%;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--fg);">
+    <form method="dialog" style="margin:0;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem;padding:.8rem 1rem;border-bottom:1px solid var(--line);">
+        <strong>About BTI</strong>
+        <button>OK</button>
+      </div>
+      <div style="padding:1rem;max-height:65vh;overflow:auto;">
+        <p class="note">
+          The Transformation Index BTI aggregates 17 criteria and 49 indicators into the Status Index and Governance Index using expert reports, peer review, and regional plus interregional calibration. See the PDFs in this repository for details.
+        </p>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module">
+    import * as duckdb from 'https://cdn.jsdelivr.net/npm/@duckdb/duckdb-wasm@1.29.0/+esm';
+
+    // Config
+    const AppConfig = {
+      DATA_URL: 'https://huggingface.co/datasets/ARACInt/bti-data/resolve/main/2024-2006-bti-data.parquet',
+      patterns: { country:/^country$/i, region:/^region$/i, year:/^year$/i },
+      indicatorTokens: [
+        'status index','democracy status','economy status','governance index','governance performance',
+        'stateness','political participation','rule of law','stability of democratic institutions',
+        'political and social integration','level of socioeconomic development','organization of the market','competition',
+        'monetary','private property','welfare regime','economic performance','sustainability',
+        'level of difficulty','steering capability','resource efficiency','consensus','international cooperation',
+        'q1','q2','q3','q4','q5','q6','q7','q8','q9','q10','q11','q12','q13','q14','q15','q16','q17'
+      ],
+      previewRows: 500
+    };
+
+    // State
+    const State = {
+      db:null, conn:null, schema:[], mapping:{},
+      keyCols:{country:null, region:null, year:null},
+      indicatorList:[], years:[],
+      geojson:null, map:null, mapLayer:null, name2iso:{}
+    };
+
+    // Utils
+    const showOverlay = (on=true)=>{ document.getElementById('overlay').style.display = on ? 'flex' : 'none'; };
+    const norm = (s)=> s.replace(/\s+/g,' ').trim().replace(/[|/()\u2013\u2014\-]+/g,' ').replace(/\s+/g,' ').toLowerCase();
+    const safe = (s)=> norm(s).replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'');
+    const asNum = v => (typeof v === 'bigint' ? Number(v) : (typeof v === 'string' ? Number(v) : v));
+    const asStr = v => (v == null ? '' : (typeof v === 'bigint' ? v.toString() : String(v)));
+    const normalizeName = s => (s ?? '')
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .replace(/’/g,"'").toLowerCase()
+      .replace(/[^a-z'& ]+/g,' ').replace(/\s+/g,' ').trim();
+
+    const BTI_ALIASES = {
+      "drc": "democratic republic of the congo",
+      "dr congo": "democratic republic of the congo",
+      "congo, dem. rep.": "democratic republic of the congo",
+      "republic of congo": "republic of the congo",
+      "cote d'ivoire": "cote d'ivoire",
+      "cote d ivoire": "cote d'ivoire",
+      "czech republic": "czechia",
+      "türkiye": "turkey",
+      "turkiye": "turkey",
+      "serbia": "serbia",
+      "tanzania": "tanzania",
+      "united republic of tanzania": "tanzania"
+    };
+
+    const yearExpr = (col) => `
+      CASE
+        WHEN TRY_CAST(${col} AS INT) IS NOT NULL THEN CAST(${col} AS INT)
+        WHEN ${col} ~ '^[0-9]{4}$' THEN CAST(${col} AS INT)
+        WHEN ${col} LIKE '%/%/%' THEN EXTRACT(YEAR FROM STRPTIME(${col}, '%m/%d/%Y'))
+        WHEN ${col} LIKE '____-__-__' THEN EXTRACT(YEAR FROM STRPTIME(${col}, '%Y-%m-%d'))
+        ELSE NULL
+      END
+    `;
+
+    async function initDuckDB(){
+      showOverlay(true);
+      try{
+        const bundles = duckdb.getJsDelivrBundles();
+        const bundle = await duckdb.selectBundle(bundles);
+        const worker = await duckdb.createWorker(bundle.mainWorker);
+        const db = new duckdb.AsyncDuckDB(new duckdb.ConsoleLogger(), worker);
+        await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
+        const conn = await db.connect();
+        await conn.query(`INSTALL httpfs; LOAD httpfs; SET enable_http_metadata_cache=true;`);
+        State.db = db; State.conn = conn;
+      }finally{ showOverlay(false); }
+    }
+
+    async function buildView(){
+      showOverlay(true);
+      try{
+        await State.conn.query(`CREATE OR REPLACE VIEW raw_bti AS SELECT * FROM read_parquet('${AppConfig.DATA_URL}')`);
+        const info = await State.conn.query(`PRAGMA table_info('raw_bti')`);
+        const cols = info.toArray().map(r => r.name);
+        State.schema = cols;
+        State.mapping = cols.reduce((acc,c)=>{ acc[c]=safe(c); return acc; },{});
+
+        function findKey(pattern){ for(const raw of cols){ if(pattern.test(raw)) return {raw, as: State.mapping[raw]}; } return null; }
+        State.keyCols = {
+          country: findKey(AppConfig.patterns.country),
+          region:  findKey(AppConfig.patterns.region),
+          year:    findKey(AppConfig.patterns.year)
+        };
+
+        const selectList = cols.map(raw => `"${raw}" AS ${State.mapping[raw]}`).join(', ');
+        await State.conn.query(`CREATE OR REPLACE VIEW bti AS SELECT ${selectList} FROM raw_bti`);
+
+        if(State.keyCols.year){
+          const yrs = await State.conn.query(`
+            SELECT DISTINCT ${yearExpr(State.keyCols.year.as)} AS y
+            FROM bti WHERE ${State.keyCols.year.as} IS NOT NULL
+            ORDER BY 1
+          `);
+          State.years = yrs.toArray().map(r => asNum(r.y)).filter(n => Number.isFinite(n));
+        }
+
+        const indicatorCandidates = cols
+          .map(raw => ({ raw, as: State.mapping[raw], label: raw }))
+          .filter(c=>{
+            const L = norm(c.label);
+            if(Object.values(State.keyCols).some(k => k && k.as === c.as)) return false;
+            const tokenHit = AppConfig.indicatorTokens.some(tok => L.includes(tok));
+            const qHit = /^q\d+(\.\d+)?/.test(L);
+            return tokenHit || qHit;
+          });
+
+        const seen = new Set();
+        const finalIndicators = [];
+        for(const c of indicatorCandidates){
+          if(seen.has(c.as)) continue;
+          seen.add(c.as);
+          finalIndicators.push({ key:c.as, raw:c.raw, as:c.as });
+        }
+        finalIndicators.sort((a,b)=> a.raw.localeCompare(b.raw));
+        State.indicatorList = finalIndicators;
+
+      }catch(e){
+        console.error('Error building the data view:', e);
+        alert('Failed to read the Parquet schema. See console for details.');
+      }finally{ showOverlay(false); }
+    }
+
+    async function loadWorld(){
+      if(State.geojson) return State.geojson;
+      const resp = await fetch('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson');
+      State.geojson = await resp.json();
+
+      const m = {};
+      for(const f of State.geojson.features){
+        const base = normalizeName(f.properties.name);
+        m[base] = f.id;
+        if(base === 'democratic republic of the congo'){ m['drc']=f.id; m['dr congo']=f.id; m["congo, dem. rep."]=f.id; }
+        if(base === 'republic of the congo'){ m['republic of congo']=f.id; }
+        if(base === 'cote d\'ivoire'){ m["cote d ivoire"]=f.id; }
+        if(base === 'czechia'){ m['czech republic']=f.id; }
+        if(base === 'turkey'){ m['turkiye']=f.id; m['türkiye']=f.id; }
+        if(base === 'tanzania'){ m['united republic of tanzania']=f.id; }
+      }
+      State.name2iso = m;
+      return State.geojson;
+    }
+
+    function isoForCountryName(name){
+      const n = normalizeName(name);
+      if(State.name2iso[n]) return State.name2iso[n];
+      const alias = BTI_ALIASES[n];
+      if(alias && State.name2iso[alias]) return State.name2iso[alias];
+      return null;
+    }
+
+    function initMap(){
+      State.map = L.map('map',{zoomControl:true}).setView([20,0],2);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ attribution:'© OpenStreetMap' }).addTo(State.map);
+    }
+
+    function fillSelect(sel, arr, value='value', label='label'){ sel.innerHTML=''; arr.forEach(r=> sel.add(new Option(r[label], r[value]))); }
+    function getMulti(sel){ return Array.from(sel.selectedOptions).map(o=>o.value); }
+
+    async function populateFilters(){
+      fillSelect(document.getElementById('selIndicators'), State.indicatorList.map(x=>({value:x.key, label:x.raw})));
+      const r = await State.conn.query(`SELECT DISTINCT ${State.keyCols.region.as} AS v FROM bti WHERE ${State.keyCols.region.as} IS NOT NULL ORDER BY 1`);
+      fillSelect(document.getElementById('selRegions'), r.toArray().map(x=>({value:x.v, label:x.v})));
+      const c = await State.conn.query(`SELECT DISTINCT ${State.keyCols.country.as} AS v FROM bti WHERE ${State.keyCols.country.as} IS NOT NULL ORDER BY 1`);
+      fillSelect(document.getElementById('selCountries'), c.toArray().map(x=>({value:x.v, label:x.v})));
+      const y1 = document.getElementById('selY1'), y2 = document.getElementById('selY2'); y1.innerHTML=''; y2.innerHTML='';
+      State.years.forEach(y=>{ y1.add(new Option(y,y)); y2.add(new Option(y,y)); });
+      if(State.years.length){ y1.value = Math.min(...State.years); y2.value = Math.max(...State.years); }
+    }
+
+    function buildQuery({regions,countries,y1,y2,indicators}){
+      const cols = [];
+      if(State.keyCols.region)  cols.push(`${State.keyCols.region.as} AS "Region"`);
+      if(State.keyCols.country) cols.push(`${State.keyCols.country.as} AS "Country"`);
+      if(State.keyCols.year)    cols.push(`${yearExpr(State.keyCols.year.as)} AS "Year"`);
+
+      for(const k of indicators){
+        const found = State.indicatorList.find(x => x.key === k);
+        if(found) cols.push(`${found.as} AS "${found.raw}"`);
+      }
+
+      const where = [];
+      if(regions.length && State.keyCols.region)  where.push(`${State.keyCols.region.as} IN (${regions.map(v=>`'${v.replace(/'/g,"''")}'`).join(',')})`);
+      if(countries.length && State.keyCols.country) where.push(`${State.keyCols.country.as} IN (${countries.map(v=>`'${v.replace(/'/g,"''")}'`).join(',')})`);
+      if(State.keyCols.year && y1 && y2) where.push(`${yearExpr(State.keyCols.year.as)} BETWEEN ${asNum(y1)} AND ${asNum(y2)}`);
+
+      return `SELECT ${cols.join(', ')} FROM bti ${where.length?'WHERE '+where.join(' AND '):''} ORDER BY "Region","Country","Year"`;
+    }
+
+    async function renderTable(){
+      const indicators = getMulti(document.getElementById('selIndicators'));
+      const tableWrap = document.getElementById('tableWrap');
+      if(!indicators.length){
+        tableWrap.innerHTML = '<p class="note" style="text-align:center;">Select one or more indicators.</p>';
+        if(State.mapLayer) State.map.removeLayer(State.mapLayer); State.map.setView([20,0],2);
+        return;
+      }
+
+      showOverlay(true);
+      try{
+        const sql = buildQuery({
+          regions:getMulti(document.getElementById('selRegions')),
+          countries:getMulti(document.getElementById('selCountries')),
+          y1:document.getElementById('selY1').value,
+          y2:document.getElementById('selY2').value,
+          indicators
+        });
+        const rs = await State.conn.query(sql);
+        const all = rs.toArray();
+        const rows = all.slice(0, AppConfig.previewRows);
+
+        if(!rows.length){
+          tableWrap.innerHTML = '<p class="note" style="text-align:center;">No rows match the current filters.</p>';
+          if(State.mapLayer) State.map.removeLayer(State.mapLayer); State.map.setView([20,0],2);
+          return;
+        }
+
+        const cols = Object.keys(rows[0]);
+        let html = '<table><thead><tr>'; cols.forEach(c=> html += `<th>${c}</th>`); html += '</tr></thead><tbody>';
+        rows.forEach(r=>{ html += '<tr>'; cols.forEach(c=> html += `<td>${asStr(r[c])}</td>`); html += '</tr>'; }); html += '</tbody></table>';
+        if(all.length>rows.length){ html += `<div class="foot">Showing ${rows.length} of ${all.length} rows.</div>`; }
+        tableWrap.innerHTML = html;
+
+        const endYear = document.getElementById('selY2').value;
+        const metric = cols.find(c => !['Region','Country','Year'].includes(c));
+        if(metric){ await renderChoropleth(all.filter(r=>String(r.Year)===String(endYear)), metric); }
+      }catch(e){
+        console.error('Error rendering table:', e);
+        tableWrap.innerHTML = `<p class="note" style="text-align:center;color:#d9534f;">Error while fetching data. See console.</p>`;
+      }finally{ showOverlay(false); }
+    }
+
+    async function renderChoropleth(dataForYear, metric){
+      if(State.mapLayer) State.map.removeLayer(State.mapLayer);
+      await loadWorld();
+
+      const valueByIso = {};
+      for(const row of dataForYear){
+        const iso = isoForCountryName(row.Country);
+        if(iso != null){
+          const v = Number(row[metric]);
+          if(Number.isFinite(v)) valueByIso[iso] = v;
+        }
+      }
+
+      const values = Object.values(valueByIso).filter(v=>Number.isFinite(v));
+      if(!values.length){ State.map.setView([20,0],2); return; }
+      const min = Math.min(...values), max = Math.max(...values);
+      const getColor = d => { if(!Number.isFinite(d)) return '#ccc'; const t=(d-min)/(max-min||1); if(t>0.66) return '#228B22'; if(t>0.33) return '#FFD700'; return '#DC143C'; };
+
+      State.mapLayer = L.geoJSON(State.geojson,{
+        style:f=>({weight:.5,color:'#666',fillOpacity:.7,fillColor:getColor(valueByIso[f.id])}),
+        onEachFeature:(f,layer)=>{ const v=valueByIso[f.id]; layer.bindTooltip(`${f.properties.name}: ${Number.isFinite(v)?v.toFixed(2):'N/A'}`); }
+      }).addTo(State.map);
+
+      const selected = new Set(getMulti(document.getElementById('selCountries')).map(n=>isoForCountryName(n)));
+      const fit = State.geojson.features.filter(f=>selected.has(f.id));
+      if(fit.length){ const b=L.geoJSON({type:'FeatureCollection',features:fit}).getBounds(); if(b.isValid()) State.map.fitBounds(b,{padding:[20,20]}); }
+    }
+
+    async function exportCSV(){
+      const indicators = getMulti(document.getElementById('selIndicators'));
+      if(!indicators.length){ alert('Select one or more indicators to export.'); return; }
+      showOverlay(true);
+      try{
+        const sql = buildQuery({
+          regions:getMulti(document.getElementById('selRegions')),
+          countries:getMulti(document.getElementById('selCountries')),
+          y1:document.getElementById('selY1').value,
+          y2:document.getElementById('selY2').value,
+          indicators
+        });
+        const rs = await State.conn.query(sql);
+        const rows = rs.toArray();
+        if(!rows.length){ alert('No rows to export for current filters.'); return; }
+
+        const cols = Object.keys(rows[0]);
+        const esc = s => { const v = asStr(s); return /[",\n]/.test(v) ? `"${v.replace(/"/g,'""')}"` : v; };
+        const csv = [cols.join(','), ...rows.map(r => cols.map(c => esc(r[c])).join(','))].join('\n');
+        const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+        const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download=`bti_export_${Date.now()}.csv`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+      }catch(e){ console.error('Error exporting CSV:', e); alert('Export failed. See console.'); }
+      finally{ showOverlay(false); }
+    }
+
+    document.getElementById('btnTheme').addEventListener('click', ()=> document.body.classList.toggle('dark-mode'));
+    document.getElementById('btnAbout').addEventListener('click', ()=> document.getElementById('aboutDlg').showModal());
+    document.getElementById('btnReset').addEventListener('click', ()=>{
+      ['selIndicators','selRegions','selCountries'].forEach(id=>{ const sel=document.getElementById(id); Array.from(sel.options).forEach(o=>o.selected=false); });
+      if(State.years.length){ document.getElementById('selY1').value=Math.min(...State.years); document.getElementById('selY2').value=Math.max(...State.years); }
+      renderTable();
+    });
+    document.getElementById('btnExport').addEventListener('click', exportCSV);
+    ['selIndicators','selRegions','selCountries','selY1','selY2'].forEach(id=> document.getElementById(id).addEventListener('change', renderTable));
+
+    (async function boot(){
+      await initDuckDB();
+      await buildView();
+      await populateFilters();
+      initMap();
+      renderTable();
+    })();
+  </script>
+</body>
+</html>
