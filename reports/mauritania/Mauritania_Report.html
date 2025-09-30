@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="Mauritania Risk Assessment | Global Security Analysis">
+<meta property="og:description" content="In-depth analysis of Mauritania's governance, human rights, and fragility trends using BTI, V-Dem, FSI & ACLED data.">
+<meta property="og:url" content="https://www.mnshakoor.com/research/mauritania-risk-assessment">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://quanta-analytica.mnshakoor.com/assets/mauritania-vdem-equality.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Mauritania Risk Assessment | Global Security Analysis">
+<meta name="twitter:description" content="Comprehensive Mauritania risk assessment integrating BTI, V-Dem, FSI & ACLED data.">
+<meta name="twitter:image" content="https://quanta-analytica.mnshakoor.com/assets/mauritania-vdem-equality.png">
+
+    <title>Integrated Risk Assessment: Mauritania (2006–2025)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Analyst Neutral (Stone background, dark text, ochre/slate accents) -->
+    <!-- Application Structure Plan: A thematic SPA with persistent side navigation (Overview, Risk Dashboard, Data Explorer, Scenarios, Context, Recommendations, AI Assistant). This structure deconstructs the dense report into user-driven, explorable modules, prioritizing key takeaways and interactive data visualization over the original linear format. The goal is to allow different user types (e.g., a policy maker wanting a quick overview vs. an analyst wanting to dig into data) to find information efficiently. The AI Assistant section is added as a new module to provide dynamic, on-demand summarization and Q&A powered by an LLM. -->
+    <!-- Visualization & Content Choices: Report Info: CARVER Risk Matrix -> Goal: Inform/Compare -> Viz: Interactive Cards with color-coded scores -> Interaction: Click to expand for details. Justification: More engaging & less overwhelming than a large table. Library: HTML/CSS/JS. Report Info: BTI, V-Dem, FSI, ACLED time-series data -> Goal: Show Change/Trends -> Viz: Line Charts -> Interaction: Dropdown to select specific indicators, updating chart and descriptive text. Justification: Allows direct exploration of the report's evidence base. Library: Chart.js. Report Info: Future Scenarios -> Goal: Compare possibilities -> Viz: Interactive Cards -> Interaction: Click to view details/triggers. Justification: Clearly separates and explains potential outcomes. Library: HTML/CSS/JS. Report Info: Entire Report Text -> Goal: Summarize & Answer Questions -> Viz: Dynamic Text Block -> Interaction: User prompt, button click. Justification: Provides a new, powerful layer of interactivity for synthesizing complex information quickly. Library: Gemini API via Fetch. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F5F5F4;
+            color: #292524;
+        }
+        .nav-link {
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-link.active {
+            background-color: #A8A29E;
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+        .nav-link:hover {
+            background-color: #E7E5E4;
+        }
+        .nav-link.active:hover {
+            background-color: #A8A29E;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 50vh;
+        }
+        .risk-card {
+            border-left-width: 8px;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .risk-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .scenario-card h3 {
+            border-left: 4px solid;
+            padding-left: 0.75rem;
+        }
+        .video-responsive {
+            overflow: hidden;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            position: relative;
+            height: 0;
+            border-radius: 0.5rem; /* rounded-lg */
+        }
+        .video-responsive iframe {
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="flex min-h-screen">
+        <aside class="w-64 bg-stone-200 text-stone-800 p-4 sticky top-0 h-screen">
+            <h1 class="text-xl font-bold text-stone-900 border-b border-stone-400 pb-2 mb-4">Mauritania Risk Analysis</h1>
+            <nav class="flex flex-col space-y-2">
+                <a href="#overview" class="nav-link active rounded-md px-3 py-2 text-sm font-medium">Executive Summary</a>
+                <a href="#risk-dashboard" class="nav-link rounded-md px-3 py-2 text-sm font-medium">Risk Dashboard</a>
+                <a href="#data-explorer" class="nav-link rounded-md px-3 py-2 text-sm font-medium">Data Explorer</a>
+                <a href="#scenarios" class="nav-link rounded-md px-3 py-2 text-sm font-medium">Future Scenarios</a>
+                <a href="#context" class="nav-link rounded-md px-3 py-2 text-sm font-medium">Context & Drivers</a>
+                <a href="#recommendations" class="nav-link rounded-md px-3 py-2 text-sm font-medium">Recommendations</a>
+                
+            </nav>
+            <div class="absolute bottom-4 left-4 text-xs text-stone-500">
+                <p>ARAC International Inc.</p>
+                <p>23 September 2025</p>
+            </div>
+        </aside>
+        
+        <main class="flex-1 p-6 md:p-10 bg-stone-100 overflow-y-auto">
+            
+            <section id="overview" class="content-section active">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-3xl font-bold text-stone-900">Executive Summary</h2>
+                        
+                    </div>
+                    <div id="overview-content">
+                        <p class="text-stone-600 mb-6 leading-relaxed">This assessment presents a data-driven analysis of Mauritania's political and social landscape from 2006 to 2025. It reveals a state caught in a fragile equilibrium, where an external reputation for stability, crucial for partnerships with the EU and in Sahel counter-terrorism, masks deep-seated internal vulnerabilities. Explore the key risks, underlying data trends, and potential future scenarios to understand this complex dynamic.</p>
+                        
+                        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-orange-800">
+                            <h3 class="text-xl font-semibold text-stone-800 mb-2">The Core Finding: A Brittle Stability</h3>
+                            <p class="mb-4">Mauritania remains in a fragile equilibrium characterized by low democratic quality, entrenched grievances, and persistent human rights violations. The government's reputation for "stability" increasingly relies on coercive suppression rather than institutional resilience.</p>
+                            <blockquote class="border-l-4 border-stone-300 pl-4 text-stone-700 italic">
+                                The data converge: weak governance (BTI, V-Dem), high fragility (FSI), and rising political violence (ACLED). The combination points to a brittle state more vulnerable than its external partners assume.
+                            </blockquote>
+                        </div>
+                        
+                        <!-- Embedded YouTube Video -->
+                        <div class="mt-8 mb-8">
+                            <h3 class="text-xl font-semibold text-stone-800 mb-2">UNGA Protest & International Advocacy</h3>
+                            <p class="mb-4 text-stone-600">This video provides a first-hand look at the diaspora protest at the UN General Assembly, a critical event that highlights the growing gap between Mauritania's international reputation and its internal realities.</p>
+                            <div class="video-responsive">
+                                <iframe 
+                                    src="https://www.youtube.com/embed/2_Hn1ZqbKGU?si=7j2qKW10-N7ys6LR" 
+                                    title="UNGA Protest: Mauritanian Diaspora" 
+                                    frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                    allowfullscreen>
+                                </iframe>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-semibold text-stone-800 mb-2">The UNGA Protest: A Widening Gap</h3>
+                            <p>The recent diaspora protest at the UN General Assembly highlights a widening gap between international perceptions and the internal lived reality. Systemic exclusion of Black Mauritanians, impunity for past atrocities, and escalating repression have severely eroded the government's legitimacy. This protest serves as a critical data point, aligning with empirical evidence of fragility and signaling a potential shift in how international partners engage with Mauritania, possibly moving from a "stability-first" to a "rights-first" approach.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="risk-dashboard" class="content-section">
+                 <div class="max-w-6xl mx-auto">
+                    <h2 class="text-3xl font-bold text-stone-900 mb-4">Interactive Risk Dashboard</h2>
+                    <p class="text-stone-600 mb-8 max-w-4xl">The following risks have been assessed using the CARVER methodology, which evaluates factors like Criticality, Accessibility, and Vulnerability. The total score indicates the overall severity of each risk. Click on any card to view a detailed breakdown of its scoring and the rationale behind the assessment. This interactive format helps to prioritize the most immediate and impactful threats to Mauritania's stability.</p>
+                    <div id="risk-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    </div>
+                </div>
+            </section>
+
+            <section id="data-explorer" class="content-section">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="text-3xl font-bold text-stone-900 mb-4">Data Explorer (2006-2024)</h2>
+                    <p class="text-stone-600 mb-8">This section provides an interactive view of the core datasets underpinning the risk assessment. By visualizing long-term trends in governance, democracy, human rights, and political violence, we can see the empirical evidence for Mauritania's institutional stagnation and rising fragility. Select a data source and then choose a specific indicator from the dropdown to update the chart and see the corresponding analysis.</p>
+
+                    <div class="mb-6">
+                        <label for="indicator-select" class="block text-sm font-medium text-stone-700">Select Indicator to Display:</label>
+                        <select id="indicator-select" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-orange-800 focus:border-orange-800 sm:text-sm rounded-md shadow-sm">
+                            <optgroup label="Fragile States Index (FSI)">
+                                <option value="fsi_human_rights" selected>FSI: Human Rights & Rule of Law</option>
+                                <option value="fsi_group_grievance">FSI: Group Grievance</option>
+                                <option value="fsi_state_legitimacy">FSI: State Legitimacy</option>
+                            </optgroup>
+                            <optgroup label="Varieties of Democracy (V-Dem)">
+                                <option value="vdem_liberal_democracy">V-Dem: Liberal Democracy Index</option>
+                                <option value="vdem_electoral_democracy">V-Dem: Electoral Democracy Index</option>
+                                <option value="vdem_social_equality">V-Dem: Social Group Equality</option>
+                            </optgroup>
+                             <optgroup label="Bertelsmann Transformation Index (BTI)">
+                                <option value="bti_status">BTI: Status Index</option>
+                            </optgroup>
+                            <optgroup label="ACLED">
+                                <option value="acled_events">ACLED: Political Violence Events</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        <div class="chart-container">
+                            <canvas id="mainChart"></canvas>
+                        </div>
+                        <div id="chart-interpretation" class="mt-4 p-4 text-sm text-stone-700 bg-stone-50 rounded-md">
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="scenarios" class="content-section">
+                <div class="max-w-5xl mx-auto">
+                    <h2 class="text-3xl font-bold text-stone-900 mb-4">Future Scenarios (12-24 Months)</h2>
+                    <p class="text-stone-600 mb-8">Based on the current trajectory and risk analysis, we project three plausible scenarios for Mauritania over the next one to two years. These scenarios are not predictions but structured possibilities designed to aid in strategic planning. They are weighted by likelihood, considering the deep-seated nature of institutional stagnation versus the potential for external pressures or internal escalations to alter the country's path.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="scenario-card bg-white p-6 rounded-lg shadow-md flex flex-col">
+                            <h3 class="text-lg font-semibold text-stone-800 mb-2 border-green-600">1. Managed Stagnation</h3>
+                            <p class="text-2xl font-bold text-green-700 mb-4">~60% Likelihood</p>
+                            <p class="text-sm text-stone-600 flex-grow">This scenario reflects a continuation of the historical pattern. The government maintains its "stability" narrative with international partners, while internal dissent is managed through low-level coercion. Key indicators of democracy and fragility remain static.</p>
+                            <div class="mt-4 pt-4 border-t border-stone-200 text-xs text-stone-500">
+                                <p><span class="font-semibold">ACLED Events:</span> 5-15 annually</p>
+                                <p><span class="font-semibold">BTI/V-Dem:</span> Static, low scores</p>
+                                <p><span class="font-semibold">FSI Score:</span> Persistently high</p>
+                            </div>
+                        </div>
+                        <div class="scenario-card bg-white p-6 rounded-lg shadow-md flex flex-col">
+                            <h3 class="text-lg font-semibold text-stone-800 mb-2 border-yellow-500">2. Rights-Linked Conditionality</h3>
+                            <p class="text-2xl font-bold text-yellow-600 mb-4">~25% Likelihood</p>
+                            <p class="text-sm text-stone-600 flex-grow">Increased pressure from diaspora advocacy and UN mechanisms leads international donors to link aid more closely to human rights performance. This could force small but measurable improvements in policing, judicial processes, and activists' rights.</p>
+                             <div class="mt-4 pt-4 border-t border-stone-200 text-xs text-stone-500">
+                                <p><span class="font-semibold">V-Dem Liberal Dem.:</span> Slight gain</p>
+                                <p><span class="font-semibold">FSI Human Rights:</span> Slight improvement</p>
+                                <p><span class="font-semibold">Key Trigger:</span> Donor pressure</p>
+                            </div>
+                        </div>
+                        <div class="scenario-card bg-white p-6 rounded-lg shadow-md flex flex-col">
+                            <h3 class="text-lg font-semibold text-stone-800 mb-2 border-red-600">3. Crackdown Spiral</h3>
+                            <p class="text-2xl font-bold text-red-700 mb-4">~15% Likelihood</p>
+                            <p class="text-sm text-stone-600 flex-grow">A new lethal incident during a protest or in state detention triggers wider counter-mobilization. The state responds with a harsh crackdown, leading to a spike in political violence and prompting diaspora groups to campaign for sanctions.</p>
+                             <div class="mt-4 pt-4 border-t border-stone-200 text-xs text-stone-500">
+                                <p><span class="font-semibold">ACLED Events:</span> New peak (>15)</p>
+                                <p><span class="font-semibold">Diaspora:</span> Escalates campaigns</p>
+                                <p><span class="font-semibold">Key Trigger:</span> Lethal state violence</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="context" class="content-section">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-3xl font-bold text-stone-900">Context and Drivers of Instability</h2>
+                        
+                    </div>
+                    <div id="context-content">
+                        <p class="text-stone-600 mb-8">Understanding Mauritania's current risk profile requires acknowledging the deep historical and structural factors that shape its political landscape. These core drivers fuel the grievances visualized in the data and create the conditions for the scenarios outlined. From unresolved historical atrocities to systemic discrimination, these issues form the foundation of the country's fragility.</p>
+                        <div class="space-y-4">
+                            <div class="bg-white p-6 rounded-lg shadow-md">
+                                <h3 class="font-semibold text-lg text-stone-800">Historical Legacy: Unaddressed Atrocities</h3>
+                                <p class="mt-2 text-stone-600">The 1989–1991 deportations, massacres, and arbitrary killings of Black Mauritanians remain a deep, unhealed wound. The passage of Amnesty Law 93-23 has ensured impunity for perpetrators, preventing transitional justice and embedding grievance at the heart of the nation's identity politics.</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow-md">
+                                <h3 class="font-semibold text-lg text-stone-800">Structural Exclusion</h3>
+                                <p class="mt-2 text-stone-600">Persistent ethnic discrimination is institutionalized through various state mechanisms. The 2011 biometric registration system has been widely criticized for systematically denying citizenship to Black Mauritanians. This, combined with ongoing land dispossession, fuels the high "Group Grievance" scores seen in the FSI data.</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow-md">
+                                <h3 class="font-semibold text-lg text-stone-800">Shrinking Political Space</h3>
+                                <p class="mt-2 text-stone-600">The government actively suppresses dissent. Opposition parties, civil society activists, and particularly anti-slavery groups like the Initiative for the Resurgence of the Abolitionist Movement (IRA), face routine repression, arbitrary detention, and police violence. This stifles internal channels for peaceful change.</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow-md">
+                                <h3 class="font-semibold text-lg text-stone-800">Geopolitical Role & Socioeconomic Pressures</h3>
+                                <p class="mt-2 text-stone-600">International partners, especially the EU and US, prioritize Mauritania's role in stability and counter-terrorism, often shielding the regime in Nouakchott from stronger human rights pressure. This external dynamic intersects with severe internal socioeconomic pressures like high unemployment, climate stress, and weak public services, compounding the population's vulnerability and discontent.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="recommendations" class="content-section">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-3xl font-bold text-stone-900">Data-Grounded Recommendations</h2>
+                        
+                    </div>
+                    <div id="recommendations-content">
+                        <p class="text-stone-600 mb-8">The following recommendations are derived directly from the report's findings and are tailored for different stakeholders. They focus on leveraging data for more effective monitoring, advocacy, and risk mitigation, with the goal of shifting the international approach from one that enables brittle stability to one that promotes genuine, rights-based resilience.</p>
+                        <div class="space-y-6">
+                            <div>
+                                <h3 class="text-xl font-semibold text-stone-800 mb-3">For Analysts and Monitors</h3>
+                                <ul class="list-disc list-inside space-y-2 text-stone-700 bg-white p-6 rounded-lg shadow-md">
+                                    <li><strong>Develop Indicator Dashboards:</strong> Track BTI, V-Dem, FSI, and ACLED data quarterly, using specific thresholds (e.g., ACLED annual events >15) as triggers for escalation warnings.</li>
+                                    <li><strong>Triangulate Claims:</strong> Systematically cross-validate claims from diaspora and activist groups with quantitative data spikes in V-Dem equality indicators and ACLED protest/repression events.</li>
+                                </ul>
+                            </div>
+                             <div>
+                                <h3 class="text-xl font-semibold text-stone-800 mb-3">For Advocacy Groups</h3>
+                                <ul class="list-disc list-inside space-y-2 text-stone-700 bg-white p-6 rounded-lg shadow-md">
+                                    <li><strong>Bundle Evidence:</strong> Frame advocacy messages by combining powerful narratives (like the Kaédi killings) with hard data, such as the ACLED 2024 peak and V-Dem's negative equality scores.</li>
+                                    <li><strong>Target Policy Levers:</strong> Focus campaigns on concrete, measurable demands like the repeal of Amnesty Law 93-23 and verifiable reforms to the biometric citizenship system.</li>
+                                    <li><strong>Counter the Narrative:</strong> Actively use data showing repression-driven fragility to challenge the "stable partner" narrative often used by the government and its allies.</li>
+                                </ul>
+                            </div>
+                             <div>
+                                <h3 class="text-xl font-semibold text-stone-800 mb-3">For Risk Mitigation & Donor Engagement</h3>
+                                <ul class="list-disc list-inside space-y-2 text-stone-700 bg-white p-6 rounded-lg shadow-md">
+                                    <li><strong>Protect Communities:</strong> Increase monitoring and protective presence in high-risk towns like Kaédi, which have proven to be flashpoints for state violence.</li>
+                                    <li><strong>Provide Legal Defense:</strong> Prioritize resources for the legal defense of activists targeted for detention, as this is a primary tool of state repression.</li>
+                                    <li><strong>Advocate for Conditionality:</strong> Engage with donor governments and institutions to tie development and security aid to measurable improvements in human rights indicators.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            
+        </main>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const reportContent = `
+        Executive Summary
+        Mauritania remains in a fragile equilibrium: low democratic quality, entrenched grievances, persistent human rights violations, and growing signs of political unrest. The government continues to enjoy a reputation of “stability” in external partnerships, especially with the EU (migration management) and Sahel counter-terrorism frameworks, yet this stability increasingly relies on coercive suppression rather than institutional resilience. The diaspora protest at the UNGA underscores a widening gap between international perceptions and internal lived reality, where systemic exclusion of Black Mauritanians, impunity for past atrocities, and escalating repression have eroded legitimacy. The data converge: weak governance (BTI, V-Dem), high fragility (FSI), and rising political violence (ACLED). The combination points to a brittle state more vulnerable than its external partners assume.
+        
+        Context and Drivers
+        Understanding Mauritania's current risk profile requires acknowledging the deep historical and structural factors that shape its political landscape. These core drivers fuel the grievances visualized in the data and create the conditions for the scenarios outlined. From unresolved historical atrocities to systemic discrimination, these issues form the foundation of the country's fragility.
+        Historical Legacy: The 1989–1991 deportations, massacres, and arbitrary killings of Black Mauritanians remain a deep, unhealed wound. The passage of Amnesty Law 93-23 has ensured impunity for perpetrators, preventing transitional justice and embedding grievance at the heart of the nation's identity politics.
+        Structural Exclusion: Persistent ethnic discrimination is institutionalized through various state mechanisms. The 2011 biometric registration system has been widely criticized for systematically denying citizenship to Black Mauritanians. This, combined with ongoing land dispossession, fuels the high "Group Grievance" scores seen in the FSI data.
+        Shrinking Political Space: The government actively suppresses dissent. Opposition parties, civil society activists, and particularly anti-slavery groups like the Initiative for the Resurgence of the Abolitionist Movement (IRA), face routine repression, arbitrary detention, and police violence. This stifles internal channels for peaceful change.
+        Geopolitical Role & Socioeconomic Pressures: International partners, especially the EU and US, prioritize Mauritania's role in stability and counter-terrorism, often shielding the regime in Nouakchott from stronger human rights pressure. This external dynamic intersects with severe internal socioeconomic pressures like high unemployment, climate stress, and weak public services, compounding the population's vulnerability and discontent.
+        
+        Data-Grounded Recommendations
+        The following recommendations are derived directly from the report's findings and are tailored for different stakeholders. They focus on leveraging data for more effective monitoring, advocacy, and risk mitigation, with the goal of shifting the international approach from one that enables brittle stability to one that promotes genuine, rights-based resilience.
+        For Analysts and Monitors: Develop Indicator Dashboards: Track BTI, V-Dem, FSI, and ACLED data quarterly, using specific thresholds (e.g., ACLED annual events >15) as triggers for escalation warnings. Triangulate Claims: Systematically cross-validate claims from diaspora and activist groups with quantitative data spikes in V-Dem equality indicators and ACLED protest/repression events.
+        For Advocacy Groups: Bundle Evidence: Frame advocacy messages by combining powerful narratives (like the Kaédi killings) with hard data, such as the ACLED 2024 peak and V-Dem's negative equality scores. Target Policy Levers: Focus campaigns on concrete, measurable demands like the repeal of Amnesty Law 93-23 and verifiable reforms to the biometric citizenship system. Counter the Narrative: Actively use data showing repression-driven fragility to challenge the "stable partner" narrative often used by the government and its allies.
+        For Risk Mitigation & Donor Engagement: Protect Communities: Increase monitoring and protective presence in high-risk towns like Kaédi, which have proven to be flashpoints for state violence. Provide Legal Defense: Prioritize resources for the legal defense of activists targeted for detention, as this is a primary tool of state repression. Advocate for Conditionality: Engage with donor governments and institutions to tie development and security aid to measurable improvements in human rights indicators.
+    `;
+
+    const riskData = [
+        { 
+            name: "Protest Repression Leading to Fatalities", 
+            score: 27, 
+            total: 30,
+            probability: 0.90,
+            color: 'border-red-700',
+            details: `
+                <p><strong>Criticality: 5</strong> - Directly undermines legitimacy and raises diaspora/donor pressure.</p>
+                <p><strong>Accessibility: 4</strong> - High accessibility; protests are frequent in towns like Kaédi.</p>
+                <p><strong>Recuperability: 4</strong> - Low resilience; repeated killings deepen grievances, recovery difficult.</p>
+                <p><strong>Vulnerability: 4</strong> - State is vulnerable to reputational cost and diaspora mobilization.</p>
+                <p><strong>Effect: 5</strong> - Large effect on internal cohesion and external reputation.</p>
+                <p><strong>Recognizability: 5</strong> - Highly recognizable (widely covered in diaspora & international media).</p>
+                <p class="mt-2 text-sm text-stone-500"><strong>Note:</strong> Pattern evident in Kaédi (2024) and IRA crackdown (2025).</p>
+            `
+        },
+        { 
+            name: "Inter-communal Grievances Escalating", 
+            score: 25, 
+            total: 30,
+            probability: 0.83,
+            color: 'border-red-600',
+            details: `
+                <p><strong>Criticality: 5</strong> - Critical, long-term driver of instability.</p>
+                <p><strong>Accessibility: 3</strong> - Medium accessibility; localized but widespread.</p>
+                <p><strong>Recuperability: 5</strong> - Recovery extremely difficult (historic injustices, dispossession).</p>
+                <p><strong>Vulnerability: 4</strong> - Vulnerable, especially in rural areas and biometric registration system.</p>
+                <p><strong>Effect: 4</strong> - High effect; sustains fragility and group grievances.</p>
+                <p><strong>Recognizability: 4</strong> - Recognizable within Mauritania and diaspora networks.</p>
+                <p class="mt-2 text-sm text-stone-500"><strong>Note:</strong> FSI Group Grievances score remains high; land/citizenship disputes risk flashpoints.</p>
+            `
+        },
+        { 
+            name: "Institutional Stagnation", 
+            score: 23, 
+            total: 30,
+            probability: 0.77,
+            color: 'border-orange-600',
+            details: `
+                <p><strong>Criticality: 5</strong> - Central to long-term stability.</p>
+                <p><strong>Accessibility: 2</strong> - Low accessibility; rooted in structural governance.</p>
+                <p><strong>Recuperability: 5</strong> - Very hard to recover; entrenched systems resist reform.</p>
+                <p><strong>Vulnerability: 4</strong> - Vulnerable if donor pressure escalates.</p>
+                <p><strong>Effect: 4</strong> - Significant effect on democracy scores, aid terms.</p>
+                <p><strong>Recognizability: 3</strong> - Recognizable in indices (BTI, V-Dem, FSI), less so to general public.</p>
+                <p class="mt-2 text-sm text-stone-500"><strong>Note:</strong> BTI and V-Dem data show long-term entrenchment with no significant improvement.</p>
+            `
+        },
+        { 
+            name: "Climate–Fragility Nexus", 
+            score: 23, 
+            total: 30,
+            probability: 0.77,
+            color: 'border-orange-600',
+            details: `
+                <p><strong>Criticality: 4</strong> - Critical to survival and livelihoods.</p>
+                <p><strong>Accessibility: 3</strong> - Medium accessibility (climate shocks hit communities broadly).</p>
+                <p><strong>Recuperability: 5</strong> - Very hard to recover from systemic climate stress.</p>
+                <p><strong>Vulnerability: 4</strong> - High vulnerability given poor public services (FSI 7.9–9.2).</p>
+                <p><strong>Effect: 4</strong> - Significant effect; amplifies grievances and fragility.</p>
+                <p><strong>Recognizability: 3</strong> - Moderately recognizable; less immediate than protest killings.</p>
+                 <p class="mt-2 text-sm text-stone-500"><strong>Note:</strong> FSI Demographic Pressures elevated; intersects with land disputes.</p>
+            `
+        },
+        { 
+            name: "Diaspora Advocacy Triggering Reputational Costs", 
+            score: 22, 
+            total: 30,
+            probability: 0.73,
+            color: 'border-yellow-500',
+            details: `
+                <p><strong>Criticality: 4</strong> - Reputational legitimacy is critical for aid/partnerships.</p>
+                <p><strong>Accessibility: 3</strong> - Medium accessibility; depends on UN/NGO platforms.</p>
+                <p><strong>Recuperability: 3</strong> - Moderate recuperability; reputational damage lasts, but can be managed.</p>
+                <p><strong>Vulnerability: 3</strong> - Somewhat vulnerable; international partners balance stability vs rights.</p>
+                <p><strong>Effect: 4</strong> - Strong effect if linked to specific incidents (Kaédi, Law 93-23).</p>
+                <p><strong>Recognizability: 5</strong> - Highly recognizable; protests, press releases, UNGA.</p>
+                <p class="mt-2 text-sm text-stone-500"><strong>Note:</strong> UNGA protests amplify pressure on donors and international bodies.</p>
+            `
+        },
+        { 
+            name: "External 'Stability' Narrative Shields Regime", 
+            score: 18, 
+            total: 30,
+            probability: 0.60,
+            color: 'border-yellow-400',
+            details: `
+                <p><strong>Criticality: 3</strong> - Less critical internally, but key for aid inflows.</p>
+                <p><strong>Accessibility: 2</strong> - Not directly accessible to opposition/diaspora.</p>
+                <p><strong>Recuperability: 4</strong> - Recovery hard if partners shift narrative, but shield can persist.</p>
+                <p><strong>Vulnerability: 3</strong> - Moderate vulnerability; depends on EU/US priorities.</p>
+                <p><strong>Effect: 3</strong> - Effect moderate; donors may tolerate abuses.</p>
+                <p><strong>Recognizability: 3</strong> - Moderately recognizable (policy reports, press, but less visible to public).</p>
+                <p class="mt-2 text-sm text-stone-500"><strong>Note:</strong> EU/US priority on Counter-Terrorism and migration management continues to benefit the regime.</p>
+            `
+        },
+    ];
+
+    const chartData = {
+        years: [2006, 2008, 2010, 2012, 2014, 2016, 2018, 2020, 2022, 2024],
+        fsi_human_rights: {
+            label: 'FSI: Human Rights & Rule of Law (Higher=Worse)',
+            data: [7.8, 7.8, 8.1, 7.9, 7.7, 7.1, 6.8, 6.5, 6.4, 6.7],
+            interpretation: "The Human Rights & Rule of Law indicator remains in an 'elevated' or 'high' fragility band across the entire period. Despite minor fluctuations, it never enters a stable zone, reflecting persistent issues with impunity, weak judicial oversight, and political rights, which aligns with the diaspora's core grievances."
+        },
+        fsi_group_grievance: {
+            label: 'FSI: Group Grievance (Higher=Worse)',
+            data: [9.1, 9.2, 9.2, 8.9, 8.6, 8.1, 7.7, 7.3, 7.1, 7.4],
+            interpretation: "This indicator is consistently high, signaling deep and lasting divisions and discrimination between ethnic and social groups. The score, among the highest for Mauritania, quantifies the structural exclusion of Black Mauritanians and validates the centrality of this issue to the country's instability."
+        },
+        fsi_state_legitimacy: {
+            label: 'FSI: State Legitimacy (Higher=Worse)',
+            data: [8.3, 8.1, 8.2, 7.8, 7.6, 7.2, 7.0, 6.8, 6.6, 6.9],
+            interpretation: "State legitimacy shows a slow, marginal improvement but remains fragile. This trend suggests that while the state is not on the verge of collapse, its authority is continuously contested and considered corrupt or unrepresentative by significant portions of the population, especially those affected by exclusion."
+        },
+        vdem_liberal_democracy: {
+            label: 'V-Dem: Liberal Democracy Index (0 to 1)',
+            data: [0.120, 0.135, 0.122, 0.150, 0.180, 0.205, 0.210, 0.220, 0.235, 0.230],
+            interpretation: "The Liberal Democracy Index, which measures protections for individual and minority rights, is extremely low and flat. This indicates that even when elections occur, the fundamental pillars of a liberal democracy—such as rule of law and civil liberties—are critically weak, confirming claims of an authoritarian system."
+        },
+        vdem_electoral_democracy: {
+            label: 'V-Dem: Electoral Democracy Index (0 to 1)',
+            data: [0.249, 0.280, 0.260, 0.310, 0.350, 0.390, 0.420, 0.450, 0.470, 0.460],
+            interpretation: "While showing some marginal gains over the years, the Electoral Democracy Index remains in the bottom global quartile. This suggests that while elections are held, they suffer from significant flaws regarding freedom, fairness, and suffrage, failing to provide a genuine channel for popular will."
+        },
+        vdem_social_equality: {
+            label: 'V-Dem: Social Group Equality (-2 to 2)',
+            data: [-1.386, -1.350, -1.370, -1.250, -1.100, -1.050, -0.980, -0.950, -0.896, -0.910],
+            interpretation: "This indicator remains severely negative throughout the period, providing the starkest quantitative evidence of the systemic discrimination central to the report. It shows that civil liberties are profoundly unequal across social groups, directly supporting claims of racialized exclusion and a caste-like system."
+        },
+        bti_status: {
+            label: 'BTI: Status Index (0 to 10)',
+            data: [4.41, 4.30, 3.73, 3.85, 4.05, 4.15, 4.20, 4.25, 4.35, 4.40],
+            interpretation: "The BTI Status Index, measuring the state of democracy and market economy, shows Mauritania is in the 'very limited' transformation category. The long-term flat trend demonstrates a complete lack of structural improvement, indicating that episodic reforms have failed to alter the country's underlying exclusionary governance."
+        },
+        acled_events: {
+            label: 'ACLED: Political Violence Events (Annual Count)',
+            data: [1, 0, 2, 4, 3, 5, 8, 7, 9, 12],
+            interpretation: "While the absolute number of events is low compared to other Sahel countries, the trend is clearly upward, culminating in a local peak in 2024. This rise, driven by protest repression, is a key early-warning signal that the state's 'stability' is becoming more coercive and brittle."
+        }
+    };
+
+    const riskGrid = document.getElementById('risk-grid');
+    riskData.forEach(risk => {
+        const card = document.createElement('div');
+        card.className = `risk-card bg-white p-6 rounded-lg shadow-md cursor-pointer ${risk.color}`;
+        card.innerHTML = `
+            <div class="flex justify-between items-start">
+                <h3 class="text-lg font-semibold text-stone-800 pr-4">${risk.name}</h3>
+                <p class="text-2xl font-bold text-stone-800 whitespace-nowrap">${risk.score}/${risk.total}</p>
+            </div>
+            <p class="text-sm font-medium text-stone-600 mt-2">Probability: ${(risk.probability * 100).toFixed(0)}%</p>
+            <div class="risk-details hidden mt-4 pt-4 border-t border-stone-200 space-y-1 text-sm text-stone-600">${risk.details}</div>
+        `;
+        riskGrid.appendChild(card);
+
+        card.addEventListener('click', () => {
+            const details = card.querySelector('.risk-details');
+            details.classList.toggle('hidden');
+        });
+    });
+
+    const navLinks = document.querySelectorAll('.nav-link');
+    const contentSections = document.querySelectorAll('.content-section');
+
+    const setActiveLink = (hash) => {
+        navLinks.forEach(link => {
+            if (link.getAttribute('href') === hash) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+
+        contentSections.forEach(section => {
+            if ('#' + section.id === hash) {
+                section.classList.add('active');
+            } else {
+                section.classList.remove('active');
+            }
+        });
+    };
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetHash = link.getAttribute('href');
+            window.location.hash = targetHash;
+        });
+    });
+
+    window.addEventListener('hashchange', () => {
+        const hash = window.location.hash || '#overview';
+        setActiveLink(hash);
+    });
+
+    const initialHash = window.location.hash || '#overview';
+    setActiveLink(initialHash);
+    
+    const ctx = document.getElementById('mainChart').getContext('2d');
+    let mainChart;
+
+    const chartInterpretationEl = document.getElementById('chart-interpretation');
+    const indicatorSelect = document.getElementById('indicator-select');
+
+    function renderChart(indicatorKey) {
+        if (mainChart) {
+            mainChart.destroy();
+        }
+        
+        const selectedData = chartData[indicatorKey];
+        chartInterpretationEl.innerHTML = `<p><strong>Interpretation:</strong> ${selectedData.interpretation}</p>`;
+        
+        mainChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: chartData.years,
+                datasets: [{
+                    label: selectedData.label,
+                    data: selectedData.data,
+                    borderColor: '#7C2D12',
+                    backgroundColor: 'rgba(124, 45, 18, 0.1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#7C2D12',
+                    pointRadius: 4,
+                    tension: 0.1,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: indicatorKey.includes('social_equality') ? false : true,
+                        ticks: {
+                            color: '#44403C'
+                        },
+                        grid: {
+                            color: '#E7E5E4'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                           color: '#44403C'
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                         labels: {
+                            color: '#44403C'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#292524',
+                        titleFont: {
+                            size: 14
+                        },
+                        bodyFont: {
+                            size: 12
+                        },
+                        padding: 10,
+                        callbacks: {
+                            title: function(context) {
+                                return `Year: ${context[0].label}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    indicatorSelect.addEventListener('change', (e) => {
+        renderChart(e.target.value);
+    });
+
+    renderChart(indicatorSelect.value);
+
+    // Gemini API Integration
+    const apiKey = "";
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+    const geminiInput = document.getElementById('gemini-input');
+    const geminiOutput = document.getElementById('gemini-output');
+    const askButton = document.getElementById('ask-button');
+    const loadingIndicator = document.getElementById('loading-indicator');
+
+    const fetchWithRetry = (url, options) => {
+        return new Promise((resolve, reject) => {
+            const maxRetries = 5;
+            let retries = 0;
+            const fetchData = () => {
+                fetch(url, options)
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json().then(resolve);
+                        }
+                        if (response.status === 429 && retries < maxRetries) {
+                            retries++;
+                            const delay = Math.pow(2, retries) * 1000 + Math.random() * 1000;
+                            setTimeout(fetchData, delay);
+                        } else {
+                            response.json().then(reject).catch(() => reject(new Error('API request failed')));
+                        }
+                    })
+                    .catch(error => {
+                        if (retries < maxRetries) {
+                            retries++;
+                            const delay = Math.pow(2, retries) * 1000 + Math.random() * 1000;
+                            setTimeout(fetchData, delay);
+                        } else {
+                            reject(error);
+                        }
+                    });
+            };
+            fetchData();
+        });
+    };
+
+    askButton.addEventListener('click', async () => {
+        const query = geminiInput.value.trim();
+        if (!query) return;
+
+        geminiOutput.classList.add('hidden');
+        loadingIndicator.classList.remove('hidden');
+        askButton.disabled = true;
+
+        try {
+            const payload = {
+                contents: [{ parts: [{ text: query }] }],
+                systemInstruction: {
+                    parts: [{ text: `You are an expert analyst. Answer questions about the provided report on Mauritania. Only use information from the following text to answer. Do not use any external knowledge. If the answer is not in the text, say "I cannot answer this question based on the provided report." The report is: ${reportContent}` }]
+                },
+            };
+
+            const response = await fetchWithRetry(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const text = response?.candidates?.[0]?.content?.parts?.[0]?.text || "No response from AI.";
+            geminiOutput.querySelector('p').textContent = text;
+            geminiOutput.classList.remove('hidden');
+
+        } catch (error) {
+            console.error('Error fetching from Gemini API:', error);
+            geminiOutput.querySelector('p').textContent = "An error occurred. Please try again.";
+            geminiOutput.classList.remove('hidden');
+        } finally {
+            loadingIndicator.classList.add('hidden');
+            askButton.disabled = false;
+        }
+    });
+
+    window.summarizeSection = async (sectionId) => {
+        let textToSummarize;
+        let title;
+        if (sectionId === 'overview') {
+            textToSummarize = document.getElementById('overview-content').innerText;
+            title = 'Executive Summary';
+        } else if (sectionId === 'context') {
+            textToSummarize = document.getElementById('context-content').innerText;
+            title = 'Context and Drivers';
+        } else if (sectionId === 'recommendations') {
+            textToSummarize = document.getElementById('recommendations-content').innerText;
+            title = 'Data-Grounded Recommendations';
+        }
+        
+        if (!textToSummarize) return;
+
+        geminiInput.value = `Summarize the following section of the report titled "${title}":\n\n${textToSummarize}`;
+        
+        window.location.hash = '#gemini-assistant';
+        
+        await new Promise(resolve => setTimeout(resolve, 100));
+        askButton.click();
+    };
+
+});
+</script>
+</body>
+</html>

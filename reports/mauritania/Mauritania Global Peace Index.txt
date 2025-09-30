@@ -1,0 +1,85 @@
+Mauritania Global Peace Index-source-IEP & Vision for Humanity-https://visionforhumanity.org
+
+2025 Global Peace Index
+Mauritania
+Overall Score
+2.20
+Country Ranking
+110 / 163
+Overall Indicator
+2.204 / 5
+A composite index measuring the peacefulness of countries made up of 23 quantitative and qualitative indicators each weighted on a scale of 1-5. The lower the score the more peaceful the country.
+- Perceptions of Criminality
+2.8 / 5
+Level of perceived criminality in society. Source: Gallup World Poll, IEP estimates
+- Police Rate
+5 / 5
+Number of internal security officers and police per 100,000 people. Source: UNODC CTS
+- Homicide Rate
+1.458 / 5
+Number of homicides per 100,000 people. Source: United Nations Office on Drugs and Crime (UNODC) Surveys on Crime Trends and the Operations of Criminal Justice Systems (CTS); EIU estimates
+- Incarceration Rate
+1.452 / 5
+Number of jailed population per 100,000 people. Source: World Prison Brief, Institute for Criminal Policy Research at Birkbeck, University of Londo
+- Access to Small Arms
+4 / 5
+Qualitative assessment of Ease of access to small arms and light weapons by EIU analysts. Source: Economist Intelligence Unit
+- Intensity of Internal Conflict
+3 / 5
+Qualitative assessments of the intensity of organised internal conflict EIU analysts. Source: Economist Intelligence Unit
+- Violent Demonstrations
+2.5 / 5
+Violent demonstrations. Source: Armed Conflict Location and Event Data Project (ACLED); IEP
+- Violent Crime
+3 / 5
+Qualitative assessment of level of violent crime by EIU analysts. Source: Economist Intelligence Unit
+- Political Instability
+4 / 5
+Qualitative assessment of Political instability by EIU analysts. Source: Economist Intelligence Unit
+- Political Terror Scale
+3 / 5
+Political Terror Scale Source: Gibney, Mark, Linda Cornett, Reed Wood, Peter Haschke, Daniel Arnon, and Attilio Pisanò. 2021. The Political Terror Scale 1976-2019. Date Retrieved, from the Political Terror Scale website: http://www.politicalterrorscale.org.
+- Weapons Imports
+1.358 / 5
+Volume of transfers of major conventional weapons as recipient (imports) per 100,000 people. Source: Stockholm International Peace Research Institute (SIPRI) Arms Transfers Database
+- Terrorism Impact
+1 / 5
+Calculation based on a weighted average of the last five years of the number of incidents, injuries, hostages and fatalities by terrorism. Source: Global Terrorism Index (GTI), IEP
+- Deaths from Internal Conflict
+1.16 / 5
+Number of deaths from internal organised conflict. Source: UCDP Georeferenced Event Dataset
+- Military Expenditure (% GDP)
+2.166 / 5
+Military expenditure as a percentage of GDP. Source: The Military Balance, IISS, EIU Estimates
+- Armed Services Personnel Rate
+1.466 / 5
+Number of armed services personnel per 100,000 people. Source: The Military Balance, IISS
+- UN Peacekeeping Funding
+3.982 / 5
+Financial contribution to UN peacekeeping missions. Source: United Nations Committee on Contributions; IEP
+- Nuclear and Heavy Weapons
+1.005 / 5
+Nuclear and heavy weapons capabilities. Source: Military Balance+, IISS; IEP
+- Weapons Exports
+1 / 5
+Volume of transfers of major conventional weapons as supplier (exports) per 100,000 people. Source: SIPRI Arms Transfers Database
+- Refugees and IDPs
+1.241 / 5
+Number of refugees and internally displaced people as a percentage of the population. Source: Office of the High Commissioner for Refugees (UNHCR) Mid-Year Trends; Internal Displacement Monitoring Centre (IDMC)
+- Neighbouring Countries Relations
+2 / 5
+Qualitative assessment of relations with neighbouring countries by EIU analysts. Source: Economist Intelligence Unit
+- Deaths from External Conflict
+1 / 5
+Number of deaths from external organised conflict. Source: UCDP Georeferenced Event Dataset
+- External Conflicts Fought
+2.775 / 5
+Number, duration and role in external conflicts. Source: UCDP Battle-Related Deaths Dataset; IEP
++ Internal Conflicts Fought
+1.105 / 5
+Domestic & International Conflict
+1.81 / 5
+Safety & Security
+2.59 / 5
+Militarisation
+2.115 / 5
