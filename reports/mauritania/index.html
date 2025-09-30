@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive PESTELS Analysis: Mauritania</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Desert Neutrals -->
+    <!-- Application Structure Plan: The application is structured as a single-page dashboard with tabbed navigation. This design was chosen over a linear report to serve the target audience (analysts, strategists) who require non-linear access to information. Users can instantly switch between PESTELS categories (e.g., from 'Economic' indicators to 'Security' threats) to facilitate cross-domain analysis and synthesis. Each section begins with high-level summary cards for quick insights, followed by detailed text and interactive visualizations for deeper exploration. This structure prioritizes user efficiency and data discovery. -->
+    <!-- Visualization & Content Choices: The application uses a combination of data cards, textual summaries, and interactive charts to present the complex information. Report Info: GDP Composition -> Goal: Compare -> Viz: Donut Chart -> Interaction: Hover for details -> Justification: Clearly shows sector contributions. Library: Chart.js. Report Info: Population Structure -> Goal: Inform -> Viz: Bar Chart (Population Pyramid) -> Interaction: Hover for age/gender breakdown -> Justification: Standard, intuitive way to show demographics. Library: Chart.js. Report Info: Human Rights Issues -> Goal: Inform/Organize -> Viz: Interactive Text Blocks -> Interaction: Click to reveal details -> Justification: Manages information density and allows user-driven exploration of sensitive topics. Method: Vanilla JS. This approach ensures all information is presented in its most effective and digestible format. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF7;
+            color: #4A4A4A;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .nav-button {
+            transition: all 0.3s ease;
+        }
+        .nav-button.active {
+            background-color: #D6A354;
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+        .nav-button:not(.active):hover {
+            background-color: #F0E6D5;
+        }
+        .stat-card {
+            background-color: white;
+            border-left: 4px solid #D6A354;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .content-section {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-[#4A4A4A]">Interactive PESTELS Analysis</h1>
+            <p class="text-lg text-[#D6A354] font-semibold">Mauritania</p>
+        </header>
+
+        <nav class="flex flex-wrap justify-center gap-2 mb-8" id="main-nav">
+            <button class="nav-button active px-4 py-2 rounded-full text-sm font-medium" data-target="overview">Overview</button>
+            <button class="nav-button px-4 py-2 rounded-full text-sm font-medium" data-target="political">Political</button>
+            <button class="nav-button px-4 py-2 rounded-full text-sm font-medium" data-target="economic">Economic</button>
+            <button class="nav-button px-4 py-2 rounded-full text-sm font-medium" data-target="social">Social</button>
+            <button class="nav-button px-4 py-2 rounded-full text-sm font-medium" data-target="technological">Technological</button>
+            <button class="nav-button px-4 py-2 rounded-full text-sm font-medium" data-target="environmental">Environmental</button>
+            <button class="nav-button px-4 py-2 rounded-full text-sm font-medium" data-target="legal">Legal</button>
+            <button class="nav-button px-4 py-2 rounded-full text-sm font-medium" data-target="security">Security</button>
+        </nav>
+
+        <main id="content-container">
+            <!-- Overview Section -->
+            <section id="overview" class="content-section">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-2xl font-bold mb-4 text-[#4A4A4A]">Country Profile: Mauritania</h2>
+                    <p class="mb-4">This dashboard provides a comprehensive analysis of Mauritania, a nation at the crossroads of North and Sub-Saharan Africa. It synthesizes political, economic, social, and other critical factors to offer insights for policy analysts, NGOs, and investors. Mauritania faces a complex set of challenges, including deep-seated social stratification, economic dependence on commodities, significant environmental threats from climate change, and regional security risks. However, it also possesses strategic importance and resources that present opportunities for growth and development. Use the navigation above to explore the specific domains of the analysis.</p>
+                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                           <h3 class="text-xl font-semibold mb-3 text-[#D6A354]">Demographic Snapshot</h3>
+                           <div class="chart-container h-64 md:h-80"><canvas id="ethnicChart"></canvas></div>
+                           <p class="text-center text-sm mt-2">Ethnic composition illustrates the diverse social fabric. (Source: CIA World Factbook)</p>
+                        </div>
+                        <div>
+                           <h3 class="text-xl font-semibold mb-3 text-[#D6A354]">Population Structure</h3>
+                           <div class="chart-container h-64 md:h-80"><canvas id="populationPyramid"></canvas></div>
+                           <p class="text-center text-sm mt-2">A youthful population presents both demographic dividends and challenges. (Source: CIA World Factbook)</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Political Section -->
+            <section id="political" class="content-section hidden">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-2xl font-bold mb-2 text-[#4A4A4A]">Political Landscape</h2>
+                    <p class="mb-6 text-gray-600">Mauritania's political environment is characterized by a presidential republic system that has seen a history of coups, but has experienced relative stability in recent years. Governance is a key challenge, with ongoing efforts to strengthen democratic institutions and maintain regional alliances.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                        <div class="stat-card p-4 rounded-lg shadow-sm">
+                            <h3 class="font-bold text-lg">Government Type</h3>
+                            <p class="text-xl text-[#D6A354]">Presidential Republic</p>
+                        </div>
+                        <div class="stat-card p-4 rounded-lg shadow-sm">
+                            <h3 class="font-bold text-lg">Political Stability Index</h3>
+                            <p class="text-xl text-[#D6A354]">-1.15 (2022)</p>
+                            <p class="text-xs text-gray-500">Source: TheGlobalEconomy.com</p>
+                        </div>
+                        <div class="stat-card p-4 rounded-lg shadow-sm">
+                            <h3 class="font-bold text-lg">Key Alliances</h3>
+                            <p class="text-xl text-[#D6A354]">AU, G5 Sahel, EU, USA</p>
+                        </div>
+                    </div>
+                    <ul class="list-disc list-inside space-y-2">
+                        <li><strong>Government Structure:</strong> A centralized system led by the President, with a bicameral parliament. The current president is Mohamed Ould Ghazouani, who came to power in 2019 in the country's first peaceful transfer of power.</li>
+                        <li><strong>Political Developments:</strong> Recent years have focused on countering corruption, addressing historical grievances related to slavery, and managing security threats in the Sahel region.</li>
+                        <li><strong>International Relations:</strong> Mauritania is a key partner for Western nations in counter-terrorism efforts in the Sahel. It maintains strong economic and political ties with the European Union (especially France and Spain) and the United States.</li><br>
+			 
+
+<center><strong>Bertelsmann Transformation Index Political Report – Mauritania (BTI Report, 2024)</strong></center>
+<br>
+  <strong>Government Structure & Leadership</strong>
+  <p>
+    Mauritania is officially an Islamic Republic operating under a presidential system, but its political landscape remains heavily shaped by the military elite. Despite formal democratic procedures and periodic elections, real political power continues to be concentrated in the hands of the executive and security apparatus. The current leadership, under President Mohamed Ould Ghazouani, maintains relative popular legitimacy but also benefits from a security-first governance model rooted in military patronage.
+  </p><br>
+
+  <strong>Political Stability & Institutional Control</strong>
+  <p>
+    According to the Bertelsmann Transformation Index (BTI) 2024, Mauritania scores <strong>8/10</strong> on the indicator <em>"Monopoly on the Use of Force"</em>, suggesting a <strong>high degree of political stability</strong> in terms of state authority and territorial integrity. The government faces no active insurgencies or separatist movements, and national security forces maintain consistent control over the country’s borders and internal regions.
+    However, political stability is not synonymous with democratic resilience. The dominance of the security sector in civil governance undermines institutional checks and balances. While major violent conflict is absent, power remains personalized, and avenues for peaceful political contestation are limited.
+  </p><br>
+
+  <strong>Democratic Institutions, Human Rights & Governance Risks</strong>
+  <ul>
+    <li><Elections are held regularly, but opposition parties operate under constraints, and political pluralism remains limited.</li>
+    <li>The judiciary lacks independence, and public trust in formal political institutions is low.</li>
+    <li>The military wields informal veto power over key policy areas, restricting genuine civilian oversight.</li>
+  </ul>
+  <p><br>
+    According to BTI 2024, the democratic quality of institutions is <strong>weak</strong>, with <strong>limited accountability</strong>, <strong>concentrated executive power</strong>, and a <strong>fragile rule-of-law environment</strong>. These dynamics present <strong>medium-to-high governance risk</strong> for long-term investors and diplomatic partners.
+Also, the U.S. State Department’s 2024 Trafficking in Persons (TIP) Report, Mauritania remains on Tier 2. The government is making efforts to combat trafficking and hereditary slavery, but challenges persist:
+
+Hereditary slavery practices still affect vulnerable communities, particularly the Haratine and Afro-Mauritanian populations <i>(most recently verified with international diaspora communities during UNGA80)</i>.
+
+Some law enforcement and judicial officials refuse to investigate slavery-related crimes, and cases are often settled informally, outside formal courts.
+
+Victims of sex trafficking and hereditary slavery are at times prosecuted for fornication or adultery, reflecting weak victim protections.
+
+The government has made progress by prosecuting traffickers and creating victims’ funds, but enforcement remains inconsistent and under-resourced.
+  </p><br>
+
+  <strong>Regional Context & Geopolitical Exposure</strong>
+  <p>
+    Mauritania's geographic proximity to the Sahel conflict zone (notably Mali) poses potential spillover risks. Although it has successfully avoided the kind of instability that has plagued neighbors, persistent insecurity in the region demands continued vigilance. Border control and counterterrorism efforts receive significant external support (e.g., from France and the G5 Sahel), but long-term sustainability depends on institutional reform.
+  </p><br>
+
+  <strong>Key Political Risk Factors:</strong>
+  <ul>
+    <li>1. Military-dominated governance structure</li>
+    <li>2. Lack of robust democratic checks and balances</li>
+    <li>3. Potential for external shock spillover from Sahel conflicts</li>
+    <li>4. Ethnic tensions and social exclusion risks, especially among Haratin and Black African communities</li>
+  </ul><br>
+
+  <strong>Summary Assessment:</strong>
+  <p>
+    Mauritania exhibits <strong>high coercive stability</strong> but remains vulnerable in terms of <strong>democratic legitimacy and governance transparency</strong>. The political environment is stable in the short term but requires structural reform to ensure resilience and inclusivity over the long term.
+  </p>
+ 
+                    </ul>
+                </div>
+
+            </section>
+
+            <!-- Economic Section -->
+            <section id="economic" class="content-section hidden">
+                 <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-2xl font-bold mb-2 text-[#4A4A4A]">Economic Profile</h2>
+                    <p class="mb-6 text-gray-600">The economy is largely based on the extraction and export of natural resources, making it vulnerable to global commodity price fluctuations. Key challenges include high youth unemployment, poverty, and the need for economic diversification.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                        <div class="stat-card p-4 rounded-lg shadow-sm">
+                            <h3 class="font-bold text-lg">GDP (Nominal)</h3>
+                            <p class="text-xl text-[#D6A354]">$10.38 Billion (2022)</p>
+                            <p class="text-xs text-gray-500">Source: World Bank</p>
+                        </div>
+                        <div class="stat-card p-4 rounded-lg shadow-sm">
+                            <h3 class="font-bold text-lg">GDP Growth</h3>
+                            <p class="text-xl text-[#D6A354]">5.3% (2022 est.)</p>
+                            <p class="text-xs text-gray-500">Source: IMF</p>
+                        </div>
+                        <div class="stat-card p-4 rounded-lg shadow-sm">
+                            <h3 class="font-bold text-lg">Key Exports</h3>
+                            <p class="text-xl text-[#D6A354]">Iron Ore, Fish, Gold</p>
+                        </div>
+                    </div>
+                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                         <div>
+                            <h3 class="text-xl font-semibold mb-3 text-center text-[#D6A354]">GDP Composition by Sector</h3>
+                            <div class="chart-container"><canvas id="gdpChart"></canvas></div>
+                         </div>
+                         <div>
+                            <ul class="list-disc list-inside space-y-2">
+                                <li><strong>Key Sectors:</strong> The economy is dominated by the extractive industries (iron ore, gold, copper) and fisheries. Agriculture remains a significant source of livelihood but is hampered by desertification.</li>
+                                <li><strong>Economic Trends:</strong> The IMF notes recent growth driven by the mining sector and fishing. However, inflation remains a concern. Foreign direct investment is primarily targeted at the extractive sectors.</li>
+                                <li><strong>Challenges:</strong> Major challenges include reducing youth unemployment (estimated over 30%), diversifying the economy away from raw material exports, and improving the business climate.</li>
+                            </ul>
+                         </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Social Section -->
+            <section id="social" class="content-section hidden">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-2xl font-bold mb-2 text-[#4A4A4A]">Social & Cultural Fabric</h2>
+                    <p class="mb-6 text-gray-600">Mauritanian society is marked by deep-seated stratification along ethnic and caste lines. Human rights issues, particularly related to descent-based slavery and discrimination against Black Mauritanians, are significant challenges.</p>
+                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                        <div class="stat-card p-4 rounded-lg shadow-sm">
+                            <h3 class="font-bold text-lg">Population</h3>
+                            <p class="text-xl text-[#D6A354]">~4.7 Million (2022)</p>
+                             <p class="text-xs text-gray-500">Source: World Bank</p>
+                        </div>
+                        <div class="stat-card p-4 rounded-lg shadow-sm">
+                            <h3 class="font-bold text-lg">Literacy Rate</h3>
+                            <p class="text-xl text-[#D6A354]">53.5% (Total)</p>
+                             <p class="text-xs text-gray-500">Source: CIA World Factbook</p>
+                        </div>
+                        <div class="stat-card p-4 rounded-lg shadow-sm">
+                            <h3 class="font-bold text-lg">Official Language</h3>
+                            <p class="text-xl text-[#D6A354]">Arabic</p>
+                        </div>
+                    </div>
+                    <ul class="list-disc list-inside space-y-2 mb-4">
+                        <li><strong>Social Stratification:</strong> Society is traditionally divided between the Bidhan (White Moors), Haratin (Black Moors/descendants of slaves), and other Sub-Saharan African groups. This hierarchy affects access to resources, education, and political power.</li>
+                        <li><strong>Human Rights:</strong> Human Rights Watch and Amnesty International report on the persistence of slavery practices despite its criminalization. There are also severe restrictions on freedom of expression, association, and assembly. Activists who speak out against slavery and discrimination face harassment and arrest.</li>
+                        <li><strong>Education & Healthcare:</strong> Access to quality education and healthcare is limited, especially in rural areas. Disparities along ethnic and wealth lines are pronounced.</li>
+                        <li><strong>Cultural Norms:</strong> Islam is the state religion and permeates all aspects of life. Traditional customs and tribal affiliations remain highly influential. French is widely used in business and administration, alongside the official language, Arabic.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Technological Section -->
+            <section id="technological" class="content-section hidden">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-2xl font-bold mb-2 text-[#4A4A4A]">Technological Advancement</h2>
+                    <p class="mb-6 text-gray-600">Technological infrastructure in Mauritania is still developing. While mobile phone penetration is relatively high, internet access and digital literacy lag behind, creating a digital divide between urban and rural areas.</p>
+                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                        <div class="stat-card p-4 rounded-lg shadow-sm">
+                            <h3 class="font-bold text-lg">Internet Penetration</h3>
+                            <p class="text-xl text-[#D6A354]">~58.6% (2023)</p>
+                            <p class="text-xs text-gray-500">Source: CIA World Factbook</p>
+                        </div>
+                        <div class="stat-card p-4 rounded-lg shadow-sm">
+                            <h3 class="font-bold text-lg">Mobile Subscriptions</h3>
+                            <p class="text-xl text-[#D6A354]">115 per 100 people</p>
+                            <p class="text-xs text-gray-500">Source: World Bank</p>
+                        </div>
+                    </div>
+                    <ul class="list-disc list-inside space-y-2">
+                        <li><strong>Telecommunications:</strong> The mobile sector is the most developed part of the telecom industry. Fiber optic connectivity is expanding but primarily concentrated in the capital, Nouakchott.</li>
+                        <li><strong>Digital Services:</strong> The government is slowly digitizing public services, but progress is limited. Mobile money services are growing, offering potential for financial inclusion.</li>
+                        <li><strong>Challenges:</strong> High costs, limited infrastructure outside major cities, and low digital literacy are major barriers to wider technology adoption. There is minimal local R&D or tech innovation support.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Environmental Section -->
+            <section id="environmental" class="content-section hidden">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-2xl font-bold mb-2 text-[#4A4A4A]">Environmental Challenges</h2>
+                    <p class="mb-6 text-gray-600">Mauritania is on the front lines of climate change. Severe and prolonged droughts, advancing desertification, and water scarcity pose existential threats to livelihoods, food security, and social stability.</p>
+                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                        <div class="stat-card p-4 rounded-lg shadow-sm">
+                            <h3 class="font-bold text-lg">Key Threat</h3>
+                            <p class="text-xl text-[#D6A354]">Desertification</p>
+                        </div>
+                        <div class="stat-card p-4 rounded-lg shadow-sm">
+                            <h3 class="font-bold text-lg">Climate Impact</h3>
+                            <p class="text-xl text-[#D6A354]">Extreme Droughts</p>
+                        </div>
+                        <div class="stat-card p-4 rounded-lg shadow-sm">
+                            <h3 class="font-bold text-lg">Primary Concern</h3>
+                            <p class="text-xl text-[#D6A354]">Water Scarcity</p>
+                        </div>
+                    </div>
+                    <ul class="list-disc list-inside space-y-2">
+                        <li><strong>Climate Change:</strong> The country is experiencing rising temperatures and increasingly erratic rainfall. The Sahara Desert is expanding southward, encroaching on arable and grazing land.</li>
+                        <li><strong>Water Scarcity:</strong> As a largely desert nation, Mauritania has extremely limited freshwater resources. Over-exploitation of aquifers and drought are worsening the situation.</li>
+                        <li><strong>Food Security:</strong> Climate change directly impacts agriculture and pastoralism, the mainstays for much of the rural population. This leads to chronic food insecurity, with many reliant on international aid (Source: ReliefWeb).</li>
+                        <li><strong>Responses:</strong> The government, with support from partners like the World Bank, has initiated projects like the Great Green Wall to combat desertification and programs to improve water management, but the scale of the challenge is immense.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Legal Section -->
+            <section id="legal" class="content-section hidden">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-2xl font-bold mb-2 text-[#4A4A4A]">Legal & Regulatory Framework</h2>
+                    <p class="mb-6 text-gray-600">The legal system is a hybrid of Islamic law (Shari'a) and French civil law. While modern statutes address issues like slavery and human rights, their implementation and enforcement remain weak, creating a significant gap between law and practice.</p>
+                    <ul class="list-disc list-inside space-y-2">
+                        <li><strong>Legal System:</strong> Courts apply both Shari'a law, particularly in family and personal status matters, and secular codes inherited from the French colonial period.</li>
+                        <li><strong>Anti-Slavery Legislation:</strong> Mauritania criminalized slavery in 2007 and passed a stronger law in 2015 making it a crime against humanity. However, prosecutions are rare and ineffective, and activists who report cases often face persecution (Source: HRW, Amnesty).</li>
+                        <li><strong>Civil Liberties:</strong> The constitution provides for freedoms of speech and press, but these rights are severely restricted in practice. Laws criminalizing "blasphemy" and "insulting the state" are used to suppress dissent.</li>
+                        <li><strong>U.S. TPS Act of 2024 (H.R.7034):</strong> This proposed legislation in the U.S. Congress would grant Temporary Protected Status (TPS) to Mauritanian nationals. Its introduction signifies U.S. legislative concern over the "exceptional and extraordinary conditions" in Mauritania, citing entrenched hereditary slavery, racial discrimination, and state-sanctioned violence that prevent safe return.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Security Section -->
+            <section id="security" class="content-section hidden">
+                 <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-2xl font-bold mb-2 text-[#4A4A4A]">Security Environment</h2>
+                    <p class="mb-6 text-gray-600">Mauritania is located in a volatile region. While internal stability has been maintained, it faces significant external threats from terrorist groups operating in the Sahel, particularly along its porous eastern borders.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                        <div class="stat-card p-4 rounded-lg shadow-sm">
+                            <h3 class="font-bold text-lg">OSAC Crime Rating</h3>
+                            <p class="text-xl text-[#D6A354]">High</p>
+                            <p class="text-xs text-gray-500">Source: U.S. OSAC</p>
+                        </div>
+                        <div class="stat-card p-4 rounded-lg shadow-sm">
+                            <h3 class="font-bold text-lg">Primary Threat</h3>
+                            <p class="text-xl text-[#D6A354]">Regional Terrorism</p>
+                        </div>
+                    </div>
+                    <ul class="list-disc list-inside space-y-2">
+                        <li><strong>Regional Threats:</strong> The primary security threat comes from Al-Qaeda and ISIS affiliates based in neighboring Mali. The U.S. Overseas Security Advisory Council (OSAC) advises against travel to border areas due to the risk of terrorism and kidnapping.</li>
+                        <li><strong>Counter-Terrorism:</strong> The Mauritanian military is considered one of the more effective forces in the region and has successfully prevented major terrorist attacks on its soil for over a decade. It is a key member of the G5 Sahel joint force.</li>
+                        <li><strong>Internal Security:</strong> While politically motivated violence is low, high unemployment and social tensions create risks of civil unrest. Common crime, such as theft and robbery, is a concern in urban centers.</li>
+                        <li><strong>Border Security:</strong> Securing the long, remote borders in the Sahara is a major challenge and a priority for the government and its international partners.</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const mainNav = document.getElementById('main-nav');
+    const contentContainer = document.getElementById('content-container');
+    const navButtons = mainNav.querySelectorAll('.nav-button');
+    const contentSections = contentContainer.querySelectorAll('.content-section');
+
+    mainNav.addEventListener('click', (e) => {
+        const targetButton = e.target.closest('.nav-button');
+        if (!targetButton) return;
+
+        const targetId = targetButton.dataset.target;
+        
+        navButtons.forEach(button => {
+            button.classList.remove('active');
+        });
+        targetButton.classList.add('active');
+
+        contentSections.forEach(section => {
+            if (section.id === targetId) {
+                section.classList.remove('hidden');
+            } else {
+                section.classList.add('hidden');
+            }
+        });
+    });
+
+    const createChart = (ctx, type, data, options) => {
+        new Chart(ctx, { type, data, options });
+    };
+
+    const defaultChartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'top',
+                labels: {
+                    font: {
+                        family: "'Inter', sans-serif"
+                    }
+                }
+            },
+            tooltip: {
+                bodyFont: {
+                    family: "'Inter', sans-serif"
+                },
+                titleFont: {
+                    family: "'Inter', sans-serif"
+                }
+            }
+        }
+    };
+
+    const gdpData = {
+        labels: ['Services', 'Industry (incl. Mining)', 'Agriculture'],
+        datasets: [{
+            label: 'GDP by Sector',
+            data: [49.5, 39.2, 11.3],
+            backgroundColor: ['#D6A354', '#4A4A4A', '#F0E6D5'],
+            borderColor: '#FDFBF7',
+            borderWidth: 2
+        }]
+    };
+    const gdpCtx = document.getElementById('gdpChart')?.getContext('2d');
+    if (gdpCtx) createChart(gdpCtx, 'doughnut', gdpData, defaultChartOptions);
+
+    const ethnicData = {
+        labels: ['Black Moors (Haratin)', 'White Moors (Bidhan)', 'Sub-Saharan Africans'],
+        datasets: [{
+            label: 'Ethnic Groups',
+            data: [40, 30, 30],
+            backgroundColor: ['#4A4A4A', '#F0E6D5', '#D6A354'],
+            borderColor: '#FDFBF7',
+            borderWidth: 2
+        }]
+    };
+    const ethnicCtx = document.getElementById('ethnicChart')?.getContext('2d');
+    if (ethnicCtx) createChart(ethnicCtx, 'pie', ethnicData, defaultChartOptions);
+
+    const populationData = {
+        labels: ['0-14', '15-24', '25-54', '55-64', '65+'],
+        datasets: [
+            {
+                label: 'Male',
+                data: [-37.8, -20.5, -31.7, -5.5, -4.5].map(v => v/2),
+                backgroundColor: '#4A4A4A',
+                barPercentage: 0.9,
+                categoryPercentage: 0.8
+            },
+            {
+                label: 'Female',
+                data: [37.1, 20.1, 32.3, 5.8, 4.7].map(v => v/2),
+                backgroundColor: '#D6A354',
+                barPercentage: 0.9,
+                categoryPercentage: 0.8
+            }
+        ]
+    };
+    const populationPyramidOptions = {
+        ...defaultChartOptions,
+        indexAxis: 'y',
+        scales: {
+            x: {
+                stacked: true,
+                ticks: {
+                    callback: value => `${Math.abs(value)}%`
+                },
+                grid: {
+                    display: false
+                }
+            },
+            y: {
+                beginAtZero: true,
+                stacked: true,
+                grid: {
+                    display: false
+                }
+            }
+        },
+        plugins: {
+            ...defaultChartOptions.plugins,
+            tooltip: {
+                callbacks: {
+                    label: (context) => `${context.dataset.label}: ${Math.abs(context.raw).toFixed(1)}%`
+                }
+            }
+        }
+    };
+    const populationPyramidCtx = document.getElementById('populationPyramid')?.getContext('2d');
+    if (populationPyramidCtx) createChart(populationPyramidCtx, 'bar', populationData, populationPyramidOptions);
+});
+</script>
+
+</body>
+</html>
