@@ -1,0 +1,82 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Bab el-Mandeb & Suez Corridor",
+        "Risk_Level": "Critical",
+        "Probability": 4,
+        "Severity": 5,
+        "Systemic_Spillover": 5
+      },
+      "geometry": { "type": "Point", "coordinates": [43.3, 12.6] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Strait of Hormuz",
+        "Risk_Level": "Critical",
+        "Probability": 3,
+        "Severity": 5,
+        "Systemic_Spillover": 5
+      },
+      "geometry": { "type": "Point", "coordinates": [56.3, 26.6] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Strait of Malacca",
+        "Risk_Level": "High",
+        "Probability": 3,
+        "Severity": 4,
+        "Systemic_Spillover": 5
+      },
+      "geometry": { "type": "Point", "coordinates": [101.0, 2.5] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Panama Canal",
+        "Risk_Level": "High",
+        "Probability": 3,
+        "Severity": 4,
+        "Systemic_Spillover": 4
+      },
+      "geometry": { "type": "Point", "coordinates": [-79.7, 9.1] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Turkish Straits",
+        "Risk_Level": "High",
+        "Probability": 2,
+        "Severity": 4,
+        "Systemic_Spillover": 4
+      },
+      "geometry": { "type": "Point", "coordinates": [29.0, 41.0] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Strait of Gibraltar",
+        "Risk_Level": "Moderate",
+        "Probability": 2,
+        "Severity": 4,
+        "Systemic_Spillover": 3
+      },
+      "geometry": { "type": "Point", "coordinates": [-5.6, 35.9] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Taiwan Strait",
+        "Risk_Level": "Moderate",
+        "Probability": 2,
+        "Severity": 4,
+        "Systemic_Spillover": 4
+      },
+      "geometry": { "type": "Point", "coordinates": [120.0, 24.0] }
+    }
+  ]
+}

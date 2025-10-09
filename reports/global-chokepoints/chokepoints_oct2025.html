@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Global Maritime Chokepoints - Interactive Risk Map | Quanta Analytica MNS Consulting</title>
+<meta name="description" content="An interactive global risk intelligence map highlighting key maritime chokepoints and their strategic, geopolitical, and economic importance. Prepared by M. Nuri Shakoor for Quanta Analytica MNS Consulting and ARAC International Inc.">
+<meta name="keywords" content="global chokepoints, maritime security, geopolitical risk, Quanta Analytica, M. Nuri Shakoor, ARAC International, global trade, sea lanes, Leaflet map, shipping routes, security analysis">
+<meta name="author" content="M. Nuri Shakoor, Quanta Analytica MNS Consulting, ARAC International Inc.">
+<link rel="canonical" href="https://quanta-analytica.mnshakoor.com/reports/global-chokepoints/chokepoints-oct2025.html">
+<meta property="og:title" content="Global Maritime Chokepoints - Interactive Risk Map | Quanta Analytica MNS Consulting">
+<meta property="og:description" content="Explore the world's most significant maritime chokepoints through an interactive intelligence map with detailed risk analysis by M. Nuri Shakoor.">
+<meta property="og:image" content="https://quanta-analytica.mnshakoor.com/assets/images/global-chokepoints-map-preview.png">
+<meta property="og:url" content="https://quanta-analytica.mnshakoor.com/reports/global-chokepoints/chokepoints-oct2025.html">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Global Maritime Chokepoints - Interactive Risk Map">
+<meta name="twitter:description" content="An interactive intelligence dashboard analyzing strategic maritime chokepoints worldwide.">
+<meta name="twitter:image" content="https://quanta-analytica.mnshakoor.com/assets/images/global-chokepoints-map-preview.png">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+<style>
+  html, body { height: 100%; margin: 0; background: #0f1115; color: #e6e6e6; font-family: system-ui, Arial, sans-serif; }
+  #map { height: 85vh; border-top: 2px solid #222; border-bottom: 2px solid #222; }
+  header { padding: 10px 20px; background: #141821; border-bottom: 1px solid #222; }
+  h1 { margin: 0; font-size: 20px; color: #60a5fa; }
+  .leaflet-popup-content { font-size: 13px; line-height: 1.4; }
+  .risk-critical { color: #ef4444; font-weight: bold; }
+  .risk-high { color: #f59e0b; font-weight: bold; }
+  .risk-moderate { color: #22c55e; font-weight: bold; }
+  .risk-contingency { color: #a855f7; font-weight: bold; }
+  footer { background: #141821; padding: 20px; font-size: 14px; border-top: 1px solid #333; }
+  section.report { max-width: 1100px; margin: auto; padding: 20px; line-height: 1.6; }
+  section.report h2 { color: #60a5fa; margin-top: 0; }
+  section.report table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+  section.report th, section.report td { border: 1px solid #333; padding: 8px; text-align: left; }
+  section.report th { background: #1f2937; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Global Maritime Chokepoints - Interactive Risk Map</h1>
+  <small>Prepared by <strong>M. Nuri Shakoor</strong> | Quanta Analytica MNS Consulting | ARAC International Inc. | October 2025</small>
+</header>
+
+<div id="map"></div>
+
+<section class="report">
+  <h2>Strategic Risk Overview</h2>
+  <p>This report provides a strategic analysis of the world’s primary maritime chokepoints—key transit routes where global trade, energy supplies, and strategic security converge. These corridors serve as vital arteries of international commerce and geopolitical leverage points, influencing both global stability and regional dynamics.</p>
+
+  <h3>Top-Tier Chokepoints (by Strategic Relevance)</h3>
+  <table>
+    <tr><th>Chokepoint</th><th>Region</th><th>Risk Level</th><th>Strategic Significance</th></tr>
+    <tr><td>Bab el-Mandeb & Suez Corridor</td><td>Red Sea / Middle East</td><td>Critical</td><td>Vital for oil and container traffic between Asia and Europe.</td></tr>
+    <tr><td>Strait of Hormuz</td><td>Persian Gulf</td><td>Critical</td><td>Handles 20% of global oil flows; primary vulnerability in energy supply.</td></tr>
+    <tr><td>Strait of Malacca</td><td>Indian-Pacific Interface</td><td>High</td><td>Most congested sea lane; essential for East Asian economies.</td></tr>
+    <tr><td>Panama Canal</td><td>Central America</td><td>High</td><td>Facilitates inter-oceanic trade between Atlantic and Pacific routes.</td></tr>
+    <tr><td>Turkish Straits</td><td>Black Sea Access</td><td>High</td><td>Geopolitical leverage point for NATO and Russia; critical for grain exports.</td></tr>
+    <tr><td>Taiwan Strait</td><td>East Asia</td><td>Moderate</td><td>Key semiconductor export corridor; hotspot of U.S.-China tensions.</td></tr>
+    <tr><td>Strait of Gibraltar</td><td>Mediterranean</td><td>Moderate</td><td>Gateway for Atlantic-Mediterranean trade; strategic NATO monitoring area.</td></tr>
+    <tr><td>Cape of Good Hope</td><td>Southern Africa</td><td>Contingency</td><td>Alternate route during Suez disruptions; longer but safer under conflict.</td></tr>
+    <tr><td>Lombok Strait</td><td>Indonesia</td><td>Contingency</td><td>Deep-water alternative for heavy vessels avoiding Malacca.</td></tr>
+  </table>
+</section>
+
+<footer>
+  <p><strong>Prepared by:</strong> M. Nuri Shakoor, Global Security Analyst<br>
+  <strong>Affiliation:</strong> Quanta Analytica MNS Consulting | ARAC International Inc.<br>
+  <strong>Website:</strong> <a href="https://quanta-analytica.mnshakoor.com" target="_blank">https://quanta-analytica.mnshakoor.com</a><br>
+  <strong>Publication Date:</strong> October 2025</p>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script>
+// --- Basemaps ---
+const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap contributors' });
+const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, attribution: 'Tiles &copy; Esri, DigitalGlobe, GeoEye' });
+const terrain = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 17, attribution: '&copy; OpenTopoMap contributors' });
+const map = L.map('map', { center: [15, 20], zoom: 2, layers: [satellite], scrollWheelZoom: 'center', worldCopyJump: true });
+const baseMaps = { 'Satellite (Esri)': satellite, 'OpenStreetMap': osm, 'Terrain': terrain };
+
+// --- Chokepoints Data ---
+const chokepoints = [
+  { name: 'Bab el-Mandeb & Suez Corridor', coords: [12.6, 43.3], region: 'Red Sea / North Africa–Middle East', risk: 'Critical', probability: 4, severity: 5, spillover: 5, description: 'Vital link between the Indian Ocean and the Mediterranean through the Suez Canal.' },
+  { name: 'Strait of Hormuz', coords: [26.6, 56.3], region: 'Persian Gulf / Arabian Sea', risk: 'Critical', probability: 3, severity: 5, spillover: 5, description: 'A crucial oil transit route handling 20% of global petroleum flows.' },
+  { name: 'Strait of Malacca', coords: [2.5, 101.0], region: 'Southeast Asia / Indian Ocean', risk: 'High', probability: 3, severity: 4, spillover: 5, description: 'World’s busiest maritime corridor connecting the Indian and Pacific Oceans.' },
+  { name: 'Panama Canal', coords: [9.1, -79.7], region: 'Central America / Americas Inter-Oceanic', risk: 'High', probability: 3, severity: 4, spillover: 4, description: 'Crucial for trans-Atlantic and trans-Pacific shipping, vulnerable to droughts and delays.' },
+  { name: 'Turkish Straits', coords: [41.0, 29.0], region: 'Eastern Mediterranean / Black Sea', risk: 'High', probability: 2, severity: 4, spillover: 4, description: 'Includes Bosporus and Dardanelles, connecting the Black Sea to the Mediterranean.' },
+  { name: 'Strait of Gibraltar', coords: [35.9, -5.6], region: 'Mediterranean / Atlantic Europe', risk: 'Moderate', probability: 2, severity: 4, spillover: 3, description: 'Gateway between the Atlantic Ocean and the Mediterranean Sea.' },
+  { name: 'Taiwan Strait', coords: [24.0, 120.0], region: 'Western Pacific / East Asia', risk: 'Moderate', probability: 2, severity: 4, spillover: 4, description: 'Strategic shipping lane critical for semiconductor exports and regional stability.' },
+  { name: 'Cape of Good Hope', coords: [-34.4, 18.5], region: 'Southern Africa / Indian-Atlantic Transition', risk: 'Contingency', probability: 1, severity: 3, spillover: 2, description: 'Alternate route when Suez Canal or Red Sea routes are disrupted.' },
+  { name: 'Lombok Strait', coords: [-8.5, 116.0], region: 'Indonesia / Maritime Southeast Asia', risk: 'Contingency', probability: 1, severity: 3, spillover: 3, description: 'Deep-draft alternate to the Strait of Malacca used by large oil tankers.' }
+];
+
+const layers = { Critical: L.layerGroup(), High: L.layerGroup(), Moderate: L.layerGroup(), Contingency: L.layerGroup() };
+
+chokepoints.forEach(cp => {
+  const popupHTML = `<div style='min-width:180px'><strong>${cp.name}</strong><br><em>${cp.region}</em><br><br><span class='risk-${cp.risk.toLowerCase()}'>${cp.risk}</span> Risk<br><b>Probability:</b> ${cp.probability} | <b>Severity:</b> ${cp.severity} | <b>Spillover:</b> ${cp.spillover}<br><br><p>${cp.description}</p></div>`;
+  const marker = L.circleMarker(cp.coords, { radius: 7, fillColor: cp.risk === 'Critical' ? '#ef4444' : cp.risk === 'High' ? '#f59e0b' : cp.risk === 'Moderate' ? '#22c55e' : '#a855f7', color: '#111', weight: 1, fillOpacity: 0.9 }).bindPopup(popupHTML);
+  layers[cp.risk].addLayer(marker);
+});
+
+Object.values(layers).forEach(layer => layer.addTo(map));
+L.control.layers(baseMaps, { 'Critical Risk Points': layers.Critical, 'High Risk Points': layers.High, 'Moderate Risk Points': layers.Moderate, 'Contingency Routes': layers.Contingency }, { collapsed: false, position: 'topright' }).addTo(map);
+map.fitBounds(chokepoints.map(cp => cp.coords));
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+ID,Name,Region,Latitude,Longitude,Risk_Level,Probability,Severity,Systemic_Spillover,Notes
+1,Bab el-Mandeb & Suez Corridor,Red Sea / North Africa–Middle East,12.6,43.3,Critical,4,5,5,"Combined system: Bab el-Mandeb → Gulf of Aden → Suez Canal (Egypt). Vital for 10–12% of global trade."
+2,Strait of Hormuz,Persian Gulf / Arabian Sea,26.6,56.3,Critical,3,5,5,"Energy chokepoint; 20–30% of global oil and LNG exports transit here."
+3,Strait of Malacca,Southeast Asia / Indian Ocean,2.5,101.0,High,3,4,5,"Handles 25% of world seaborne trade. Key to China’s “Malacca Dilemma.”"
+4,Panama Canal,Central America / Americas Inter-Oceanic,9.1,-79.7,High,3,4,4,"Connects Pacific ↔ Atlantic. Climate-driven water shortages threaten throughput."
+5,Turkish Straits,Eastern Mediterranean / Black Sea,41.0,29.0,High,2,4,4,"Includes Bosporus and Dardanelles. Sole maritime exit for Black Sea grain and oil."
+6,Strait of Gibraltar,Mediterranean / Atlantic Europe,35.9,-5.6,Moderate,2,4,3,"Main maritime gateway between Atlantic and Mediterranean."
+7,Taiwan Strait,Western Pacific / East Asia,24.0,120.0,Moderate,2,4,4,"Vital shipping corridor for global electronics."
+8,Cape of Good Hope (Alternate Route),Southern Africa / Indian-Atlantic Transition,-34.4,18.5,Contingency,1,3,2,"Major reroute during Suez or Red Sea disruptions."
+9,Lombok Strait (Alternate for Malacca),Indonesia / Maritime Southeast Asia,-8.5,116.0,Contingency,1,3,3,"Deep enough for large vessels; bypass for Malacca during congestion or security incidents."
