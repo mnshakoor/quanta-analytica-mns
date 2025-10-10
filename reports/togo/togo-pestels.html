@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geopolitical Risk Analysis: Togo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Serene Coast -->
+    <!-- Application Structure Plan: The SPA is structured as a single-page dashboard with a fixed vertical navigation sidebar for seamless exploration. This design was chosen over a linear report to provide users with immediate access to any section, facilitating non-linear information discovery and comparison. The flow begins with a high-level 'Strategic Outlook' to give immediate key insights. It then drills down into foundational 'Geographic & Demographic' context, followed by the detailed 'PESTELS' and 'SWOT' analyses in visually distinct card and grid formats. A dedicated 'Data Visualizations' section consolidates all quantitative data for at-a-glance comparison. This architecture transforms a dense report into an accessible, interactive intelligence tool, prioritizing user control and rapid comprehension. -->
+    <!-- Visualization & Content Choices: 
+        - Strategic Outlook: Report Info -> 1-3 year forecast. Goal -> Inform on key risks/advantages. Presentation -> Emphasized text block. Interaction -> None. Justification -> Delivers the most critical conclusion upfront.
+        - Geographic Profile: Report Info -> Land area, coastline, resources. Goal -> Provide physical context. Presentation -> Key stats cards next to a CSS-based map representation. Interaction -> None. Justification -> Visual and statistical context without chart overhead.
+        - Demographics & Population Pyramid: Report Info -> Age/sex distribution. Goal -> Visualize population structure (youth bulge). Viz -> Horizontal Bar Chart. Interaction -> Tooltips on hover. Justification -> A population pyramid is the standard, most effective way to show this data. Library -> Chart.js.
+        - PESTELS Analysis: Report Info -> Categorized external factors. Goal -> Organize complex information. Presentation -> A grid of themed cards with icons. Interaction -> None. Justification -> Breaks down the analysis into digestible, parallel segments.
+        - SWOT Analysis: Report Info -> Internal/External strategic factors. Goal -> Synthesize strategic position. Presentation -> Classic 2x2 grid. Interaction -> Subtle hover effects. Justification -> The visual matrix is intuitive and universally understood for SWOT.
+        - Economic & Social Indicators: Report Info -> GDP, inflation, literacy, etc. Goal -> Compare key development metrics. Viz -> Grouped Bar and Donut charts. Interaction -> Tooltips. Justification -> Allows for direct comparison of economic performance and social development indicators. Library -> Chart.js.
+        - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8; /* Warm Neutral Background */
+            color: #2F4858; /* Dark Slate Blue Text */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .nav-link {
+            transition: all 0.2s ease-in-out;
+            border-left: 3px solid transparent;
+        }
+        .nav-link.active, .nav-link:hover {
+            background-color: #E6E2DD; /* Muted accent */
+            border-left-color: #8C7B70; /* Darker accent */
+            color: #2F4858;
+        }
+        .accent-bg {
+            background-color: #E6E2DD;
+        }
+        .accent-text {
+            color: #3B5249; /* Muted Green */
+        }
+        .accent-border {
+            border-color: #8C7B70;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FDFBF8;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #B0A195;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8C7B70;
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+    <div class="flex min-h-screen">
+        <!-- Sidebar Navigation -->
+        <nav id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-[#F5F3F0] p-4 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out z-30 shadow-lg">
+            <div class="text-center py-4">
+                <h1 class="text-xl font-bold text-gray-800">Togo Analysis</h1>
+                <p class="text-sm text-gray-500">Geopolitical & Strategic Risk</p>
+            </div>
+            <ul class="mt-8 space-y-2" id="nav-links">
+                <li><a href="#outlook" class="nav-link block font-medium p-3 rounded-lg">Strategic Outlook</a></li>
+                <li><a href="#geo-demo" class="nav-link block font-medium p-3 rounded-lg">Geography & Demographics</a></li>
+                <li><a href="#pestels" class="nav-link block font-medium p-3 rounded-lg">PESTELS Analysis</a></li>
+                <li><a href="#swot" class="nav-link block font-medium p-3 rounded-lg">SWOT Analysis</a></li>
+                <li><a href="#charts" class="nav-link block font-medium p-3 rounded-lg">Data Visualizations</a></li>
+                <li><a href="#sources" class="nav-link block font-medium p-3 rounded-lg">Sources</a></li>
+            </ul>
+        </nav>
+
+        <!-- Mobile Header -->
+        <header class="md:hidden fixed top-0 left-0 right-0 bg-[#F5F3F0] p-4 z-20 shadow-md flex justify-between items-center">
+             <h1 class="text-lg font-bold text-gray-800">Togo Analysis</h1>
+            <button id="menu-toggle" class="text-2xl text-gray-700">☰</button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 md:ml-64 p-6 pt-20 md:pt-8">
+
+            <!-- Section: Strategic Risk Outlook -->
+            <section id="outlook" class="mb-12 scroll-mt-20">
+                <h2 class="text-3xl font-bold mb-4 border-b-2 accent-border pb-2">Strategic Risk Outlook (1-3 Years)</h2>
+                <div class="accent-bg p-6 rounded-lg shadow">
+                    <p class="text-lg leading-relaxed">
+                        Togo's strategic outlook is one of cautious stability, contingent on navigating significant internal and external pressures. The primary short-to-medium term risks stem from <strong class="accent-text">political succession uncertainties, youth unemployment, and the spillover of Sahel-based extremist violence</strong> across its northern border. Economic diversification away from subsistence agriculture and phosphates is critical for long-term growth but faces headwinds from global market volatility and internal governance challenges.
+                    </p>
+                    <p class="mt-4 leading-relaxed">
+                        A key strategic advantage lies in its role as a regional trade and logistics hub, centered on the deep-water Port of Lomé. Continued investment in infrastructure and business climate reforms could solidify this position. However, failure to address social grievances, particularly among the large youth population, and perceived democratic deficits could lead to increased social unrest, undermining investor confidence and developmental progress. Vigilance on the northern border and proactive socio-economic policies will be paramount to maintaining stability.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Section: Geography & Demographics -->
+            <section id="geo-demo" class="mb-12 scroll-mt-20">
+                <h2 class="text-3xl font-bold mb-4 border-b-2 accent-border pb-2">Geographic & Demographic Profile</h2>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-3">Physical Geography</h3>
+                        <div class="grid grid-cols-2 gap-4 text-center">
+                            <div class="bg-white p-4 rounded-lg shadow">
+                                <p class="text-2xl font-bold accent-text">56,785</p>
+                                <p class="text-sm text-gray-600">Area (sq km)</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg shadow">
+                                <p class="text-2xl font-bold accent-text">56 km</p>
+                                <p class="text-sm text-gray-600">Coastline</p>
+                            </div>
+                        </div>
+                        <p class="mt-4 text-gray-700">Togo is a narrow West African nation with a southern coastal plain, central hills, a northern savanna, and a stream-dissected plateau in the northwest. Its tropical climate varies from humid in the south to semi-arid in the north. Key natural resources include phosphates, limestone, marble, and arable land.</p>
+                        <h3 class="text-xl font-semibold mb-3 mt-6">Linguistic & Cultural Norms</h3>
+                        <p class="text-gray-700">With over 37 ethnic groups, Togo has a rich cultural tapestry. The dominant groups are the Ewe in the south and the Kabye in the north. French is the official language, facilitating commerce and administration, while Ewe, Mina, and Kabye are prominent national languages. Traditional beliefs and customs remain influential, often coexisting with Christianity and Islam.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-3">Population Pyramid (2023 est.)</h3>
+                        <div class="chart-container bg-white p-4 rounded-lg shadow">
+                            <canvas id="populationPyramid"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: PESTELS Analysis -->
+            <section id="pestels" class="mb-12 scroll-mt-20">
+                 <h2 class="text-3xl font-bold mb-6 border-b-2 accent-border pb-2">PESTELS Analysis</h2>
+                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Political -->
+                    <div class="bg-white p-6 rounded-lg shadow transition-shadow hover:shadow-xl">
+                        <div class="flex items-center mb-3">
+                             <span class="text-3xl mr-3">🏛️</span>
+                            <h3 class="text-xl font-bold accent-text">Political</h3>
+                        </div>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li><strong>Government:</strong> Presidential republic dominated by the Gnassingbé family since 1967, indicating high stability but also a significant democratic deficit.</li>
+                            <li><strong>Policy Trends:</strong> Focus on economic development ("National Development Plan"), infrastructure, and attracting foreign investment.</li>
+                            <li><strong>Foreign Relations:</strong> Active role in ECOWAS; maintains strong ties with France, China, and neighboring countries. Acts as a mediator in regional conflicts.</li>
+                        </ul>
+                    </div>
+                    <!-- Economic -->
+                    <div class="bg-white p-6 rounded-lg shadow transition-shadow hover:shadow-xl">
+                        <div class="flex items-center mb-3">
+                             <span class="text-3xl mr-3">📈</span>
+                            <h3 class="text-xl font-bold accent-text">Economic</h3>
+                        </div>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li><strong>Key Sectors:</strong> Reliant on agriculture (cotton, cocoa, coffee) and phosphate mining. The Port of Lomé is a critical regional trade hub.</li>
+                            <li><strong>Challenges:</strong> High public debt, vulnerability to commodity price shocks, large informal sector, and high youth unemployment.</li>
+                             <li><strong>IMF/WB:</strong> Engaged in programs focused on fiscal consolidation, governance reform, and improving the business climate.</li>
+                        </ul>
+                    </div>
+                    <!-- Social -->
+                    <div class="bg-white p-6 rounded-lg shadow transition-shadow hover:shadow-xl">
+                        <div class="flex items-center mb-3">
+                             <span class="text-3xl mr-3">👨‍👩‍👧‍👦</span>
+                            <h3 class="text-xl font-bold accent-text">Social</h3>
+                        </div>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li><strong>Demographics:</strong> Significant youth bulge, with nearly 60% of the population under 25, creating demographic pressure for jobs and services.</li>
+                            <li><strong>Inequality:</strong> High levels of poverty and inequality, particularly between urban southern areas and the rural north.</li>
+                            <li><strong>Education & Health:</strong> Progress made, but challenges in quality and access persist. HDI remains low (163rd in 2022).</li>
+                        </ul>
+                    </div>
+                    <!-- Technological -->
+                    <div class="bg-white p-6 rounded-lg shadow transition-shadow hover:shadow-xl">
+                        <div class="flex items-center mb-3">
+                             <span class="text-3xl mr-3">💻</span>
+                            <h3 class="text-xl font-bold accent-text">Technological</h3>
+                        </div>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li><strong>ICT Infrastructure:</strong> Improving, with expanding mobile broadband coverage. Government initiatives aim to create a digital economy.</li>
+                            <li><strong>Innovation:</strong> Nascent tech ecosystem, but limited by funding and skills shortages. Mobile banking is a growing area.</li>
+                            <li><strong>Readiness:</strong> Faces significant gaps in digital literacy and infrastructure to fully capitalize on AI and advanced technologies.</li>
+                        </ul>
+                    </div>
+                     <!-- Environmental, Legal, Security -->
+                     <div class="bg-white p-6 rounded-lg shadow transition-shadow hover:shadow-xl">
+                        <div class="flex items-center mb-3">
+                             <span class="text-3xl mr-3">⚖️</span>
+                            <h3 class="text-xl font-bold accent-text">Legal & Security</h3>
+                        </div>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li><strong>Legal:</strong> Judicial system influenced by the executive, undermining rule of law. Corruption is a major concern (CPI: 31/100 in 2023).</li>
+                             <li><strong>Security:</strong> Increasing threat from Sahel-based extremist groups in the northern Savanes region. OSAC rates crime as high in Lomé.</li>
+                             <li><strong>Environmental:</strong> Vulnerable to climate change impacts like coastal erosion, flooding, and desertification. Deforestation is a pressing issue.</li>
+                        </ul>
+                    </div>
+                 </div>
+            </section>
+
+            <!-- Section: SWOT Analysis -->
+            <section id="swot" class="mb-12 scroll-mt-20">
+                <h2 class="text-3xl font-bold mb-6 border-b-2 accent-border pb-2">SWOT Analysis</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Strengths -->
+                    <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-r-lg">
+                        <h3 class="text-xl font-bold text-green-800 mb-3">Strengths</h3>
+                        <ul class="list-disc list-inside space-y-2 text-green-900">
+                            <li>Strategic location with a modern, deep-water Port of Lomé serving as a gateway to landlocked Sahelian countries.</li>
+                            <li>Political stability, albeit under authoritarian rule, has prevented major internal conflict seen in neighboring states.</li>
+                            <li>Membership in regional blocs like ECOWAS and UEMOA facilitates trade and diplomatic engagement.</li>
+                        </ul>
+                    </div>
+                    <!-- Weaknesses -->
+                    <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-lg">
+                        <h3 class="text-xl font-bold text-red-800 mb-3">Weaknesses</h3>
+                        <ul class="list-disc list-inside space-y-2 text-red-900">
+                            <li>High dependence on a narrow range of exports (phosphates, cotton) vulnerable to price fluctuations.</li>
+                            <li>Endemic corruption and weak rule of law, which deter foreign investment and hinder development.</li>
+                            <li>Large, unemployed youth population poses a risk of social and political instability.</li>
+                        </ul>
+                    </div>
+                    <!-- Opportunities -->
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg">
+                        <h3 class="text-xl font-bold text-blue-800 mb-3">Opportunities</h3>
+                        <ul class="list-disc list-inside space-y-2 text-blue-900">
+                            <li>Potential to expand its role as a regional logistics and financial services hub.</li>
+                            <li>Untapped potential in agriculture (agribusiness) and tourism.</li>
+                            <li>Growing digital economy and mobile penetration offer avenues for new service-based industries.</li>
+                        </ul>
+                    </div>
+                    <!-- Threats -->
+                    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-r-lg">
+                        <h3 class="text-xl font-bold text-yellow-800 mb-3">Threats</h3>
+                        <ul class="list-disc list-inside space-y-2 text-yellow-900">
+                            <li>Spillover of Islamist insurgency and instability from Burkina Faso and the broader Sahel region.</li>
+                            <li>Potential for social unrest fueled by political grievances, inequality, and lack of economic opportunity.</li>
+                            <li>Climate change impacts, such as coastal erosion and erratic rainfall, threaten coastal communities and agriculture.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+             <!-- Section: Data Visualizations -->
+            <section id="charts" class="mb-12 scroll-mt-20">
+                <h2 class="text-3xl font-bold mb-6 border-b-2 accent-border pb-2">Data Visualizations</h2>
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <div class="bg-white p-4 rounded-lg shadow">
+                         <h3 class="text-xl font-semibold mb-3 text-center">Key Economic Indicators</h3>
+                        <div class="chart-container">
+                            <canvas id="economicChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow">
+                         <h3 class="text-xl font-semibold mb-3 text-center">Social Development</h3>
+                        <div class="chart-container flex items-center justify-around">
+                            <canvas id="literacyChart"></canvas>
+                            <canvas id="urbanizationChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section: Sources -->
+            <section id="sources" class="mb-12 scroll-mt-20">
+                <h2 class="text-3xl font-bold mb-4 border-b-2 accent-border pb-2">Sources</h2>
+                <div class="prose max-w-none text-gray-700">
+                    <ul class="list-disc list-inside space-y-2">
+                        <li>Britannica, T. Editors of Encyclopaedia (2025, October 5). <em>Togo</em>. Encyclopedia Britannica.</li>
+                        <li>Central Intelligence Agency. (2025). <em>Togo</em>. The World Factbook.</li>
+                        <li>International Monetary Fund. (2024). <em>Togo: Country Data</em>.</li>
+                        <li>TheGlobalEconomy.com. (2024). <em>Togo: Corruption Perceptions Index</em>.</li>
+                        <li>U.S. Department of State, Bureau of Diplomatic Security. (2024). <em>Togo 2024 Crime & Safety Report</em>. OSAC.</li>
+                        <li>United Nations Development Programme. (2023). <em>Human Development Report 2023-24</em>.</li>
+                        <li>World Bank Group. (2025). <em>Togo Overview</em>.</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // Mobile menu toggle
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    if (menuToggle) {
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+        });
+    }
+    
+    // Navigation link handling
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('section');
+
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.4
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.getAttribute('id');
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${id}`) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+        });
+    }, observerOptions);
+
+    sections.forEach(section => {
+        observer.observe(section);
+    });
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({ behavior: 'smooth' });
+                if (window.innerWidth < 768) {
+                   sidebar.classList.add('-translate-x-full');
+                }
+            }
+        });
+    });
+
+    const chartTextColor = '#2F4858';
+    const chartGridColor = 'rgba(0, 0, 0, 0.05)';
+    Chart.defaults.color = chartTextColor;
+    Chart.defaults.font.family = "'Inter', sans-serif";
+
+    function wrapText(context, text, x, y, maxWidth, lineHeight) {
+        let words = text.split(' ');
+        let line = '';
+        for(let n = 0; n < words.length; n++) {
+            let testLine = line + words[n] + ' ';
+            let metrics = context.measureText(testLine);
+            let testWidth = metrics.width;
+            if (testWidth > maxWidth && n > 0) {
+                context.fillText(line, x, y);
+                line = words[n] + ' ';
+                y += lineHeight;
+            } else {
+                line = testLine;
+            }
+        }
+        context.fillText(line, x, y);
+    }
+    
+    // Chart 1: Population Pyramid
+    const popCtx = document.getElementById('populationPyramid');
+    if (popCtx) {
+        new Chart(popCtx, {
+            type: 'bar',
+            data: {
+                labels: ['0-14', '15-24', '25-54', '55-64', '65+'],
+                datasets: [
+                    {
+                        label: 'Male',
+                        data: [-39.5, -19.6, -33.1, -4.5, -3.3],
+                        backgroundColor: '#608A9E', // Muted Blue
+                        borderColor: '#2F4858',
+                        borderWidth: 1,
+                        borderRadius: 3,
+                    },
+                    {
+                        label: 'Female',
+                        data: [38.2, 19.1, 33.7, 4.9, 4.2],
+                        backgroundColor: '#C8A3A3', // Muted Rose
+                        borderColor: '#8C7B70',
+                        borderWidth: 1,
+                        borderRadius: 3,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        ticks: {
+                            callback: value => Math.abs(value) + '%'
+                        },
+                        grid: { color: chartGridColor },
+                    },
+                    y: {
+                        beginAtZero: true,
+                        stacked: true,
+                        grid: { display: false },
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => `${context.dataset.label}: ${Math.abs(context.raw)}%`
+                        }
+                    },
+                    title: {
+                        display: false,
+                        text: 'Population by Age Group (2023 est.)'
+                    }
+                }
+            }
+        });
+    }
+    
+    // Chart 2: Economic Indicators
+    const econCtx = document.getElementById('economicChart');
+    if (econCtx) {
+        new Chart(econCtx, {
+            type: 'bar',
+            data: {
+                labels: ['2021', '2022', '2023', '2024 (est.)'],
+                datasets: [
+                    {
+                        label: 'GDP Growth (%)',
+                        data: [6.0, 5.8, 5.4, 5.6],
+                        backgroundColor: '#608A9E',
+                        borderColor: '#2F4858',
+                        borderWidth: 1,
+                        borderRadius: 3,
+                    },
+                    {
+                        label: 'Inflation Rate (%)',
+                        data: [4.3, 7.8, 5.3, 2.9],
+                        backgroundColor: '#C8A3A3',
+                        borderColor: '#8C7B70',
+                        borderWidth: 1,
+                        borderRadius: 3,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: value => value + '%'
+                        },
+                        grid: { color: chartGridColor },
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                         callbacks: {
+                            label: (context) => `${context.dataset.label}: ${context.raw}%`
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Chart 3 & 4: Social Indicators (Donut)
+    const literacyCtx = document.getElementById('literacyChart');
+    if (literacyCtx) {
+        new Chart(literacyCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Literate', 'Illiterate'],
+                datasets: [{
+                    data: [63.7, 36.3],
+                    backgroundColor: ['#608A9E', '#E6E2DD'],
+                    borderColor: '#FFFFFF',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '60%',
+                plugins: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Literacy Rate (64%)',
+                        position: 'bottom',
+                        font: { size: 14, weight: 'bold' }
+                    },
+                     tooltip: {
+                        callbacks: {
+                            label: (context) => `${context.label}: ${context.raw}%`
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    const urbanizationCtx = document.getElementById('urbanizationChart');
+    if (urbanizationCtx) {
+        new Chart(urbanizationCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Urban', 'Rural'],
+                datasets: [{
+                    data: [44.7, 55.3],
+                    backgroundColor: ['#C8A3A3', '#E6E2DD'],
+                    borderColor: '#FFFFFF',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '60%',
+                plugins: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Urbanization (45%)',
+                        position: 'bottom',
+                        font: { size: 14, weight: 'bold' }
+                    },
+                     tooltip: {
+                        callbacks: {
+                            label: (context) => `${context.label}: ${context.raw}%`
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+});
+</script>
+</body>
+</html>
