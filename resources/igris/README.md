@@ -8,7 +8,7 @@
 <p align="center">
   <img src="https://global.arac-international.org/assets/logo-arac.png" alt="ARAC International Logo" height="95"/>
   <img src="https://mnshakoor.com/assets/logo-quanta.png" alt="Quanta Analytica Logo" height="90"/>
-  <img src="https://mnshakoor.com/assets/logo-mns.png" alt="MNS Consulting Logo" height="90"/>
+  <img src="https://drive.google.com/file/d/199spbuCnr0CFCPsSukcp3Wwk6DBCeuin/view?usp=drive_link" alt="MNS Consulting Logo" height="90"/>
 </p>
 
 # 🌍 **IGRIS — Integrated Global Risk Intelligence System**
