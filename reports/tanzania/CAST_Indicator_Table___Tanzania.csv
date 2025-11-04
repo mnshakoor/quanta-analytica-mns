@@ -1,0 +1,13 @@
+Indicator,Score_Now_1to10,Trend_30d,Rationale,Evidence_Excerpts
+Security Apparatus,6,↔,"Visible coercive capacity (curfew enforcement, deployments). Risk of overreach but no signs of force fracture in provided data.","X posts cite curfew, deployments; GDELT volume spike around election window."
+Factionalized Elites,6,↑,Contested outcome and opposition exclusion suggest widening elite polarization.,Opposition rejection narratives in X dataset; election result controversy in 3‑month GDELT set.
+Group Grievance,7,↑,Youth‑led mobilization and grievance language dominate sentiment.,Tone JSON indicates negative skew.
+Economic Decline,4,↔,No direct macro signals in provided files; anticipate localized disruption costs from curfew/blackouts.,Operational disruptions referenced in X posts; no macro series included.
+Uneven Development,4,↔,Not evidenced in uploaded datasets; keep as context factor for medium‑term review.,No disaggregated socioeconomic data provided.
+Human Flight & Brain Drain,3,↔,No emigration spikes evidenced in current files; watch if crackdown persists.,No migration stats in provided datasets.
+State Legitimacy,8,↑,Near‑98% result amid exclusions and repression perceptions sharply elevate legitimacy stress.,GDELT articles list election outcome headlines; X narratives contest process legitimacy.
+Public Services,4,↔,Core state delivery not evidenced as collapsing; connectivity controls degrade information services.,Internet shutdown references; limited service evidence beyond telecoms.
+Human Rights & Rule of Law,7,↑,"Detentions, alleged abuses, and blackout context raise rights‑rule‑of‑law concerns.",X excerpts alleging live fire/abductions; verification pending in external monitoring.
+Demographic Pressures,5,↔,"Youth bulge is a structural factor; datasets show mobilization, not demographic shocks.",Mobilization signals in X; no population shock data uploaded.
+Refugees & IDPs,3,↔,No displacement data in provided files; monitor border nodes for spillovers.,No ACLED/UN displacement metrics included in upload.
+External Intervention,3,↔,International attention is high online but no concrete external force deployment evident in files.,Mentions of ICC/AU/EAC in narratives without operational footprints.
