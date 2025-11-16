@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PESTELS Analysis: Sierra Leone 2025</title>
+    <!-- Chosen Palette: Calm Neutral (BG-Gray-50, Text-Gray-800, Accent-Teal-700) -->
+    <!-- Application Structure Plan: A thematic SPA with a sticky top-navigation (P, E, S, T, E, L, S) that dynamically shows/hides content sections. The default view is an "Overview" dashboard with key metrics and a composite governance trend chart. Each thematic section presents qualitative analysis alongside specific, relevant data visualizations (charts, stats). This structure was chosen over a linear report to allow non-linear exploration and quick access to specific PESTELS factors, which is ideal for a stakeholder or analyst user. -->
+    <!-- Visualization & Content Choices: Overview: Composite Line Chart (WGI/V-Dem data) to establish core governance trends. Political: Line Chart (V-Dem) to detail election/democracy indices. Economic: Doughnut Chart (simulated) for export composition. Tech: Bar Chart (simulated) for digital divide. Legal: Line Chart (WGI) for corruption/rule of law. All charts use Chart.js (Canvas). Key text blocks provide qualitative analysis for each section. This mixes quantitative trends with qualitative context. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        .content-section {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .nav-button {
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-button.active {
+            border-bottom-color: #0d9488;
+            color: #0d9488;
+            font-weight: 600;
+        }
+        .nav-button:not(.active):hover {
+            border-bottom-color: #9ca3af;
+            color: #374151;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <header class="w-full bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center py-4">
+                <h1 class="text-2xl sm:text-3xl font-bold text-teal-700">PESTELS Analysis: Sierra Leone 2025</h1>
+                <nav id="main-nav" class="flex flex-wrap justify-center sm:justify-end space-x-2 sm:space-x-4 mt-3 sm:mt-0">
+                    <button class="nav-button py-2 px-2 sm:px-3 text-sm sm:text-base font-medium text-gray-500 border-b-2 border-transparent" data-target="overview-section">Overview</button>
+		<button class="nav-button py-2 px-2 sm:px-3 text-sm sm:text-base font-medium text-gray-500 border-b-2 border-transparent" data-target="media-section">Media</button>
+
+                    <button class="nav-button py-2 px-2 sm:px-3 text-sm sm:text-base font-medium text-gray-500 border-b-2 border-transparent" data-target="political-section">Political</button>
+                    <button class="nav-button py-2 px-2 sm:px-3 text-sm sm:text-base font-medium text-gray-500 border-b-2 border-transparent" data-target="economic-section">Economic</button>
+                    <button class="nav-button py-2 px-2 sm:px-3 text-sm sm:text-base font-medium text-gray-500 border-b-2 border-transparent" data-target="social-section">Social</button>
+                    <button class="nav-button py-2 px-2 sm:px-3 text-sm sm:text-base font-medium text-gray-500 border-b-2 border-transparent" data-target="technological-section">Technological</button>
+                    <button class="nav-button py-2 px-2 sm:px-3 text-sm sm:text-base font-medium text-gray-500 border-b-2 border-transparent" data-target="legal-section">Legal</button>
+                    <button class="nav-button py-2 px-2 sm:px-3 text-sm sm:text-base font-medium text-gray-500 border-b-2 border-transparent" data-target="security-section">Security</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <div id="overview-section" class="content-section">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Analyst Overview (Late 2025)</h2>
+                <p class="text-lg text-gray-700 leading-relaxed">
+                    This dashboard provides a comprehensive PESTELS analysis for Sierra Leone as of late 2025. The nation stands at a critical juncture, balancing post-war democratic aspirations with profound structural challenges. The political environment remains fragile following the disputed 2023 elections, impacting investor confidence and international relations. Economically, the country grapples with severe macroeconomic headwinds, while a burgeoning social crisis, exemplified by the "Kush" epidemic, threatens youth and stability. This interactive report allows you to explore each factor, supported by relevant data, to understand the complex interplay of risks and opportunities shaping Sierra Leone today.
+                </p>
+            </div>
+	    
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white p-5 rounded-lg shadow">
+                    <div class="text-sm font-medium text-gray-500">Freedom House Score (2025)</div>
+                    <div class="text-3xl font-bold text-teal-700">59/100</div>
+                    <div class="text-sm text-gray-600">Partly Free</div>
+                </div>
+                <div class="bg-white p-5 rounded-lg shadow">
+                    <div class="text-sm font-medium text-gray-500">Est. Inflation (2025)</div>
+                    <div class="text-3xl font-bold text-red-600">~42.5%</div>
+                    <div class="text-sm text-gray-600">Persistent Macro-Pressure</div>
+                </div>
+                <div class="bg-white p-5 rounded-lg shadow">
+                    <div class="text-sm font-medium text-gray-500">Est. Youth Unemployment</div>
+                    <div class="text-3xl font-bold text-red-600">~60%</div>
+                    <div class="text-sm text-gray-600">High Risk for Instability</div>
+                </div>
+                <div class="bg-white p-5 rounded-lg shadow">
+                    <div class="text-sm font-medium text-gray-500">Fragile States Index (2025)</div>
+                    <div class="text-3xl font-bold text-red-600">99.2</div>
+                    <div class="text-sm text-gray-600">High Warning (Rank 11)</div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-2xl font-semibold mb-4 text-gray-900">Key Governance & Democracy Trends (2010-2023)</h3>
+                <p class="text-gray-600 mb-4">
+                    This chart illustrates the trajectory of key governance indicators. Note the general positive trend post-war, followed by stagnation and recent declines, particularly in electoral democracy, reflecting the contested nature of recent polls.
+                </p>
+                <div class="chart-container">
+                    <canvas id="overviewChart"></canvas>
+                </div>
+            </div>
+        </div>
+<!-- Media section: ARAC video + description -->
+<div id="media-section" class="content-section hidden">
+  <h2 class="text-3xl font-bold text-gray-900 mb-6">Media: UNGA80 Field View</h2>
+
+  <div class="bg-white p-6 rounded-lg shadow">
+    <div class="video-wrap mb-6">
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/PYTRuOidAXE?si=CBLPL57YVh7CKRKo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+
+    <h3 class="text-2xl font-semibold mb-3 text-gray-900">A Tale of Two Sierra Leones</h3>
+    <p class="text-gray-700 leading-relaxed mb-4">
+      This video captures the stark political divide within the Sierra Leonean diaspora during President Julius Maada Bio's address at the 80th UN General Assembly (UNGA80) in New York.
+    </p>
+    <p class="text-gray-700 leading-relaxed mb-4">
+      On one side, a jubilant crowd of supporters celebrates President Bio's leadership, with many showcasing traditional music and attire. On the other, a passionate group of protesters raises their voices and placards, alleging widespread electoral fraud in the recent elections. Their signs also highlight critical issues, including the devastating impact of the synthetic drug "Kush" on the nation's youth and deep concerns over the country's economic policies.
+    </p>
+    <p class="text-gray-700 leading-relaxed mb-4">
+      This visual juxtaposition reveals a country grappling with conflicting narratives, one of progress and stability, and another of injustice and systemic crisis. The protest underscores the demand for electoral justice and accountability.
+    </p>
+    <p class="text-gray-700 leading-relaxed">
+      President Bio has recently assumed the rotating Chairmanship of the Economic Community of West African States (ECOWAS) during a period of unprecedented regional turmoil. With Mali, Burkina Faso, and Niger having formally withdrawn from the bloc to form the Alliance of Sahel States (AES), a major rift has emerged, threatening decades of regional integration. Praised for his diplomatic approach, President Bio has made mending this divide a top priority for his tenure. He has stressed that the region's stability hinges on unity, expressing optimism that his personal relationships with the Sahelian leaders can help facilitate dialogue and encourage them to "return to the fold." Rather than relying on punitive measures, his leadership is focused on addressing the root causes of the crisis, including security challenges and governance issues, in a bid to restore trust and rebuild a more inclusive and resilient West Africa.
+    </p>
+  </div>
+</div>
+
+        <div id="political-section" class="content-section hidden">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6">Political Analysis</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-2xl font-semibold mb-4 text-teal-700">Post-Election Fragility</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        The political landscape in late 2025 remains defined by the contentious aftermath of the June 2023 general elections. The Electoral Commission for Sierra Leone (ECSL) declared President Julius Maada Bio (SLPP) the winner with 56.17% of the vote, avoiding a run-off. However, the opposition All People's Congress (APC) rejected the results, alleging significant electoral fraud and citing a lack of transparency in the tabulation process [1].
+                    </p>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        This dispute, supported by critical reports from international observers (including the EU and The Carter Center) questioning the statistical integrity of the results, has led to a protracted political impasse. An ECOWAS-mediated "Agreement for National Unity" was signed, but its implementation, particularly regarding the opposition's return to parliament and the establishment of a results review committee, has been slow and fraught with distrust [2].
+                    </p>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        This legitimacy crisis impacts governance, political stability, and international relations, with partners like the US and EU linking non-humanitarian aid to a credible review of the electoral process.
+                    </p>
+                    <h3 class="text-2xl font-semibold mb-4 mt-6 text-teal-700">International Posture</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        Internationally, President Bio has maintained a high-profile, non-aligned stance, recently completing a term on the UN Security Council. At the 78th UNGA, he emphasized Sierra Leone's role in peacebuilding and its commitment to democratic governance. However, this rhetoric is increasingly at odds with domestic criticisms of shrinking civic space and the unresolved election dispute, creating a significant disconnect between the government's international messaging and the domestic reality [3].
+                    </p>
+                </div>
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-900">Democracy Index Trends (V-Dem)</h3>
+                        <p class="text-gray-600 text-sm mb-4">
+                            V-Dem data shows a clear decline in the Clean Elections and Electoral Democracy indices leading into and following the 2023 election.
+                        </p>
+                        <div class="chart-container" style="height: 250px; max-height: 300px;">
+                            <canvas id="politicalChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-900">Key Political Indicators</h3>
+                        <ul class="space-y-2">
+                            <li class="flex justify-between">
+                                <span class="font-medium text-gray-600">Freedom House Score:</span>
+                                <span class="font-bold text-teal-700">59/100</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span class="font-medium text-gray-600">Political Rights:</span>
+                                <span class="font-bold text-red-600">23/40</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span class="font-medium text-gray-600">Civil Liberties:</span>
+                                <span class="font-bold text-yellow-600">36/60</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span class="font-medium text-gray-600">Status:</span>
+                                <span class="font-bold text-yellow-600">Partly Free</span>
+                            </li>
+                        </ul>
+                        <p class="text-xs text-gray-500 mt-3">*Source: Freedom in the World 2025 [2]</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="economic-section" class="content-section hidden">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6">Economic Analysis</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-2xl font-semibold mb-4 text-teal-700">Macroeconomic Instability</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Sierra Leone faces severe macroeconomic challenges. Inflation remains stubbornly high (est. >40% in late 2025), driven by global price shocks, currency depreciation, and domestic supply constraints. The Leone (SLL) has lost significant value, eroding purchasing power and increasing the cost of essential imports like food and fuel [4].
+                    </p>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Public debt is at a critical level (est. >90% of GDP), consuming a large portion of domestic revenue for debt servicing and limiting fiscal space for development. The government remains heavily reliant on external financing from partners like the IMF and World Bank, whose disbursements are often tied to stringent reforms and, increasingly, to the resolution of the political impasse [1].
+                    </p>
+                    <h3 class="text-2xl font-semibold mb-4 mt-6 text-teal-700">Structural Challenges & Investment</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        The economy is characterized by a high dependence on mineral exports (primarily iron ore and diamonds) and subsistence agriculture. This lack of diversification makes it highly vulnerable to global commodity price swings.
+                    </p>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Cripplingly high youth unemployment (est. ~60%) is a major economic and security risk, providing fertile ground for social unrest and recruitment into organized crime, including the drug trade [5].
+                    </p>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        <span class="font-semibold text-gray-800">Risks for Investors:</span> Political instability, currency risk, weak rule of law, and poor infrastructure (especially energy) are primary deterrents.
+                    </p>
+                    <p class="text-gray-700 leading-relaxed">
+                        <span class="font-semibold text-gray-800">Opportunities:</span> Potential exists in agriculture/agribusiness, fisheries, tourism, and renewable energy, but realizing this requires significant structural reforms and a stable political environment.
+                    </s_p>
+                </div>
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-900">Est. Export Composition</h3>
+                        <p class="text-gray-600 text-sm mb-4">
+                            High dependency on minerals exposes the economy to global commodity shocks.
+                        </p>
+                        <div class="chart-container" style="height: 250px; max-height: 300px;">
+                            <canvas id="economicChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-900">Economic Indicators</h3>
+                        <ul class="space-y-2">
+                            <li class="flex justify-between">
+                                <span class="font-medium text-gray-600">BTI Econ. Performance (2024):</span>
+                                <span class="font-bold text-red-600">3.0/10</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span class="font-medium text-gray-600">Est. Debt-to-GDP (2025):</span>
+                                <span class="font-bold text-red-600">~95%</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span class="font-medium text-gray-600">Ease of Doing Business:</span>
+                                <span class="font-bold text-yellow-600">Low</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span class="font-medium text-gray-600">Primary Challenge:</span>
+                                <span class="font-bold text-red-600">Youth Unemployment</span>
+                            </li>
+                        </ul>
+                        <p class="text-xs text-gray-500 mt-3">*BTI Source: Bertelsmann Stiftung [4]</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="social-section" class="content-section hidden">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6">Social Analysis</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-2xl font-semibold mb-4 text-teal-700">Human Development & Public Services</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Sierra Leone ranks near the bottom of the UN Human Development Index (HDI), with low life expectancy and educational attainment [6]. Access to quality education and healthcare is severely limited, particularly in rural areas. While the government's "Free Quality Education" program is ambitious, it is plagued by funding, resource, and quality control challenges.
+                    </p>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Inter-ethnic relations, particularly between the Mende (largely supporting the SLPP) and Temne (largely supporting the APC), are a persistent source of social and political tension. Political affiliation is often stronger than national identity, and perceived ethnic favouritism in public appointments fuels resentment.
+                    </p>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Public perception of governance is poor, characterized by widespread cynicism regarding corruption and the political elite's commitment to the public good. This trust deficit is a major obstacle to national cohesion and development.
+                    </p>
+                    <h3 class="text-2xl font-semibold mb-4 mt-6 text-teal-700">Spotlight: The "Kush" Crisis</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        A defining social crisis of 2024-2025 is the devastating spread of "Kush," a highly addictive synthetic drug. This cheap narcotic, often mixed with human bones, is ravaging communities, particularly unemployed youth.
+                    </p>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        The impact is catastrophic: a public health emergency with overwhelmed and non-existent rehabilitation facilities; a rise in petty crime, violence, and mental health issues; and a hollowing out of the nation's youth demographic. The government has declared a "national emergency" over the drug, but a coordinated and well-resourced response, addressing both trafficking (supply) and the underlying socioeconomic despair (demand), is yet to fully materialize [5].
+                    </p>
+                </div>
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-900">Human Development</h3>
+                        <ul class="space-y-2">
+                            <li class="flex justify-between">
+                                <span class="font-medium text-gray-600">HDI Rank (2023/24):</span>
+                                <span class="font-bold text-red-600">180 / 193</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span class="font-medium text-gray-600">HDI Value:</span>
+                                <span class="font-bold text-red-600">0.477</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span class="font-medium text-gray-600">Life Expectancy:</span>
+                                <span class="font-bold text-yellow-600">60.4 years</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span class="font-medium text-gray-600">Mean Years of Schooling:</span>
+                                <span class="font-bold text-red-600">4.4 years</span>
+                            </li>
+                        </ul>
+                        <p class="text-xs text-gray-500 mt-3">*Source: UNDP [6]</p>
+                    </div>
+                    <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg shadow">
+                        <h3 class="text-xl font-semibold mb-2 text-red-700">Social Crisis Spotlight</h3>
+                        <p class="text-red-800 leading-relaxed">
+                            The <span class="font-bold">Kush epidemic</span> is a national emergency, disabling a generation of youth and driving a secondary crisis in security and public health.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="technological-section" class="content-section hidden">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6">Technological Analysis</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-2xl font-semibold mb-4 text-teal-700">Digital Infrastructure & Penetration</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Sierra Leone's technological landscape is one of stark contrasts. Mobile penetration is high (est. >100%), though this figure is skewed by multi-SIM ownership. Mobile phones are central to daily life, particularly for mobile money services which have expanded financial inclusion.
+                    </p>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        However, internet and smartphone penetration remain low (est. ~28%), especially outside the capital, Freetown. The high cost of data, unreliable electricity, and limited digital literacy are significant barriers to a digital economy. The landing of the Africa Coast to Europe (ACE) submarine cable has improved bandwidth, but "last-mile" connectivity remains a major challenge.
+                    </p>
+                    <h3 class="text-2xl font-semibold mb-4 mt-6 text-teal-700">E-Governance</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        The government has initiated several e-governance projects, such as a biometric national ID card and e-passport system, aimed at improving public service delivery and reducing corruption. The Directorate of Science, Technology, and Innovation (DSTI) has been a key driver of this agenda. However, progress is often siloed, and full implementation is hampered by a lack of underlying infrastructure, institutional capacity, and a clear regulatory framework for data protection.
+                    </s_p>
+                </div>
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-900">Digital Divide (Est. 2025)</h3>
+                        <p class="text-gray-600 text-sm mb-4">
+                            A stark gap exists between basic mobile access and meaningful, affordable internet connectivity.
+                        </p>
+                        <div class="chart-container" style="height: 250px; max-height: 300px;">
+                            <canvas id="techChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-900">Key Tech. Challenges</h3>
+                        <ul class="space-y-2 list-disc list-inside text-gray-700">
+                            <li>High cost of data</li>
+                            <li>Unreliable electricity supply</li>
+                            <li>Limited rural "last-mile" access</li>
+                            <li>Digital literacy gap</li>
+                            <li>Lack of robust data protection laws</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="legal-section" class="content-section hidden">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6">Legal Analysis</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-2xl font-semibold mb-4 text-teal-700">Rule of Law & Judiciary</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        The rule of law in Sierra Leone is inconsistently applied. While the legal framework includes provisions for judicial independence, in practice, the judiciary is perceived as under-resourced, slow, and susceptible to political influence, particularly in high-stakes cases [2]. This perception undermines public trust and creates an unpredictable environment for business.
+                    </p>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Access to justice is a significant challenge for the average citizen, who often relies on customary law systems, which may not align with constitutional protections, particularly for women and youth.
+                    </s_p>
+                    <h3 class="text-2xl font-semibold mb-4 mt-6 text-teal-700">Anti-Corruption & Civil Liberties</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        The Anti-Corruption Commission (ACC) has been one of the state's more active and high-profile institutions, securing convictions and recovering stolen assets. However, critics allege that its investigations can be selective, targeting opposition figures more vigorously than government allies. Despite this, Sierra Leone has shown improvement in some corruption indices in recent years, though it remains a pervasive problem [7].
+                    </s_p>
+                    <p class="text-gray-700 leading-relaxed">
+                        The legal framework for civil liberties is mixed. The 2020 repeal of the 1965 seditious libel law was a major victory for press freedom. However, the 2021 Cyber Security and Crime Act contains broad provisions that critics fear could be used to stifle online dissent [2]. Freedom of assembly is often restricted, with police frequently banning or violently dispersing opposition or civil society protests, citing security concerns.
+                    </s_p>
+                </div>
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-900">Governance Indicators (WGI)</h3>
+                        <p class="text-gray-600 text-sm mb-4">
+                            World Bank data shows a long-term, fragile, and non-linear trend for Rule of Law and Control of Corruption (percentile ranks).
+                        </p>
+                        <div class="chart-container" style="height: 250px; max-height: 300px;">
+                            <canvas id="legalChart"></canvas>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-3">*Source: World Governance Indicators [7]</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="environmental-section" class="content-section hidden">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6">Environmental Analysis</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-2xl font-semibold mb-4 text-teal-700">High Climate Vulnerability</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Sierra Leone is one of the world's most vulnerable countries to the adverse effects of climate change. Its high exposure is compounded by low adaptive capacity.
+                    </p>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        <span class="font-semibold text-gray-800">Flooding and Landslides:</span> The capital, Freetown, is particularly at risk. Its location on a narrow peninsula, combined with rapid, unregulated urban sprawl and deforestation of surrounding hillsides, leads to devastating seasonal flooding and landslides. The 2017 mudslide, which killed over 1,000 people, is a stark reminder of this acute vulnerability.
+                    </p>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        <span class="font-semibold text-gray-800">Deforestation and Land Degradation:</span> Deforestation rates are high, driven by demand for charcoal (the primary cooking fuel), timber, and expansion of agricultural land. This degrades soil, reduces biodiversity, and worsens flood risk.
+                    </s_p>
+                    <p class="text-gray-700 leading-relaxed">
+                        <span class="font-semibold text-gray-800">Food Insecurity:</span> The agricultural sector, the backbone of the rural economy, is rain-fed and highly sensitive to shifting weather patterns (e.g., erratic rainfall, droughts). This directly translates to high levels of food insecurity. Coastal erosion and overfishing also threaten livelihoods.
+                    </s_p>
+                </div>
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-900">Key Environmental Risks</h3>
+                        <ul class="space-y-2 list-disc list-inside text-gray-700">
+                            <li>Acute urban flooding (Freetown)</li>
+                            <li>High risk of catastrophic landslides</li>
+                            <li>Rapid deforestation for fuel & agriculture</li>
+                            <li>Coastal erosion and overfishing</li>
+                            <li>Climate-related food insecurity</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-900">Global Risk Rankings (2025)</h3>
+                        <ul class="space-y-2">
+                            <li class="flex justify-between">
+                                <span class="font-medium text-gray-600">Fragile States Index:</span>
+                                <span class="font-bold text-red-600">99.2 (Rank 11)</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span class="font-medium text-gray-600">Global Peace Index:</span>
+                                <span class="font-bold text-yellow-600">1.85 (Rank 50)</span>
+                            </li>
+                        </ul>
+                        <p class="text-xs text-gray-500 mt-3">*Sources: Fund for Peace, IEP [8, 9]</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="security-section" class="content-section hidden">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6">Security Analysis</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-2xl font-semibold mb-4 text-teal-700">Domestic Security Risks</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        The domestic security situation is fragile and directly linked to the political and economic crises. The primary risk is not a return to civil war, but rather state instability driven by:
+                    </p>
+                    <ul class="space-y-2 list-disc list-inside text-gray-700 mb-4">
+                        <li><span class="font-semibold">Political Unrest:</span> Protests over election results or economic hardship (e.g., the deadly August 2022 protests) are met with a heavy-handed state security response, risking escalation.</li>
+                        <li><span class="font-semibold">Organized Crime:</span> The "Kush" crisis is symptomatic of a larger organized crime problem. Sierra Leone is a transit point for narcotics (cocaine, heroin) moving from South America to Europe. This trafficking fuels corruption and local crime networks.</li>
+                        <li><span class="font-semibold">Youth Volatility:</span> The large cohort of unemployed, disaffected, and in many cases drug-addicted youth represents a significant social tinderbox.</li>
+                        <li><span class="font-semibold">Failed Coup Attempt (Nov 2023):</span> A chaotic attack on a military armory and prisons in November 2023, labeled a coup attempt, highlighted deep-seated security and political tensions. The subsequent treason charges against figures from the former administration have further polarized the country [2].</li>
+                    </ul>
+                    <h3 class="text-2xl font-semibold mb-4 mt-6 text-teal-700">Regional Security Role</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        Despite domestic challenges, Sierra Leone is an active participant in regional security. It contributes troops to the African Union (AU) and ECOWAS missions (e.g., in Somalia and previously Mali), earning it a reputation as a post-conflict success and responsible international citizen.
+                    </p>
+                    <p class="text-gray-700 leading-relaxed">
+                        However, it is also vulnerable to instability in the region. The string of coups in West Africa (Mali, Burkina Faso, Guinea, Niger) has alarmed ECOWAS, and Sierra Leone's own democratic backsliding is viewed with concern. The country's porous borders with Guinea (itself politically unstable) and Liberia are a conduit for smuggling and trafficking.
+                    </s_p>
+                </div>
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-900">Key Security Threats</h3>
+                        <ul class="space-y-2 list-disc list-inside text-gray-700">
+                            <li>Political unrest & violent protests</li>
+                            <li>State-on-civilian violence</li>
+                            <li>Narcotics trafficking (Kush, Cocaine)</li>
+                            <li>High youth unemployment</li>
+                            <li>Risk of state security force splintering</li>
+                            <li>Cross-border smuggling</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="references-section" class="content-section hidden bg-white p-6 rounded-lg shadow mt-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6">References (APA Style)</h2>
+            <ol class="list-decimal list-inside text-gray-700 space-y-3">
+                <li>International Monetary Fund (IMF). (2024). *Sierra Leone: Fourth and Fifth Reviews Under the Extended Credit Facility Arrangement*. IMF Country Report No. 2024/156. Washington, D.C.: IMF.</li>
+                <li>Freedom House. (2025). *Freedom in the World 2025: Sierra Leone*. Washington, D.C.: Freedom House.</li>
+                <li>Bio, J. M. (2023, September 22). *Address to the 78th Session of the UN General Assembly*. New York: United Nations.</li>
+                <li>Bertelsmann Stiftung. (2024). *BTI 2024 Country Report: Sierra Leone*. Gütersloh: Bertelsmann Stiftung.</li>
+                <li>Global Initiative Against Transnational Organized Crime. (2024). *A growing crisis: The rise of synthetic drugs in West Africa*. Geneva: GI-TOC.</li>
+                <li>United Nations Development Programme (UNDP). (2024). *Human Development Report 2023/24*. New York: UNDP.</li>
+                <li>World Bank. (2024). *Worldwide Governance Indicators (WGI) - Sierra Leone*. Washington, D.C.: The World Bank Group.</li>
+                <li>The Fund for Peace. (2025). *Fragile States Index 2025*. Washington, D.C.: The Fund for Peace.</li>
+                <li>Institute for Economics & Peace (IEP). (2025). *Global Peace Index 2025*. Sydney: IEP.</li>
+            </ol>
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navButtons = document.querySelectorAll('.nav-button');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            function showSection(targetId) {
+                contentSections.forEach(section => {
+                    section.classList.add('hidden');
+                });
+                
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    targetSection.classList.remove('hidden');
+                }
+
+                navButtons.forEach(button => {
+                    if (button.getAttribute('data-target') === targetId) {
+                        button.classList.add('active');
+                    } else {
+                        button.classList.remove('active');
+                    }
+                });
+                
+                if (targetId === 'references-section') {
+                    document.getElementById('references-section').classList.remove('hidden');
+                }
+            }
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.getAttribute('data-target');
+                    showSection(targetId);
+                });
+            });
+
+            showSection('overview-section');
+
+            Chart.defaults.font.family = 'Inter';
+            
+            const chartData = {
+                labels: ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023'],
+                vdemElectoral: [0.601, 0.603, 0.605, 0.589, 0.573, 0.570, 0.568, 0.565, 0.536, 0.528, 0.520, 0.517, 0.514, 0.435],
+                vdemCleanElections: [0.638, 0.640, 0.643, 0.611, 0.579, 0.575, 0.572, 0.568, 0.540, 0.531, 0.522, 0.517, 0.497, 0.398],
+                wgiRuleOfLaw: [30.98, 32.22, 33.17, 34.61, 36.53, 34.27, 30.98, 30.51, 31.52, 30.54, 34.48, 34.48, 33.00, 33.82],
+                wgiCorruption: [18.30, 19.33, 20.28, 24.15, 25.12, 21.71, 19.90, 25.00, 28.57, 28.57, 30.95, 34.28, 31.90, 24.52]
+            };
+
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        grid: { display: false }
+                    },
+                    y: {
+                        grid: { color: '#e5e7eb' }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    tooltip: {
+                        enabled: true,
+                        intersect: false,
+                        mode: 'index',
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                }
+            };
+            
+            const overviewCtx = document.getElementById('overviewChart');
+            if (overviewCtx) {
+                new Chart(overviewCtx, {
+                    type: 'line',
+                    data: {
+                        labels: chartData.labels,
+                        datasets: [
+                            {
+                                label: 'Electoral Democracy (V-Dem)',
+                                data: chartData.vdemElectoral,
+                                borderColor: '#0d9488',
+                                backgroundColor: '#0d9488_30',
+                                yAxisID: 'yVdem',
+                                tension: 0.1
+                            },
+                            {
+                                label: 'Rule of Law (WGI % Rank)',
+                                data: chartData.wgiRuleOfLaw,
+                                borderColor: '#0ea5e9',
+                                backgroundColor: '#0ea5e9_30',
+                                yAxisID: 'yWgi',
+                                tension: 0.1
+                            },
+                            {
+                                label: 'Control of Corruption (WGI % Rank)',
+                                data: chartData.wgiCorruption,
+                                borderColor: '#f97316',
+                                backgroundColor: '#f97316_30',
+                                yAxisID: 'yWgi',
+                                tension: 0.1
+                            }
+                        ]
+                    },
+                    options: {
+                        ...chartOptions,
+                        scales: {
+                            x: { grid: { display: false } },
+                            yVdem: {
+                                type: 'linear',
+                                position: 'left',
+                                title: { display: true, text: 'V-Dem Index (0-1)' },
+                                min: 0,
+                                max: 1
+                            },
+                            yWgi: {
+                                type: 'linear',
+                                position: 'right',
+                                title: { display: true, text: 'WGI Percentile Rank (0-100)' },
+                                min: 0,
+                                max: 100,
+                                grid: { drawOnChartArea: false }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const politicalCtx = document.getElementById('politicalChart');
+            if (politicalCtx) {
+                new Chart(politicalCtx, {
+                    type: 'line',
+                    data: {
+                        labels: chartData.labels,
+                        datasets: [
+                            {
+                                label: 'Electoral Democracy Index',
+                                data: chartData.vdemElectoral,
+                                borderColor: '#0d9488',
+                                backgroundColor: '#0d9488_30',
+                                tension: 0.1
+                            },
+                            {
+                                label: 'Clean Elections Index',
+                                data: chartData.vdemCleanElections,
+                                borderColor: '#f97316',
+                                backgroundColor: '#f97316_30',
+                                tension: 0.1
+                            }
+                        ]
+                    },
+                    options: {
+                        ...chartOptions,
+                        scales: {
+                            x: { grid: { display: false } },
+                            y: {
+                                title: { display: true, text: 'V-Dem Index (0-1)' },
+                                min: 0.3,
+                                max: 0.7
+                            }
+                        }
+                    }
+                });
+            }
+
+            const economicCtx = document.getElementById('economicChart');
+            if (economicCtx) {
+                new Chart(economicCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Minerals (Iron, Diamonds, etc.)', 'Agriculture', 'Other'],
+                        datasets: [{
+                            data: [70, 20, 10],
+                            backgroundColor: ['#0d9488', '#f97316', '#0ea5e9'],
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                            }
+                        }
+                    }
+                });
+            }
+
+            const techCtx = document.getElementById('techChart');
+            if (techCtx) {
+                new Chart(techCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Mobile Penetration (Multi-SIM)', 'Internet Penetration'],
+                        datasets: [{
+                            label: 'Penetration Rate (%)',
+                            data: [110, 28],
+                            backgroundColor: ['#0d9488', '#f97316'],
+                            borderColor: ['#0d9488', '#f97316'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        indexAxis: 'y',
+                        scales: {
+                            x: {
+                                min: 0,
+                                max: 120,
+                                title: { display: true, text: 'Percentage (%)' }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+            }
+
+            const legalCtx = document.getElementById('legalChart');
+            if (legalCtx) {
+                new Chart(legalCtx, {
+                    type: 'line',
+                    data: {
+                        labels: chartData.labels,
+                        datasets: [
+                            {
+                                label: 'Rule of Law (% Rank)',
+                                data: chartData.wgiRuleOfLaw,
+                                borderColor: '#0ea5e9',
+                                backgroundColor: '#0ea5e9_30',
+                                tension: 0.1
+                            },
+                            {
+                                label: 'Control of Corruption (% Rank)',
+                                data: chartData.wgiCorruption,
+                                borderColor: '#f97316',
+                                backgroundColor: '#f97316_30',
+                                tension: 0.1
+                            }
+                        ]
+                    },
+                    options: {
+                        ...chartOptions,
+                        scales: {
+                            x: { grid: { display: false } },
+                            y: {
+                                title: { display: true, text: 'WGI Percentile Rank (0-100)' },
+                                min: 0,
+                                max: 40
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

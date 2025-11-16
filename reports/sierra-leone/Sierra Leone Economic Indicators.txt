@@ -1,0 +1,603 @@
+Sierra Leone Economic Indicators
+
+Main indicators
+MeasureFrequencyLatest valueReferenceTime coverage
+Inflation, annual percent change in the CPIpercent5.85Aug/2025monthly1/2017 - 8/2025   
+
+ ---  
+
+GDP and economic growth
+MeasureFrequencyLatest valueReferenceTime coverage
+Economic growth: the rate of change of real GDPpercent4.002024annual1961  -  2024   
+Gross Domestic Product, billions of 2015 U.S. dollarsbillion USD9.82024annual1960  -  2024   
+Gross Domestic Product, billions of U.S. dollarsbillion USD7.552024annual1960  -  2024   
+GDP per capita, current U.S. dollarsUSD873.392024annual1960  -  2024   
+GDP per capita, Purchasing Power ParityUSD30932024annual1990  -  2024   
+GDP per capita, constant dollarsUSD1134.092024annual1960  -  2024   
+
+ ---  
+
+Consumption and investment
+MeasureFrequencyLatest valueReferenceTime coverage
+Capital investment as percent of GDPpercent29.502024annual1980  -  2024   
+Capital investment, billion USDbillion USD2.232024annual1980  -  2024   
+Household consumption as percent of GDPpercent87.602024annual1964  -  2024   
+Household consumption, billion USDbillion USD6.612024annual1964  -  2024   
+
+ ---  
+
+Money
+MeasureFrequencyLatest valueReferenceTime coverage
+Inflation: percent change in the Consumer Price Indexpercent28.62024annual2007  -  2024   
+Exchange rate regimesindex points62022annual2006  -  2022   
+USD Exchange rateLocal Currency Units per USD19678.6479Jun/2025monthly9/2004 - 6/2025   
+Money supply, billion currency unitsbillion SLL28318.83Aug/2024monthly12/2001 - 8/2024   
+Consumer Price Index (CPI)index points246.4000Sep/2025monthly1/2016 - 9/2025   
+Inflation, monthly percent change in the CPIpercent1.51Aug/2025monthly2/2016 - 8/2025   
+Inflation, annual percent change in the CPIpercent5.85Aug/2025monthly1/2017 - 8/2025   
+Private sector credit, billion currency unitsbillion SLL3698.30Aug/2024monthly12/2001 - 8/2024   
+Bank deposit interest rate, percentpercent10.62Aug/2024monthly12/2001 - 8/2024   
+
+ ---  
+
+Labor market
+MeasureFrequencyLatest valueReferenceTime coverage
+Labor force, million peoplemillion people2.862024annual1990  -  2024   
+Unemployment ratepercent3.132024annual1991  -  2024   
+Unemployment rate for femalespercent2.102024annual1991  -  2024   
+Unemployment rate for malespercent4.092024annual1991  -  2024   
+Youth unemployment, ages 15-24percent3.602024annual1991  -  2024   
+Labor force participation ratepercent53.522024annual1990  -  2024   
+Labor force, percent femalepercent48.262024annual1990  -  2024   
+Female labor force participation ratepercent51.212024annual1990  -  2024   
+Male labor force participation ratepercent55.862024annual1990  -  2024   
+Self-employment, percent of total employmentpercent89.152022annual1991  -  2022   
+Informal employment, percent of total employmentpercent93.102018annual2018  -  2018   
+
+ ---  
+
+International trade and investment
+MeasureFrequencyLatest valueReferenceTime coverage
+Terms of trade, base year = 2000percent103.602023annual2000  -  2023   
+Trade openness: exports plus imports as percent of GDPpercent64.482024annual1964  -  2024   
+Financial openness indexindex points-1.2482022annual1970  -  2022   
+Exports of goods and services as percent of GDPpercent20.942024annual1964  -  2024   
+Exports of goods and services, billion USDbillion USD1.582024annual1964  -  2024   
+Exports of goods and services, annual growthpercent6.502024annual1968  -  2024   
+Imports of goods and services as percent of GDPpercent43.542024annual1964  -  2024   
+Imports of goods and services, billion USDbillion USD3.292024annual1964  -  2024   
+Foreign Direct Investment, percent of GDPpercent3.762023annual1970  -  2023   
+Foreign Direct Investment, billion USDbillion USD0.272024annual1970  -  2024   
+Net portfolio equity inflowsmillion dollars (current)0.132011annual1977  -  2011   
+Current account balance as percent of GDPpercent-6.102023annual1980  -  2023   
+Trade balance as percent of GDPpercent-22.602024annual1964  -  2024   
+Trade balance, billion USDbillion USD-0.882023annual1977  -  2023   
+Foreign exchange reserves including gold, billion USDbillion USD0.502023annual1960  -  2023   
+Remittances as percent of GDPpercent6.102023annual1980  -  2023   
+Remittances, million USDmillion USD293.002023annual1980  -  2023   
+Balance of payments, net errors and omissionsmillion USD-354.272023annual1977  -  2023   
+External debt, percent of Gross National Incomepercent37.462023annual1970  -  2023   
+Short-term debt, percent of total external debtpercent6.592023annual1970  -  2023   
+Short-term external debt, percent of international reservespercent31.672023annual1970  -  2023   
+
+ ---  
+
+Government
+MeasureFrequencyLatest valueReferenceTime coverage
+Government spending as percent of GDPpercent5.502024annual1964  -  2024   
+Government spending, billion USDbillion USD0.422024annual1964  -  2024   
+Fiscal balance, percent of GDPpercent-5.802023annual2000  -  2023   
+Government debt as percent of GDPpercent49.222023annual2001  -  2023   
+Tax rate, percent of commercial profitspercent30.702019annual2005  -  2019   
+Tax preparation time, in hourshours3432019annual2005  -  2019   
+Foreign aid and official development assistance receivedmillion USD523.472022annual1960  -  2022   
+
+ ---  
+
+Forecast from the IMF
+MeasureFrequencyLatest valueReferenceTime coverage
+Economic growth forecastpercent4.612030annual1980  -  2030   
+Investment forecastpercent22.472030annual1980  -  2030   
+Inflation forecastpercent9.002030annual1981  -  2030   
+Current account balance forecast, percent of GDPpercent-3.692030annual1980  -  2030   
+
+ ---  
+
+Governance and business environment
+MeasureFrequencyLatest valueReferenceTime coverage
+Rule of law index (-2.5 weak; 2.5 strong)points-0.832023annual1996  -  2023   
+Government effectiveness index (-2.5 weak; 2.5 strong)points-1.162023annual1996  -  2023   
+Control of corruption (-2.5 weak; 2.5 strong)points-0.572023annual1996  -  2023   
+Regulatory quality index (-2.5 weak; 2.5 strong)points-1.062023annual1996  -  2023   
+Voice and accountability index (-2.5 weak; 2.5 strong)points-0.302023annual1996  -  2023   
+Political stability index (-2.5 weak; 2.5 strong)points-0.242023annual1996  -  2023   
+Corruption Perceptions Index, 100 = no corruptionpoints332024annual2003  -  2024   
+Political rights index, 7 (weak) - 1 (strong)points42025annual1972  -  2025   
+Civil liberties index, 7 (weak) - 1 (strong)points32025annual1972  -  2025   
+Competitiveness - World Economic Forum index (0-100)points38.802018annual2018  -  2018   
+Cost of starting a business, % of income per capitapercent of per capita GNI7.602019annual2003  -  2019   
+Shadow economy, percent of GDPpercent34.182015annual1991  -  2015   
+Informal economy, MIMIC methodpercent43.502020annual1993  -  2020   
+Informal economy, DGE methodpercent37.602020annual1990  -  2020   
+
+ ---  
+
+Political system
+MeasureFrequencyLatest valueReferenceTime coverage
+Electoral democracy indexindex points0.4972023annual1960  -  2023   
+Liberal democracy indexindex points0.3842023annual1960  -  2023   
+Participatory democracy indexindex points0.3232023annual1960  -  2023   
+Deliberative democracy indexindex points0.4592023annual1960  -  2023   
+Egalitarian democracy indexindex points0.3512023annual1960  -  2023   
+Government accountabilityindex points0.7302023annual1960  -  2023   
+Freedom of expressionindex points0.8442023annual1960  -  2023   
+Political corruption indexindex points0.4692023annual1960  -  2023   
+Women political empowerment indexindex points0.8152023annual1967  -  2023   
+Academic freedom indexindex points0.8792023annual1960  -  2023   
+Clean elections indexindex points0.3782023annual1960  -  2023   
+Judicial constraints on executiveindex points0.6602023annual1960  -  2023   
+Legislative constraints on executiveindex points0.7122023annual1960  -  2023   
+Civil society participation indexindex points0.9162023annual1960  -  2023   
+Direct popular vote indexindex points0.0092023annual1960  -  2023   
+Equal protection indexindex points0.6722023annual1960  -  2023   
+Year of presidential elections1 elections, 0 otherwise1.002023annual1960  -  2023   
+Years of parliamentary elections1 elections, 0 otherwise1.002023annual1960  -  2023   
+
+ ---  
+
+Infrastructure and transport characteristics
+MeasureFrequencyLatest valueReferenceTime coverage
+Internet users, percent of populationpercent20.602023annual1990  -  2023   
+Broadband internet subscribers, in thousandsthousand subscribers02021annual2019  -  2021   
+Fixed broadband internet subscribers per 100 peoplepercent0.002021annual2019  -  2021   
+Mobile phone subscribers, in millionsmillion subscribers8.932022annual1960  -  2022   
+Mobile phone subscribers, per 100 peoplesubscribers per 100 people107.882022annual1960  -  2022   
+Mobile network coverage, percent of the populationpercent70.002014annual2013  -  2014   
+International Internet bandwidth per Internet user, kb/skilobits per second1.992014annual2014  -  2014   
+Airline passengers of domestically owned airlinesmillion passengers0.052012annual1975  -  2012   
+Number of 20-foot containers passing through the portsmillion containers0.082019annual2010  -  2019   
+Quality of roads, 1(low) - 7(high)points3.602018annual2012  -  2018   
+Quality of railroad infrastructure, 1(low) - 7(high)points2.302018annual2012  -  2018   
+Quality of port infrastructure, 1(low) - 7(high)points3.002018annual2012  -  2018   
+Quality of air transport infrastructure, 1(low) - 7(high)points2.902018annual2012  -  2018   
+
+ ---  
+
+Energy and environment
+MeasureFrequencyLatest valueReferenceTime coverage
+Gasoline prices at the pump, in dollars per literdollars1.082016annual1991  -  2016   
+Diesel prices at the pump, in dollars per literdollars1.082016annual1991  -  2016   
+Alternative and nuclear energy, percent of total energy usepercent71.602022annual1990  -  2022   
+Carbon intensitykg of CO2 per dollar of GDP0.042023annual1990  -  2023   
+Electricity production from renewable sources, million kWhmillion kWh15.482021annual2000  -  2021   
+Carbon dioxide emissions, million metric tons of CO2 equivalentMt CO2 eq12023annual1970  -  2023   
+Carbon dioxide emissions per capitametric tons of carbon dioxide equivalent per capita0.132023annual1970  -  2023   
+Greenhouse gas emissionskt of CO2 equivalent59522020annual1990  -  2020   
+Income from natural resources, percent of GDPpercent9.042021annual1970  -  2021   
+Revenue minus production cost of oil, percent of GDPpercent0.002021annual1980  -  2021   
+Access to electricity, percent of the populationpercent35.502023annual2000  -  2023   
+Gasoline consumption per capita, liters per yearliters per person per year26.6872023annual1980  -  2023   
+
+ ---  
+
+Industry: Oil, coal, and electricity
+MeasureFrequencyLatest valueReferenceTime coverage
+Oil reserves, billion barrelsbillion barrels0.002021annual1980  -  2021   
+Oil production, thousand barrels per daythousand Barrels Per Day0.002023annual2004  -  2023   
+Oil consumption, thousand barrels per daythousand barrels per day7.502014annual1980  -  2014   
+Diesel and heating oil consumption, thousand barrels per daythousand barrels per day4.292023annual1980  -  2023   
+Gasoline production, thousand barrels per daythousand barrels per day0.002014annual1986  -  2014   
+Gasoline consumption, thousand barrels per daythousand barrels per day3.892023annual1980  -  2023   
+Liquefied petroleum gas production, thousand barrels per daythousand barrels per day0.002014annual1986  -  2014   
+Liquefied petroleum gas consumption, thousand barrels per daythousand barrels per day0.112023annual1980  -  2023   
+Jet fuel production, thousand barrels per daythousand barrels per day0.002014annual1986  -  2014   
+Jet fuel consumption, thousand barrels per daythousand barrels per day0.122023annual1980  -  2023   
+Coal reserves, million short tonsmillion short tons0.002023annual2008  -  2023   
+Coal production, thousand short tonsthousand short tons0.002023annual1980  -  2023   
+Coal consumption, thousand short tonsthousand short tons0.002023annual1980  -  2023   
+Coal imports, thousand short tonsthousand short tons0.002023annual1980  -  2023   
+Coal exports, thousand short tonsthousand short tons0.002023annual1980  -  2023   
+Electricity production capacity, million kilowattsmillion kilowatts0.152023annual1980  -  2023   
+Electricity production, billion kilowatthoursbillion kilowatthours0.212023annual1980  -  2023   
+Electricity consumption, billion kilowatthoursbillion kilowatthours0.132023annual1980  -  2023   
+Electricity imports, billion kilowatthoursbillion kilowatthours0.002023annual1980  -  2023   
+Electricity exports, billion kilowatthoursbillion kilowatthours0.002022annual1980  -  2022   
+Renewable power capacity, million kilowattsmillion kilowatts0.112023annual1980  -  2023   
+Renewable power generation, billion kilowatthoursbillion kilowatthours0.212023annual1980  -  2023   
+Natural gas productionquadrillion Btu0.0002023annual1980  -  2023   
+Natural gas consumptionquadrillion Btu0.0002023annual1980  -  2023   
+Biofuels productionthousand barrels per day0.002019annual1980  -  2019   
+Biofuels consumptionthousand barrels per day0.0002019annual1980  -  2019   
+Primary energy productionquadrillion Btu0.0012023annual1980  -  2023   
+Primary energy consumptionquadrillion Btu0.0192023annual1980  -  2023   
+Biodiesel productionthousand barrels per day0.0002019annual2000  -  2019   
+Biodiesel consumptionthousand barrels per day0.0002019annual2000  -  2019   
+
+ ---  
+
+Energy mix
+MeasureFrequencyLatest valueReferenceTime coverage
+Fossil fuels electricity capacity, million kilowattsmillion kilowatts0.032023annual1980  -  2023   
+Fossil fuels electricity generation, percentpercent29.572023annual2000  -  2023   
+Fossil fuels electricity generation, billion kilowatthoursbillion kilowatthours0.012023annual1980  -  2023   
+Fossil fuels electricity generation, percentpercent3.482023annual1980  -  2023   
+Wind electricity capacity, million kilowattsmillion kilowatts0.002023annual2000  -  2023   
+Wind electricity capacity, percentpercent0.002023annual2000  -  2023   
+Wind electricity generation, billion kilowatthoursbillion kilowatthours0.002023annual1980  -  2023   
+Wind electricity generation, percentpercent0.002023annual1980  -  2023   
+Solar electricity capacity, million kilowattsmillion kilowatts0.022023annual2000  -  2023   
+Solar electricity capacity, percentpercent17.392023annual2000  -  2023   
+Solar electricity generation, billion kilowatthoursbillion kilowatthours0.022023annual1980  -  2023   
+Solar electricity generation, percentpercent10.082023annual1980  -  2023   
+Hydroelectricity capacity, million kilowattsmillion kilowatts0.062023annual1980  -  2023   
+Hydroelectricity capacity, percentpercent53.042023annual2000  -  2023   
+Hydroelectricity generation, billion kilowatthoursbillion kilowatthours0.182023annual1980  -  2023   
+Hydroelectricity generation, percentpercent86.442023annual1980  -  2023   
+Nuclear electricity capacity, million kilowattsmillion kilowatts0.002023annual1980  -  2023   
+Nuclear electricity capacity, percentpercent0.002023annual2000  -  2023   
+Nuclear power generation, billion kilowatthoursbillion kilowatthours0.002023annual1980  -  2023   
+Nuclear electricity generation, percentpercent0.002023annual1980  -  2023   
+Geothermal electricity capacity, million kilowattsmillion kilowatts0.002023annual2000  -  2023   
+Geothermal electricity capacity, percentpercent0.002023annual2000  -  2023   
+Geothermal electricity generation, billion kilowatthoursbillion kilowatthours0.002023annual1980  -  2023   
+Geothermal electricity generation, percentpercent0.002023annual1980  -  2023   
+
+ ---  
+
+Agriculture sector
+MeasureFrequencyLatest valueReferenceTime coverage
+Forest area, percent of total land areapercent34.32023annual1990  -  2023   
+Percent agricultural landpercent54.712022annual1961  -  2022   
+Employment in agriculture, % of total employmentpercent43.032023annual1991  -  2023   
+Value added in the agricultural sector as percent of GDPpercent25.432024annual1964  -  2024   
+Agriculture value added, billion USDbillion USD1.922024annual1964  -  2024   
+Agricultural land, sq. km.sq. km.394902021annual1961  -  2021   
+Crop production index (2004-2006 = 100)index points105.82022annual1961  -  2022   
+Precipitation, mm per yearmm per year25262022annual1961  -  2022   
+Arable land, percent of total land areapercent21.92023annual1961  -  2023   
+Cereal yield, kg per hectarkg per hectar14702023annual1961  -  2023   
+Food production index (2004-2006 = 100)index points104.72022annual1961  -  2022   
+Fertilizer use, kg per hectare of arable landkg per hectare of arable land2.72023annual1961  -  2023   
+Livestock production index (2004-2006 = 100)index points101.82022annual1961  -  2022   
+Forest area, sq. kmsq. km24756.92023annual1990  -  2023   
+
+ ---  
+
+Banking system access and depth
+MeasureFrequencyLatest valueReferenceTime coverage
+ATMs per 100,000 adultsATMs per 100,000 adults1.332023annual2008  -  2023   
+Bank accounts per 1000 adultsbank accounts156.772012annual2006  -  2012   
+Bank branches per 100,000 peoplebank branches2.652012annual2004  -  2012   
+Firms using bank credit to finance investment, percent of all firmspercent7.002017annual2009  -  2017   
+Small firms with bank credit, percent of all small firmspercent7.702017annual2009  -  2017   
+Percent of people aged 15+ who have a credit cardpercent0.502021annual2011  -  2021   
+Percent of people aged 15+ who have a debit cardpercent1.432021annual2011  -  2021   
+Domestic credit to the private sector, percent of GDPpercent5.962020annual1960  -  2020   
+Bank credit to the private sector as percent of GDPpercent3.652024annual1960  -  2024   
+Liquid liabilities, percent of GDPpercent31.222021annual1960  -  2021   
+Bank assets, percent of GDPpercent21.832021annual1960  -  2021   
+Financial system deposits, percent of GDPpercent23.662021annual1960  -  2021   
+Bank credit to government and public enterprises, percent of GDPpercent14.922020annual1980  -  2020   
+Bank concentration: percent of bank assets held by top three bankspercent69.892013annual2000  -  2013   
+People with bank accounts, percent of the population over 14 years of agepercent13.782021annual2011  -  2021   
+
+ ---  
+
+Banking system efficiency and stability
+MeasureFrequencyLatest valueReferenceTime coverage
+Bank lending-deposit interest rate spreadinterest rate points12.302020annual1980  -  2020   
+Bank cost to income ratio, in percentpercent56.102019annual2000  -  2019   
+Bank overhead costs, percent of total assetspercent8.992019annual2000  -  2019   
+Bank interest revenue, percent of interest-bearing assetspercent14.692019annual2000  -  2019   
+Bank credit as percent of bank depositspercent28.842021annual1960  -  2021   
+Banking system regulatory capital to risk-weighted assetspercent33.982015annual2000  -  2015   
+Bank return on assets, in percentpercent6.702019annual2000  -  2019   
+Bank return on equity, in percentpercent50.772019annual2000  -  2019   
+Banking system z-scoresindex points6.342019annual2000  -  2019   
+Bank liquid assets to deposits and short-term fundingpercent24.352019annual2000  -  2019   
+Banking system capital, percent of assetspercent12.322015annual2000  -  2015   
+Bank non-interest income to total income, in percentpercent24.962019annual2000  -  2019   
+Interest rates on bank credit to the private sectorpercent20.442024annual1965  -  2024   
+Real interest rate: Bank lending rate minus inflationpercent0.362024annual1965  -  2024   
+Index of legal rights for creditors and borrowers (0 = weak to 12 = strong)points5.002019annual2013  -  2019   
+Credit information sharing index, 0 (low) - 8 (high)points0.002019annual2013  -  2019   
+
+ ---  
+
+Stock market, insurance, pensions
+MeasureFrequencyLatest valueReferenceTime coverage
+Life insurance premium volume, percent of GDPpercent0.102016annual2003  -  2016   
+Non-life insurance premium volume, percent of GDPpercent0.492016annual2003  -  2016   
+
+ ---  
+
+Financial development
+MeasureFrequencyLatest valueReferenceTime coverage
+Financial developmentindex points0.0702021annual1980  -  2021   
+Financial institutions developmentindex points0.1332021annual1980  -  2021   
+Financial institutions development, depthindex points0.0342021annual1980  -  2021   
+Financial institutions development, accessindex points0.0332021annual1980  -  2021   
+Financial institutions development, efficiencyindex points0.3852021annual1980  -  2021   
+Financial markets developmentindex points0.0052021annual1980  -  2021   
+Financial markets development, depthindex points0.0132021annual1980  -  2021   
+
+ ---  
+
+Innovation measures
+MeasureFrequencyLatest valueReferenceTime coverage
+Information technology exports, percent of total goods exportspercent0.022018annual2000  -  2018   
+High technology exportsmillion USD0.382018annual2014  -  2018   
+High tech exports, percent of manufactured exportspercent0.742018annual2014  -  2018   
+
+ ---  
+
+Economic freedom indexes
+MeasureFrequencyLatest valueReferenceTime coverage
+Property rights index (0-100)points342025annual1995  -  2025   
+Freedom from corruption index (0-100)points362025annual1995  -  2025   
+Fiscal freedom index (0-100)points542025annual1995  -  2025   
+Business freedom index (0-100)points372025annual1995  -  2025   
+Labor freedom index (0-100)points242025annual2005  -  2025   
+Monetary freedom index (0-100)points50.202025annual1995  -  2025   
+Trade freedom index (0-100)points642025annual1995  -  2025   
+Investment freedom index (0-100)points402025annual1995  -  2025   
+Financial freedom index (0-100)points202025annual1995  -  2025   
+Economic freedom, overall index (0-100)index points482025annual1995  -  2025   
+
+ ---  
+
+Demographics
+MeasureFrequencyLatest valueReferenceTime coverage
+Population size, in millionsmillion8.642024annual1960  -  2024   
+Percent urban populationpercent44.782024annual1960  -  2024   
+Population density, people per square kmpeople per square km1172021annual1961  -  2021   
+Population ages 65 and above, percent of totalpercent3.242024annual1960  -  2024   
+Population ages 0-14, percent of totalpercent38.092024annual1960  -  2024   
+Female population, percent of totalpercent50.132024annual1960  -  2024   
+Rural population, percent of total populationpercent55.222024annual1960  -  2024   
+Dependent people as percent of the working age populationpercent70.452024annual1960  -  2024   
+Refugee populationrefugees3452021annual1969  -  2021   
+Migrant population, percent of total populationpercent12015annual1990  -  2015   
+Population growth, percentpercent2.132023annual1961  -  2023   
+
+ ---  
+
+Health spending and outcomes
+MeasureFrequencyLatest valueReferenceTime coverage
+Health spending per capitaUSD39.322022annual2000  -  2022   
+Health spending as percent of GDPpercent7.952022annual2000  -  2022   
+Life expectancy, in yearsyears61.792023annual1960  -  2023   
+Life expectancy, in years, femaleyears61.692022annual1960  -  2022   
+Life expectancy, in years, maleyears59.122022annual1960  -  2022   
+The number of crude births per 1000 people, per yearbirths per 1000 people30.602023annual1960  -  2023   
+Death rate, per 1000 peopledeaths per 1000 people8.292023annual1960  -  2023   
+Fertility rate, births per womanbirths per woman3.792023annual1960  -  2023   
+Prevalence of HIV, percent of the population ages 15-49percent1.402022annual1990  -  2022   
+Cases of Tuberculosis per 100,000 peoplecases per 100,000 people283.002023annual2000  -  2023   
+Diabetes prevalence, percent of population ages 20-79percent2.102021annual2011  -  2021   
+Anemia, percent of children ages 6-59 monthspercent73.402019annual2000  -  2019   
+Prevalence of undernourishment, percent of populationpercent27.802021annual2001  -  2021   
+Percent rural population with access to drinking waterpercent8.72022annual2000  -  2022   
+Percent urban population with access to drinking waterpercent12.22022annual2000  -  2022   
+Suicide mortality rate, per 100,000 populationsuicides per 100,000 people6.702019annual2000  -  2019   
+Percent of children ages 12-23 months with DPT immunizationpercent912022annual1999  -  2022   
+Percent of one-year-old children with Hepatitis B immunizationpercent912022annual2007  -  2022   
+Percent of children ages 12-23 months with measles immunizationpercent902022annual1999  -  2022   
+Traffic accident deaths per 100,000 peopledeaths per 100,000 people33.002019annual2000  -  2019   
+
+ ---  
+
+Covid pandemic
+MeasureFrequencyLatest valueReferenceTime coverage
+New Covid cases per monthnew Covid cases2Mar/2023monthly2/2020 - 3/2023   
+New Covid cases per million peoplenew Covid cases per million people0Mar/2023monthly2/2020 - 3/2023   
+Total Covid cases, end of monthtotal Covid cases7762Mar/2023monthly4/2020 - 3/2023   
+Total Covid cases per million peoplecases per million902Mar/2023monthly4/2020 - 3/2023   
+Total Covid tests, end of monthtotal Covid tests428517Jun/2022monthly3/2022 - 6/2022   
+Total Covid tests per thousand peopletotal tests per thousand people51Jun/2022monthly3/2022 - 6/2022   
+New Covid vaccinations per monthnew Covid vaccinations57840Apr/2021monthly3/2021 - 4/2021   
+Total Covid vaccinations, end of monthtotal Covid vaccinations7548308Mar/2023monthly3/2021 - 3/2023   
+Total Covid vaccinations per hundred peopleCovid vaccinations per hundred people87.71Mar/2023monthly3/2021 - 3/2023   
+Total people vaccinated against Covidtotal people vaccinated5015637Mar/2023monthly3/2021 - 3/2023   
+Covid vaccinated people per hundred peopleCovid vaccinated people per hundred people58.28Mar/2023monthly3/2021 - 3/2023   
+Total fully vaccinated people against Covidtotal fully-vaccinated people4197335Mar/2023monthly4/2021 - 3/2023   
+Covid fully vaccinated people per hundred peopleCovid fully vaccinated people per hundred people48.77Mar/2023monthly4/2021 - 3/2023   
+New deaths from Covid during a monthnew deaths from Covid0Mar/2023monthly2/2020 - 3/2023   
+New Covid deaths per million peoplenew Covid deaths per million people0Mar/2023monthly2/2020 - 3/2023   
+Total Covid deaths, end of monthtotal Covid deaths125Mar/2023monthly4/2020 - 3/2023   
+Total Covid deaths per milliontotal Covid deaths15Mar/2023monthly4/2020 - 3/2023   
+Covid reproduction raterate0.00Jan/2023monthly4/2020 - 1/2023   
+Covid stringency indexindex38Dec/2022monthly2/2020 - 12/2022   
+Covid positive raterate0.00Jun/2022monthly3/2022 - 6/2022   
+
+ ---  
+
+Child and maternal mortality
+MeasureFrequencyLatest valueReferenceTime coverage
+Maternal mortality per 100,000 live birthsdeaths per 100,000 births4432020annual2000  -  2020   
+Neonates dying before 28 days of age, per 1,000 birthsdeaths per 1000 births312022annual1989  -  2022   
+Infant deaths per 1000 live birthsdeaths per 1000 live births762022annual1960  -  2022   
+Deaths of children under five years of age per 1000 live birthsdeaths per 1000 births1012022annual1960  -  2022   
+Deaths of female children under five years of age per 1000 live birthsdeaths per 1000 births942022annual1960  -  2022   
+Deaths of male children under five years of age per 1000 live birthsdeaths per 1000 births1082022annual1960  -  2022   
+Deaths of children five to fourteen years of age per 1000 live birthsdeaths per 1000 births152022annual1990  -  2022   
+
+ ---  
+
+Inequality and poverty
+MeasureFrequencyLatest valueReferenceTime coverage
+Gini income inequality indexindex points35.702018annual2003  -  2018   
+Poverty, percent of populationpercent56.802018annual2011  -  2018   
+Poverty ratio, percent living on less than 1.90 USD a daypercent26.102018annual2003  -  2018   
+Poverty ratio, percent living on less than 5.50 USD a daypercent89.902018annual2003  -  2018   
+Percent income earned by the top 10 percent of earnerspercent29.402018annual2003  -  2018   
+
+ ---  
+
+Education spending and outcomes
+MeasureFrequencyLatest valueReferenceTime coverage
+Public spending on education, percent of GDPpercent6.792023annual2000  -  2023   
+Public spending on education, percent of public spendingpercent29.372022annual2000  -  2022   
+Literacy ratepercent48.642022annual2004  -  2022   
+Female literacy rate, ages 15-24percent71.652022annual2004  -  2022   
+Male literacy rate, ages 15-24percent75.232022annual2004  -  2022   
+Youth literacy rate, ages 15-24percent73.462022annual2004  -  2022   
+Student teacher ratio, primary schoolstudents per teacher27.522018annual1971  -  2018   
+Primary school completion ratepercent96.752023annual1978  -  2023   
+Primary school starting ageyears62023annual1970  -  2023   
+Ratio of female to male pupils in primary schoolpercent1.042021annual1971  -  2021   
+Ratio of female to male students in secondary schoolpercent0.972017annual1971  -  2017   
+Ratio of female to male students in tertiary level educationpercent0.412002annual1971  -  2002   
+Preprimary school enrollment, percent of all eligible childrenpercent25.002021annual2000  -  2021   
+Primary school enrollment, percent of all eligible childrenpercent153.092023annual1971  -  2023   
+Secondary school enrollment, percent of all eligible childrenpercent70.732021annual1971  -  2021   
+Tertiary school enrollment, percent of all eligible childrenpercent1.922002annual1971  -  2002   
+Trained teachers in primary education, percent of totalpercent66.182023annual2011  -  2023   
+
+ ---  
+
+Globalization indexes
+MeasureFrequencyLatest valueReferenceTime coverage
+Globalization index (0-100)points43.962022annual1970  -  2022   
+Economic globalization index (0-100)points38.092022annual1970  -  2022   
+Political globalization index (0-100)points55.662022annual1970  -  2022   
+Social globalization index (0-100)points37.742022annual1970  -  2022   
+
+ ---  
+
+Shares of world totals
+MeasureFrequencyLatest valueReferenceTime coverage
+Percent of world populationpercent0.112023annual1960  -  2023   
+Percent of world GDPpercent0.012023annual1980  -  2023   
+Percent of world exportspercent0.002023annual1990  -  2023   
+Percent of world importspercent0.012023annual1990  -  2023   
+Percent of world Foreign Direct Investmentpercent0.032023annual1993  -  2023   
+Percent of world oil reservespercent0.002021annual1980  -  2021   
+Percent of world foreign exchange reservespercent0.0032023annual1960  -  2023   
+Oil production percent of world totalpercent0.0002023annual2004  -  2023   
+Electricity consumption percent of world totalpercent0.0002023annual1980  -  2023   
+
+ ---  
+
+Economic structure
+MeasureFrequencyLatest valueReferenceTime coverage
+Value added by industry as percent of GDPpercent27.302024annual1964  -  2024   
+Value added by the manufacturing sector as percent of GDPpercent8.042024annual1964  -  2024   
+Value added in the services sector as percent of GDPpercent44.822024annual1964  -  2024   
+Industry value added, billion USDbillion USD2.062024annual1964  -  2024   
+Manufacturing value added, billion USDbillion USD0.612024annual1964  -  2024   
+Services value added, billion USDbillion USD3.382024annual1964  -  2024   
+Savings as percent of GDPpercent12.542023annual1977  -  2023   
+Savings, billion USDbillion USD0.802023annual1977  -  2023   
+
+ ---  
+
+Industry: Diamond production and trade
+MeasureFrequencyLatest valueReferenceTime coverage
+Diamond production, caratscarats573982.912024annual2004  -  2024   
+Diamond production, million USDmillion USD103.092024annual2004  -  2024   
+Diamond production, USD per caratUSD per carat179.602024annual2004  -  2024   
+Diamond exports, caratscarats573982.912024annual2004  -  2024   
+Diamond exports, million USDmillion USD103.092024annual2004  -  2024   
+Diamond exports, USD per caratUSD per carat179.602024annual2004  -  2024   
+Diamond imports, caratscarats0.002024annual2004  -  2024   
+Diamond imports, million USDmillion USD0.002024annual2004  -  2024   
+Diamond imports, USD per caratUSD per carat0.002024annual2004  -  2024   
+
+ ---  
+
+Tourism
+MeasureFrequencyLatest valueReferenceTime coverage
+Tourist arrivalsthousand tourists712019annual2012  -  2019   
+International tourism revenuemillion USD392018annual1995  -  2018   
+International tourism revenue, percent of GDPpercent0.612018annual1995  -  2018   
+Percent of world tourist arrivalspercent0.002019annual2012  -  2019   
+Tourist departuresthousand tourists1222019annual1997  -  2019   
+
+ ---  
+
+Minerals
+MeasureFrequencyLatest valueReferenceTime coverage
+Gold production in kilogramskilograms602023annual2006  -  2023   
+Silver production in metric tonesmetric tons1252020annual2016  -  2020   
+Iron production in thousand metric tonsthousand metric tons12302023annual2011  -  2023   
+Bauxite production in thousand metric tonsthousand metric tons9102022annual2006  -  2022   
+
+ ---  
+
+Crime statistics
+MeasureFrequencyLatest valueReferenceTime coverage
+Robberies per 100,000 peoplerobberies per 100,000 people32008annual2007  -  2008   
+Number of prisoners per 100,000 peopleprisoners per 100,000 people602017annual2004  -  2017   
+Thefts per 100,000 peoplethefts per 100,000 people1902008annual2007  -  2008   
+Homicides per 100,000 peoplehomicides per 100,000 people1.72015annual2004  -  2015   
+
+ ---  
+
+Religious composition of the population
+MeasureFrequencyLatest valueReferenceTime coverage
+Muslims as percent of the total populationpercent68.02013annual1961  -  2013   
+Christians as percent of the total populationpercent24.32013annual1961  -  2013   
+
+ ---  
+
+Fragile state index
+MeasureFrequencyLatest valueReferenceTime coverage
+Fragile state index, 0 (low) - 120 (high)index points82.602024annual2007  -  2024   
+Security threats index, 0 (low) - 10 (high)index points5.602024annual2007  -  2024   
+Factionalized elites index, 0 (low) - 10 (high)index points8.202024annual2007  -  2024   
+Group grievance index, 0 (low) - 10 (high)index points5.502024annual2007  -  2024   
+Economic decline index, 0 (low) - 10 (high)index points8.602024annual2007  -  2024   
+Uneven economic development index, 0 (low) - 10 (high)index points7.402024annual2007  -  2024   
+Human flight and brain drain index, 0 (low) - 10 (high)index points6.502024annual2007  -  2024   
+State legitimacy index, 0 (high) - 10 (low)index points5.602024annual2007  -  2024   
+Public services index, 0 (high) - 10 (low)index points8.702024annual2007  -  2024   
+Human rights and rule of law index, 0 (high) - 10 (low)index points5.302024annual2007  -  2024   
+Demographic pressures, 0 (low) - 10 (high)index points8.302024annual2007  -  2024   
+Refugees and displaced persons index, 0 (low) - 10 (high)index points7.102024annual2007  -  2024   
+External interventions index, 0 (low) - 10 (high)index points5.802024annual2007  -  2024   
+
+ ---  
+
+Military
+MeasureFrequencyLatest valueReferenceTime coverage
+Military spending, in billion U.S. dollarsbillion USD0.022022annual1961  -  2022   
+Military spending, percent of GDPpercent0.602022annual1961  -  2022   
+Military spending, percent of total government spendingpercent2.712022annual2000  -  2022   
+Armed forces personnelpeople90002020annual1985  -  2020   
+Armed forces personnel, percent of the labor forcepercent0.342020annual1991  -  2020   
+Arms imports, million constant U.S. dollarsdollars2.002016annual1973  -  2016   
+
+ ---  
+
+Price level
+MeasureFrequencyLatest valueReferenceTime coverage
+Cost of living index, world average = 100index points46.762021annual2017  -  2021   
+Food price index, world average = 100index points87.9102021annual2017  -  2021   
+Fruit price index, world average = 100index points53.182021annual2017  -  2021   
+Vegetable price index, world average = 100index points86.062021annual2017  -  2021   
+Bread and cereal prices, world average = 100index points99.172021annual2017  -  2021   
+Milk, cheese, and eggs price index, world average = 100index points146.442021annual2017  -  2021   
+Meat price index, world average = 100index points78.012021annual2017  -  2021   
+Fish and seafood prices, world average = 100index points72.472021annual2017  -  2021   
+Alcohol beverage price index, world average = 100index points116.262021annual2017  -  2021   
+Clothing and footwear prices, world average = 100index points46.992021annual2017  -  2021   
+Housing and utilities price index, world average = 100index points21.3502021annual2017  -  2021   
+Furniture and household maintenance prices, world average = 100index points48.312021annual2017  -  2021   
+Healthcare price index, world average = 100index points32.992021annual2017  -  2021   
+Transport prices, world average = 100index points67.092021annual2017  -  2021   
+Hotel and restaurant price index, world average = 100index points47.382021annual2017  -  2021   
+Vehicle prices, world average = 100index points123.612021annual2017  -  2021   
+Communication price index, world average = 100index points97.642021annual2017  -  2021   
+Recreation and culture price index, world average = 100index points37.682021annual2017  -  2021   
+Education service price index, world average = 100index points24.502021annual2017  -  2021   
+Machinery and equipment prices, world average = 100index points124.522021annual2017  -  2021   
+
+ ---  
+
+Other indicators
+MeasureFrequencyLatest valueReferenceTime coverage
+Happiness Index, 0 (unhappy) - 10 (happy)points3.252024annual2013  -  2024   
+Human Development Index (0 - 1)points0.4672023annual1980  -  2023   
+Women in parliament, percentpercent29.532024annual1999  -  2024   
+Land area in sq. kmsq. km721802023annual1961  -  2023
