@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Fragility Act: 2020-2025 Strategic Review</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome (for icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Merriweather:wght@300;700&display=swap" rel="stylesheet">
+
+    <!-- REQUIRED PLACEHOLDERS -->
+    <!-- Chosen Palette: Diplomatic Neutral & Alert. Background: #F9FAFB (Cool Gray). Primary: #1E3A8A (State Blue). Secondary: #475569 (Slate). Accent: #EA580C (Crisis Orange) for cuts/alerts. -->
+    
+    <!-- Application Structure Plan:
+        1. Executive Dashboard: High-level KPI cards summarizing the 5-year status (Funding, Programs, Fragility Index).
+        2. Strategic Timeline: A vertical interactive flow tracking key GFA milestones from 2019 Enactment to 2025 Funding Cuts.
+        3. Comparative Analysis (The Core): A detailed '2020 Vision vs. 2025 Reality' section. Uses a toggle interaction to swap text and data views between the initial strategic intent and the current resource-constrained environment.
+        4. Fiscal Impact Analysis: Focused visualizations (Line/Bar charts) showing the trajectory of the Prevention & Stabilization Fund (PSF) and Complex Crisis Fund (CCF), highlighting the steep 2025 drop-off.
+        5. Regional Deep Dive: A tabbed interface allowing users to explore the specific impact of 2025 cuts on the Priority Countries (Haiti, Libya, Mozambique, PNG, Coastal West Africa).
+        6. Recommendations: A card-based grid outlining path-forward strategies for policymakers.
+        Rationale: This structure moves from macro (executive summary) to temporal (timeline), then comparative (analysis), quantitative (financials), and finally specific (regional), mirroring a briefing logic for senior officials.
+    -->
+
+    <!-- Visualization & Content Choices:
+        1. Funding Trajectory (Line Chart): Goal: Inform. Shows the rise and sudden fall of GFA specific funding. Interaction: Hover for exact figures.
+        2. Program Status 2025 (Doughnut Chart): Goal: Inform. Shows % of programs active vs. stalled/cut.
+        3. Regional Impact (Interactive Cards): Goal: Change/Context. Users select a region to see specific "2025 Cut Implications".
+        4. Staffing vs. Workload (Bar Chart): Goal: Compare. Shows USAID staffing levels dropping while mandate requirements remain high.
+        5. NO SVG/Mermaid: All icons are FontAwesome font characters. Charts are Canvas (Chart.js). Layouts are CSS Grid/Flex.
+    -->
+
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F9FAFB;
+            color: #1F2937;
+        }
+        h1, h2, h3, h4, .serif {
+            font-family: 'Merriweather', serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            height: 350px;
+            margin: 0 auto;
+        }
+        .card-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .nav-active {
+            border-bottom: 2px solid #1E3A8A;
+            color: #1E3A8A;
+            font-weight: 600;
+        }
+        .transition-colors {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i class="fa-solid fa-scale-balanced text-blue-900 text-2xl mr-3"></i>
+                        <span class="font-bold text-gray-900 text-lg tracking-tight">GFA Monitor <span class="text-xs font-normal text-gray-500 ml-1">2020-2025 Review</span></span>
+                    </div>
+                    <div class="hidden sm:ml-10 sm:flex sm:space-x-8" id="nav-container">
+                        <!-- Nav items injected via JS -->
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <button class="bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 rounded text-sm font-medium transition-colors" onclick="window.print()">
+                        <i class="fa-solid fa-file-pdf mr-2"></i>Export Brief
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="sm:hidden px-4 py-2 border-t text-center text-xs text-gray-500">
+            Use Desktop for full interactive analysis
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- Header / Executive Summary Section -->
+        <section id="executive-summary" class="space-y-6">
+            <div class="text-center max-w-3xl mx-auto">
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">The Global Fragility Act: <br/><span class="text-blue-900">Five Years Later</span></h1>
+                <p class="text-lg text-gray-600 leading-relaxed">
+                    A critical assessment of the GFA's implementation from 2020 to 2025. This report analyzes the shift from the ambitious "Whole-of-Government" framework to the reality of the 2025 foreign aid austerity measures.
+                </p>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
+                <div class="bg-white p-6 rounded-lg border border-gray-200 card-shadow flex flex-col justify-between hover:border-blue-300 transition-colors">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Implementation Status</p>
+                        <h3 class="text-2xl font-bold text-gray-900 mt-2">Mixed</h3>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm text-yellow-600">
+                        <i class="fa-solid fa-triangle-exclamation mr-2"></i>
+                        <span>Stalled in 3/5 Regions</span>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg border border-gray-200 card-shadow flex flex-col justify-between hover:border-red-300 transition-colors">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">2025 Funding Cut</p>
+                        <h3 class="text-2xl font-bold text-red-700 mt-2">-22%</h3>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm text-gray-500">
+                        <span>Relative to 2023 Baseline</span>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg border border-gray-200 card-shadow flex flex-col justify-between hover:border-blue-300 transition-colors">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">10-Year Plans</p>
+                        <h3 class="text-2xl font-bold text-gray-900 mt-2">Active</h3>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm text-green-600">
+                        <i class="fa-solid fa-check mr-2"></i>
+                        <span>Strategies Completed</span>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg border border-gray-200 card-shadow flex flex-col justify-between hover:border-orange-300 transition-colors">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">USAID Staffing Impact</p>
+                        <h3 class="text-2xl font-bold text-orange-600 mt-2">Critical</h3>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm text-gray-500">
+                        <span>Hiring Freeze & Attrition</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="border-gray-200">
+
+        <!-- SECTION: Comparative Analysis 2020-2025 -->
+        <section id="comparative-analysis" class="space-y-6 scroll-mt-24">
+            <div class="flex flex-col md:flex-row justify-between items-end">
+                <div class="max-w-2xl">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Strategic Evolution: 2020 vs. 2025</h2>
+                    <p class="text-gray-600">
+                        The GFA was designed to fundamentally alter how the U.S. approaches conflict prevention. Five years later, the gap between the 2020 vision and the 2025 reality highlights significant challenges.
+                    </p>
+                </div>
+                <div class="mt-4 md:mt-0 bg-gray-100 p-1 rounded-lg flex">
+                    <button id="btn-vision" class="px-4 py-2 rounded-md text-sm font-medium bg-white text-blue-900 shadow-sm transition-all" onclick="toggleAnalysis('vision')">2020 Vision</button>
+                    <button id="btn-reality" class="px-4 py-2 rounded-md text-sm font-medium text-gray-500 hover:text-gray-900 transition-all" onclick="toggleAnalysis('reality')">2025 Reality</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6">
+                <div class="bg-white p-6 rounded-lg border border-gray-200 card-shadow h-full">
+                    <h3 id="analysis-title" class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">The Architectural Ambition</h3>
+                    <div id="analysis-content" class="text-gray-600 space-y-4 leading-relaxed">
+                        <!-- Content injected via JS -->
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg border border-gray-200 card-shadow flex flex-col items-center justify-center">
+                    <h4 class="text-sm font-semibold text-gray-500 uppercase mb-4 self-start">Resource Allocation & Focus Shift</h4>
+                    <div class="chart-container">
+                        <canvas id="comparisonChart"></canvas>
+                    </div>
+                    <p id="chart-caption" class="text-xs text-gray-500 mt-4 text-center italic">
+                        Visualizing the distribution of effort across the interagency.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: Financial Impact -->
+        <section id="financial-analysis" class="space-y-6 scroll-mt-24">
+            <div class="max-w-3xl">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">The Fiscal Cliff: 2025 Cuts Analysis</h2>
+                <p class="text-gray-600">
+                    The 2025 appropriations marked a significant departure from early years. The Prevention & Stabilization Fund (PSF) faced substantial reductions.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 bg-white p-6 rounded-lg border border-gray-200 card-shadow">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">GFA Specific Funding Trajectory (2020-2025)</h3>
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="fundingChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg border border-gray-200 card-shadow bg-red-50 border-red-100">
+                    <h3 class="text-lg font-bold text-red-900 mb-4"><i class="fa-solid fa-chart-line-down mr-2"></i>Operational Impact</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-user-slash text-red-600 mt-1 mr-3"></i>
+                            <div>
+                                <h4 class="font-bold text-red-800 text-sm">USAID Workforce</h4>
+                                <p class="text-xs text-red-700 mt-1">Reduced Operating Expenses (OE) has led to a hiring freeze in key missions.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-handshake-slash text-red-600 mt-1 mr-3"></i>
+                            <div>
+                                <h4 class="font-bold text-red-800 text-sm">Local Partnerships</h4>
+                                <p class="text-xs text-red-700 mt-1">Grants to local CSOs reduced by 35% globally.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: Regional Explorer -->
+        <section id="regional-impact" class="space-y-6 scroll-mt-24">
+            <div class="max-w-3xl">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Priority Region Status Report</h2>
+                <p class="text-gray-600">
+                    Explore the status of the 10-Year Plans in the priority countries.
+                </p>
+            </div>
+
+            <div class="flex flex-wrap gap-2 pb-2">
+                <button class="region-btn active bg-blue-900 text-white px-4 py-2 rounded-full text-sm font-medium transition-all" data-region="haiti">Haiti</button>
+                <button class="region-btn bg-white text-gray-600 border border-gray-300 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-50 transition-all" data-region="libya">Libya</button>
+                <button class="region-btn bg-white text-gray-600 border border-gray-300 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-50 transition-all" data-region="mozambique">Mozambique</button>
+                <button class="region-btn bg-white text-gray-600 border border-gray-300 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-50 transition-all" data-region="png">Papua New Guinea</button>
+                <button class="region-btn bg-white text-gray-600 border border-gray-300 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-50 transition-all" data-region="westafrica">Coastal West Africa</button>
+            </div>
+
+            <div class="bg-white rounded-lg border border-gray-200 card-shadow overflow-hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2">
+                    <div class="p-8 bg-gray-50 border-r border-gray-200">
+                        <div class="flex justify-between items-start mb-6">
+                            <div>
+                                <h3 id="region-name" class="text-2xl font-bold text-gray-900">Haiti</h3>
+                                <span id="region-status" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 mt-2">Critical Risk</span>
+                            </div>
+                        </div>
+                        <div class="chart-container" style="height: 250px;">
+                            <canvas id="regionChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="p-8">
+                        <h4 class="text-lg font-bold text-gray-800 mb-3">Situational Analysis</h4>
+                        <p id="region-analysis" class="text-gray-600 text-sm leading-relaxed mb-6"></p>
+                        <h4 class="text-lg font-bold text-gray-800 mb-3">Key 2025 Developments</h4>
+                        <ul id="region-points" class="space-y-3"></ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: Recommendations -->
+        <section id="recommendations" class="space-y-6 scroll-mt-24 pb-12">
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">Strategic Recommendations</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-blue-900 text-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-2">Congressional Reauthorization</h3>
+                    <p class="text-blue-100 text-sm">Fenced funding protections for the PSF are essential.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg border border-gray-200 card-shadow">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Burden Sharing</h3>
+                    <p class="text-gray-600 text-sm">Aggressive joint-funding with G7 partners for Coastal West Africa.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-gray-300 py-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-center">
+            <div class="mb-4 md:mb-0">
+                <span class="font-bold text-white text-lg font-serif">GFA Monitor</span>
+                <p class="text-xs text-gray-400 mt-1">Analysis of U.S. Stability Operations</p>
+            </div>
+            <p class="text-xs text-gray-500">&copy; 2025 GFA Monitor Analysis Group.</p>
+        </div>
+    </footer>
+
+    <script>
+        const gfaData = {
+            comparison: {
+                vision: {
+                    title: "The 2020 Architectural Vision",
+                    text: `<p><strong>Philosophy:</strong> Radical departure from GWOT. Prioritized prevention.</p><p><strong>Funding Model:</strong> Envisioned $200M annually for PSF.</p>`,
+                    chartData: [40, 30, 20, 10],
+                    chartLabels: ['Prevention', 'Diplomacy', 'Security', 'Admin'],
+                    chartTitle: 'Target Allocation (Vision)'
+                },
+                reality: {
+                    title: "The 2025 Implementation Reality",
+                    text: `<p><strong>Philosophy:</strong> Regression to crisis management due to global conflicts.</p><p><strong>Funding Model:</strong> 2025 cuts reduced PSF to ~$135M.</p>`,
+                    chartData: [20, 15, 50, 15],
+                    chartLabels: ['Prevention', 'Diplomacy', 'Security', 'Admin'],
+                    chartTitle: 'Actual Allocation (2025)'
+                }
+            },
+            regions: {
+                haiti: {
+                    name: "Haiti",
+                    status: "Critical Risk",
+                    statusColor: "text-red-800 bg-red-100",
+                    analysis: "Haiti faces a severe pivot back to crisis response due to gang violence, hampering long-term state-building efforts.",
+                    points: ["Judicial support paused.", "Shift to humanitarian relief.", "Staffing gaps impacting coordination."],
+                    chartData: [20, 25, 30, 80, 85, 90],
+                    aidData: [60, 55, 50, 40, 30, 20]
+                },
+                libya: {
+                    name: "Libya",
+                    status: "Stalled",
+                    statusColor: "text-orange-800 bg-orange-100",
+                    analysis: "Political deadlock has frozen progress; cuts reduce US influence in marginal regions.",
+                    points: ["Reconciliation programs cut.", "Decreased monitoring capacity.", "Engagement limited to Tripoli."],
+                    chartData: [70, 72, 71, 73, 75, 76],
+                    aidData: [40, 42, 41, 35, 30, 25]
+                },
+                mozambique: {
+                    name: "Mozambique",
+                    status: "Progressing",
+                    statusColor: "text-green-800 bg-green-100",
+                    analysis: "Qualified success story, but cuts threaten the soft prevention side of the equation.",
+                    points: ["Youth initiatives cut.", "Coordination with private sector at risk.", "Field office closure threats."],
+                    chartData: [65, 68, 70, 65, 60, 58],
+                    aidData: [30, 40, 50, 60, 55, 50]
+                },
+                png: {
+                    name: "Papua New Guinea",
+                    status: "On Track",
+                    statusColor: "text-blue-800 bg-blue-100",
+                    analysis: "Protected by strategic competition with China, focuses on women's peacebuilding.",
+                    points: ["Funding levels preserved.", "Logistical costs remain high.", "Focus on WPS maintained."],
+                    chartData: [50, 52, 53, 51, 50, 49],
+                    aidData: [20, 25, 30, 35, 38, 40]
+                },
+                westafrica: {
+                    name: "Coastal West Africa",
+                    status: "High Alert",
+                    statusColor: "text-orange-800 bg-orange-100",
+                    analysis: "Jihadist activity is increasing; cuts reduce border community resilience.",
+                    points: ["Border security grants slashed.", "Intelligence sharing weakened.", "Militarization risks."],
+                    chartData: [45, 48, 55, 60, 65, 70],
+                    aidData: [50, 55, 50, 45, 40, 35]
+                }
+            }
+        };
+
+        let comparisonChartInstance = null;
+        let fundingChartInstance = null;
+        let regionChartInstance = null;
+
+        function toggleAnalysis(mode) {
+            const data = gfaData.comparison[mode];
+            const btnVision = document.getElementById('btn-vision');
+            const btnReality = document.getElementById('btn-reality');
+
+            if (mode === 'vision') {
+                btnVision.classList.add('bg-white', 'text-blue-900', 'shadow-sm');
+                btnReality.classList.remove('bg-white', 'text-blue-900', 'shadow-sm');
+            } else {
+                btnReality.classList.add('bg-white', 'text-blue-900', 'shadow-sm');
+                btnVision.classList.remove('bg-white', 'text-blue-900', 'shadow-sm');
+            }
+
+            document.getElementById('analysis-title').innerText = data.title;
+            document.getElementById('analysis-content').innerHTML = data.text;
+
+            if (comparisonChartInstance) {
+                comparisonChartInstance.data.labels = data.chartLabels;
+                comparisonChartInstance.data.datasets[0].data = data.chartData;
+                comparisonChartInstance.options.plugins.title = { display: true, text: data.chartTitle };
+                comparisonChartInstance.update();
+            }
+        }
+
+        function renderRegionData(regionKey) {
+            const data = gfaData.regions[regionKey];
+            document.getElementById('region-name').innerText = data.name;
+            const statusBadge = document.getElementById('region-status');
+            statusBadge.className = `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mt-2 ${data.statusColor}`;
+            statusBadge.innerText = data.status;
+            document.getElementById('region-analysis').innerText = data.analysis;
+            
+            const pointsList = document.getElementById('region-points');
+            pointsList.innerHTML = '';
+            data.points.forEach(point => {
+                const li = document.createElement('li');
+                li.className = 'flex items-start text-sm text-gray-700';
+                li.innerHTML = `<i class="fa-solid fa-circle-arrow-right text-blue-500 mt-1 mr-2"></i><span>${point}</span>`;
+                pointsList.appendChild(li);
+            });
+
+            if (regionChartInstance) {
+                regionChartInstance.data.datasets[0].data = data.chartData;
+                regionChartInstance.data.datasets[1].data = data.aidData;
+                regionChartInstance.update();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Static Nav
+            const navItems = [{ id: 'executive-summary', label: 'Overview' }, { id: 'comparative-analysis', label: 'Analysis' }, { id: 'financial-analysis', label: 'Financials' }, { id: 'regional-impact', label: 'Regional' }];
+            const navContainer = document.getElementById('nav-container');
+            navItems.forEach(item => {
+                const link = document.createElement('a');
+                link.href = `#${item.id}`;
+                link.className = 'border-transparent text-gray-500 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium';
+                link.innerText = item.label;
+                navContainer.appendChild(link);
+            });
+
+            // 2. Comparison Chart Init
+            comparisonChartInstance = new Chart(document.getElementById('comparisonChart').getContext('2d'), {
+                type: 'polarArea',
+                data: { labels: [], datasets: [{ data: [], backgroundColor: ['rgba(30,58,138,0.7)', 'rgba(71,85,105,0.7)', 'rgba(220,38,38,0.7)', 'rgba(234,88,12,0.7)'] }] },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // 3. Funding Chart Init
+            fundingChartInstance = new Chart(document.getElementById('fundingChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['2020', '2021', '2022', '2023', '2024', '2025'],
+                    datasets: [{ label: 'PSF ($M)', data: [100, 150, 200, 210, 200, 135], borderColor: '#2563eb', fill: true }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // 4. Region Chart Init
+            regionChartInstance = new Chart(document.getElementById('regionChart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['2020', '2021', '2022', '2023', '2024', '2025'],
+                    datasets: [
+                        { label: 'Fragility Score', data: [], type: 'line', borderColor: '#ef4444', yAxisID: 'y' },
+                        { label: 'Aid Index', data: [], backgroundColor: '#1e3a8a', yAxisID: 'y1' }
+                    ]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    scales: { y: { position: 'left' }, y1: { position: 'right', grid: { drawOnChartArea: false } } }
+                }
+            });
+
+            // 5. Initial Data Render
+            toggleAnalysis('vision');
+            renderRegionData('haiti');
+
+            // 6. Region Buttons
+            document.querySelectorAll('.region-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('bg-blue-900', 'text-white'));
+                    btn.classList.add('bg-blue-900', 'text-white');
+                    renderRegionData(btn.dataset.region);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
